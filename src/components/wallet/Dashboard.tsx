@@ -1,12 +1,26 @@
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Send, QrCode, Plus, History, User, Eye, EyeOff } from 'lucide-react';
+import { Send, QrCode, Plus, History, User, Eye, EyeOff, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Dashboard = () => {
   const [showBalance, setShowBalance] = useState(true);
-  const balance = 15750.50;
+  const [currentAccount, setCurrentAccount] = useState('personal');
+
+  const accounts = [
+    { id: 'personal', name: 'Conta Pessoal', balance: 15750.50, type: 'Personal' },
+    { id: 'business', name: 'Conta Comercial', balance: 45230.25, type: 'Business' },
+    { id: 'savings', name: 'Poupança', balance: 8500.00, type: 'Savings' },
+  ];
+
+  const activeAccount = accounts.find(acc => acc.id === currentAccount) || accounts[0];
 
   const quickActions = [
     { icon: Send, label: 'Enviar', color: 'bg-blue-500' },
@@ -35,6 +49,47 @@ const Dashboard = () => {
           </Button>
         </div>
 
+        {/* Account Switcher */}
+        <div className="mb-4">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost" 
+                className="text-white hover:bg-white/10 p-2 h-auto justify-start w-full"
+              >
+                <div className="flex items-center justify-between w-full">
+                  <div className="text-left">
+                    <div className="text-sm font-medium">{activeAccount.name}</div>
+                    <div className="text-xs text-white/70">{activeAccount.type}</div>
+                  </div>
+                  <ChevronDown className="w-4 h-4" />
+                </div>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-64 bg-white border shadow-lg">
+              {accounts.map((account) => (
+                <DropdownMenuItem
+                  key={account.id}
+                  onClick={() => setCurrentAccount(account.id)}
+                  className="p-4 cursor-pointer hover:bg-gray-50"
+                >
+                  <div className="flex justify-between items-center w-full">
+                    <div>
+                      <div className="font-medium text-gray-900">{account.name}</div>
+                      <div className="text-sm text-gray-500">{account.type}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-semibold text-kitadi-navy">
+                        {account.balance.toLocaleString('pt-ST')} Db
+                      </div>
+                    </div>
+                  </div>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
         {/* Balance Card */}
         <Card className="bg-white/10 backdrop-blur border-0">
           <CardContent className="p-6">
@@ -50,7 +105,7 @@ const Dashboard = () => {
               </Button>
             </div>
             <div className="text-white text-3xl font-bold">
-              {showBalance ? `${balance.toLocaleString('pt-ST')} Db` : '••••••'}
+              {showBalance ? `${activeAccount.balance.toLocaleString('pt-ST')} Db` : '••••••'}
             </div>
           </CardContent>
         </Card>

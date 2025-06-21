@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Eye, EyeOff, Phone } from 'lucide-react';
+import { Phone } from 'lucide-react';
+import NumericKeypad from './NumericKeypad';
 
 interface LoginScreenProps {
   onLoginSuccess: () => void;
@@ -13,11 +14,22 @@ interface LoginScreenProps {
 const LoginScreen = ({ onLoginSuccess }: LoginScreenProps) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [pin, setPin] = useState('');
-  const [showPin, setShowPin] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const handleNumberPress = (number: string) => {
+    if (pin.length < 4) {
+      setPin(prev => prev + number);
+    }
+  };
+
+  const handleBackspace = () => {
+    setPin(prev => prev.slice(0, -1));
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (pin.length !== 4) return;
+    
     setIsLoading(true);
     
     // Simulate login process
@@ -69,33 +81,34 @@ const LoginScreen = ({ onLoginSuccess }: LoginScreenProps) => {
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-4">
                 <Label htmlFor="pin">PIN</Label>
-                <div className="relative">
-                  <Input
-                    id="pin"
-                    type={showPin ? "text" : "password"}
-                    placeholder="Digite seu PIN"
-                    value={pin}
-                    onChange={(e) => setPin(e.target.value)}
-                    className="pr-10"
-                    maxLength={4}
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPin(!showPin)}
-                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-                  >
-                    {showPin ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
+                
+                {/* PIN Display */}
+                <div className="flex justify-center space-x-2 mb-6">
+                  {[0, 1, 2, 3].map((index) => (
+                    <div
+                      key={index}
+                      className={`w-4 h-4 rounded-full border-2 ${
+                        pin.length > index 
+                          ? 'bg-kitadi-orange border-kitadi-orange' 
+                          : 'border-gray-300'
+                      }`}
+                    />
+                  ))}
                 </div>
+
+                {/* Numeric Keypad */}
+                <NumericKeypad 
+                  onNumberPress={handleNumberPress}
+                  onBackspace={handleBackspace}
+                />
               </div>
 
               <Button
                 type="submit"
-                className="w-full bg-kitadi-orange hover:bg-kitadi-orange/90 text-white py-6 rounded-xl font-semibold"
-                disabled={isLoading}
+                className="w-full bg-kitadi-orange hover:bg-kitadi-orange/90 text-white py-6 rounded-xl font-semibold mt-8"
+                disabled={isLoading || pin.length !== 4}
               >
                 {isLoading ? 'Entrando...' : 'Entrar'}
               </Button>
