@@ -1,19 +1,26 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import OnboardingScreen from '@/components/wallet/OnboardingScreen';
 import LoginScreen from '@/components/wallet/LoginScreen';
 import Dashboard from '@/components/wallet/Dashboard';
+import SendMoneyScreen from '@/components/wallet/SendMoneyScreen';
+import SendConfirmationScreen from '@/components/wallet/SendConfirmationScreen';
+import PayScreen from '@/components/wallet/PayScreen';
+import WithdrawScreen from '@/components/wallet/WithdrawScreen';
+import TopUpScreen from '@/components/wallet/TopUpScreen';
 import MerchantLoginScreen from '@/components/merchant/MerchantLoginScreen';
 import MerchantDashboard from '@/components/merchant/MerchantDashboard';
 import QRPaymentScreen from '@/components/merchant/QRPaymentScreen';
 
-type AppScreen = 'selection' | 'onboarding' | 'login' | 'dashboard' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment';
+type AppScreen = 'selection' | 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment';
 
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('selection');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isMerchant, setIsMerchant] = useState(false);
+  
+  // Send money state
+  const [sendData, setSendData] = useState<{phoneNumber: string, amount: number} | null>(null);
 
   const handleUserSelection = () => {
     setIsMerchant(false);
@@ -43,7 +50,63 @@ const Index = () => {
   };
 
   const handleBackToDashboard = () => {
-    setCurrentScreen('merchant-dashboard');
+    if (isMerchant) {
+      setCurrentScreen('merchant-dashboard');
+    } else {
+      setCurrentScreen('dashboard');
+    }
+  };
+
+  // Wallet action handlers
+  const handleSend = () => setCurrentScreen('send');
+  const handlePay = () => setCurrentScreen('pay');
+  const handleTopUp = () => setCurrentScreen('topup');
+  const handleWithdraw = () => setCurrentScreen('withdraw');
+
+  const handleSendConfirm = (phoneNumber: string, amount: number) => {
+    setSendData({ phoneNumber, amount });
+    setCurrentScreen('send-confirmation');
+  };
+
+  const handleSendFinalConfirm = () => {
+    // Process send money transaction
+    console.log('Send money confirmed:', sendData);
+    setCurrentScreen('dashboard');
+  };
+
+  const handlePayConfirm = (reference: string, amount: number) => {
+    // Process payment
+    console.log('Payment confirmed:', { reference, amount });
+    setCurrentScreen('dashboard');
+  };
+
+  const handleScanQR = () => {
+    // Handle QR scan for payment
+    console.log('Scan QR for payment');
+  };
+
+  const handleWithdrawAgent = (amount: number, fee: number) => {
+    // Process agent withdrawal
+    console.log('Agent withdrawal:', { amount, fee });
+    setCurrentScreen('dashboard');
+  };
+
+  const handleWithdrawBank = (amount: number, fee: number) => {
+    // Process bank withdrawal
+    console.log('Bank withdrawal:', { amount, fee });
+    setCurrentScreen('dashboard');
+  };
+
+  const handleTopUpAgent = () => {
+    // Process agent top up
+    console.log('Agent top up');
+    setCurrentScreen('dashboard');
+  };
+
+  const handleTopUpBank = () => {
+    // Process bank top up
+    console.log('Bank top up');
+    setCurrentScreen('dashboard');
   };
 
   const renderScreen = () => {
@@ -94,7 +157,24 @@ const Index = () => {
       case 'login':
         return <LoginScreen onLoginSuccess={handleLoginSuccess} />;
       case 'dashboard':
-        return <Dashboard />;
+        return <Dashboard onSend={handleSend} onPay={handlePay} onTopUp={handleTopUp} onWithdraw={handleWithdraw} />;
+      case 'send':
+        return <SendMoneyScreen onBack={handleBackToDashboard} onConfirm={handleSendConfirm} />;
+      case 'send-confirmation':
+        return sendData ? (
+          <SendConfirmationScreen 
+            onBack={() => setCurrentScreen('send')} 
+            onConfirm={handleSendFinalConfirm}
+            phoneNumber={sendData.phoneNumber}
+            amount={sendData.amount}
+          />
+        ) : null;
+      case 'pay':
+        return <PayScreen onBack={handleBackToDashboard} onConfirm={handlePayConfirm} onScanQR={handleScanQR} />;
+      case 'withdraw':
+        return <WithdrawScreen onBack={handleBackToDashboard} onContinueAgent={handleWithdrawAgent} onContinueBank={handleWithdrawBank} />;
+      case 'topup':
+        return <TopUpScreen onBack={handleBackToDashboard} onSelectAgent={handleTopUpAgent} onSelectBank={handleTopUpBank} />;
       case 'merchant-login':
         return <MerchantLoginScreen onLoginSuccess={handleLoginSuccess} />;
       case 'merchant-dashboard':
