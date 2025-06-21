@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,13 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Custom Kitadi brand colors
+				kitadi: {
+					navy: 'hsl(var(--kitadi-navy))',
+					orange: 'hsl(var(--kitadi-orange))',
+					'red-orange': 'hsl(var(--kitadi-red-orange))',
+					'light-orange': 'hsl(var(--kitadi-light-orange))'
 				}
 			},
 			borderRadius: {
