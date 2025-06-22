@@ -76,135 +76,146 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw }: DashboardProps) => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-accent px-6 pt-16 pb-8">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-gray-800 text-xl font-semibold">Olá, João!</h1>
+      <div 
+        className="bg-accent px-6 pt-16 pb-8 bg-cover bg-center bg-no-repeat relative"
+        style={{
+          backgroundImage: `url('/lovable-uploads/8cbc59c8-d36c-4dd9-9b78-afd8ec0b6e3d.png')`,
+          backgroundBlendMode: 'overlay'
+        }}
+      >
+        {/* Overlay for better text readability */}
+        <div className="absolute inset-0 bg-accent/80"></div>
+        
+        <div className="relative z-10">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h1 className="text-gray-800 text-xl font-semibold">Olá, João!</h1>
+            </div>
+            
+            {/* Burger Menu Drawer */}
+            <Drawer direction="right">
+              <DrawerTrigger asChild>
+                <Button variant="ghost" size="icon" className="text-gray-800 hover:bg-white/20">
+                  <Menu className="w-6 h-6" />
+                </Button>
+              </DrawerTrigger>
+              <DrawerContent className="h-full w-80 mt-0 rounded-none border-l right-0 left-auto">
+                <DrawerHeader className="text-left">
+                  <DrawerTitle>Menu</DrawerTitle>
+                </DrawerHeader>
+                <div className="px-4 pb-4 flex flex-col space-y-1">
+                  {/* Profile Section */}
+                  <button
+                    onClick={() => handleMenuAction('profile')}
+                    className="w-full p-4 text-left hover:bg-gray-50 rounded-lg transition-colors"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <User className="w-5 h-5 text-gray-600 flex-shrink-0" />
+                      <div className="flex-1">
+                        <div className="font-medium text-gray-900">Perfil</div>
+                        <div className="text-sm text-gray-500">João Silva</div>
+                        <div className="text-sm text-gray-500">+239 991 2345</div>
+                      </div>
+                    </div>
+                  </button>
+                  
+                  {/* Menu Items */}
+                  <button
+                    onClick={() => handleMenuAction('contacts')}
+                    className="w-full p-3 text-left hover:bg-gray-50 rounded-lg transition-colors flex items-center space-x-3"
+                  >
+                    <Phone className="w-5 h-5 text-gray-600" />
+                    <span className="text-gray-900">Contactos Kitadi</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => handleMenuAction('change-pin')}
+                    className="w-full p-3 text-left hover:bg-gray-50 rounded-lg transition-colors flex items-center space-x-3"
+                  >
+                    <Lock className="w-5 h-5 text-gray-600" />
+                    <span className="text-gray-900">Alterar PIN</span>
+                  </button>
+                  
+                  <div className="border-t border-gray-200 my-2"></div>
+                  
+                  <button
+                    onClick={() => handleMenuAction('privacy-policy')}
+                    className="w-full p-3 text-left hover:bg-gray-50 rounded-lg transition-colors flex items-center space-x-3"
+                  >
+                    <Shield className="w-5 h-5 text-gray-600" />
+                    <span className="text-gray-900">Política de Privacidade</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => handleMenuAction('terms')}
+                    className="w-full p-3 text-left hover:bg-gray-50 rounded-lg transition-colors flex items-center space-x-3"
+                  >
+                    <FileText className="w-5 h-5 text-gray-600" />
+                    <span className="text-gray-900">Termos e Condições</span>
+                  </button>
+                </div>
+              </DrawerContent>
+            </Drawer>
           </div>
-          
-          {/* Burger Menu Drawer */}
-          <Drawer direction="right">
-            <DrawerTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-gray-800 hover:bg-white/20">
-                <Menu className="w-6 h-6" />
-              </Button>
-            </DrawerTrigger>
-            <DrawerContent className="h-full w-80 mt-0 rounded-none border-l right-0 left-auto">
-              <DrawerHeader className="text-left">
-                <DrawerTitle>Menu</DrawerTitle>
-              </DrawerHeader>
-              <div className="px-4 pb-4 flex flex-col space-y-1">
-                {/* Profile Section */}
-                <button
-                  onClick={() => handleMenuAction('profile')}
-                  className="w-full p-4 text-left hover:bg-gray-50 rounded-lg transition-colors"
-                >
-                  <div className="flex items-center space-x-3">
-                    <User className="w-5 h-5 text-gray-600 flex-shrink-0" />
-                    <div className="flex-1">
-                      <div className="font-medium text-gray-900">Perfil</div>
-                      <div className="text-sm text-gray-500">João Silva</div>
-                      <div className="text-sm text-gray-500">+239 991 2345</div>
-                    </div>
-                  </div>
-                </button>
-                
-                {/* Menu Items */}
-                <button
-                  onClick={() => handleMenuAction('contacts')}
-                  className="w-full p-3 text-left hover:bg-gray-50 rounded-lg transition-colors flex items-center space-x-3"
-                >
-                  <Phone className="w-5 h-5 text-gray-600" />
-                  <span className="text-gray-900">Contactos Kitadi</span>
-                </button>
-                
-                <button
-                  onClick={() => handleMenuAction('change-pin')}
-                  className="w-full p-3 text-left hover:bg-gray-50 rounded-lg transition-colors flex items-center space-x-3"
-                >
-                  <Lock className="w-5 h-5 text-gray-600" />
-                  <span className="text-gray-900">Alterar PIN</span>
-                </button>
-                
-                <div className="border-t border-gray-200 my-2"></div>
-                
-                <button
-                  onClick={() => handleMenuAction('privacy-policy')}
-                  className="w-full p-3 text-left hover:bg-gray-50 rounded-lg transition-colors flex items-center space-x-3"
-                >
-                  <Shield className="w-5 h-5 text-gray-600" />
-                  <span className="text-gray-900">Política de Privacidade</span>
-                </button>
-                
-                <button
-                  onClick={() => handleMenuAction('terms')}
-                  className="w-full p-3 text-left hover:bg-gray-50 rounded-lg transition-colors flex items-center space-x-3"
-                >
-                  <FileText className="w-5 h-5 text-gray-600" />
-                  <span className="text-gray-900">Termos e Condições</span>
-                </button>
-              </div>
-            </DrawerContent>
-          </Drawer>
-        </div>
 
-        {/* Combined Balance & Account Switcher Card */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Card className="bg-white/10 backdrop-blur border-0 cursor-pointer hover:bg-white/15 transition-colors">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-center">
-                  <div className="flex-1">
-                    <div className="flex justify-between items-center mb-2">
-                      <div>
-                        <span className="text-gray-700 text-sm">{activeAccount.type}</span>
-                        <div className="text-gray-600 text-xs">{activeAccount.displayInfo}</div>
+          {/* Combined Balance & Account Switcher Card */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Card className="bg-white/10 backdrop-blur border-0 cursor-pointer hover:bg-white/15 transition-colors">
+                <CardContent className="p-6">
+                  <div className="flex justify-between items-center">
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center mb-2">
+                        <div>
+                          <span className="text-gray-700 text-sm">{activeAccount.type}</span>
+                          <div className="text-gray-600 text-xs">{activeAccount.displayInfo}</div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowBalance(!showBalance);
+                            }}
+                            className="text-gray-700 hover:text-gray-900 h-8 w-8"
+                          >
+                            {showBalance ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </Button>
+                          <ChevronDown className="w-4 h-4 text-gray-700" />
+                        </div>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setShowBalance(!showBalance);
-                          }}
-                          className="text-gray-700 hover:text-gray-900 h-8 w-8"
-                        >
-                          {showBalance ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </Button>
-                        <ChevronDown className="w-4 h-4 text-gray-700" />
+                      <div className="text-gray-800 text-3xl font-bold">
+                        {showBalance ? `${activeAccount.balance.toLocaleString('pt-ST')} Db` : '••••••'}
                       </div>
                     </div>
-                    <div className="text-gray-800 text-3xl font-bold">
-                      {showBalance ? `${activeAccount.balance.toLocaleString('pt-ST')} Db` : '••••••'}
+                  </div>
+                </CardContent>
+              </Card>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-80 bg-white border shadow-lg">
+              {accounts.map((account) => (
+                <DropdownMenuItem
+                  key={account.id}
+                  onClick={() => setCurrentAccount(account.id)}
+                  className="p-4 cursor-pointer hover:bg-gray-50"
+                >
+                  <div className="flex justify-between items-center w-full">
+                    <div>
+                      <div className="font-medium text-gray-900">{account.name}</div>
+                      <div className="text-sm text-gray-500">{account.displayInfo}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-semibold text-kitadi-navy">
+                        {account.balance.toLocaleString('pt-ST')} Db
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-80 bg-white border shadow-lg">
-            {accounts.map((account) => (
-              <DropdownMenuItem
-                key={account.id}
-                onClick={() => setCurrentAccount(account.id)}
-                className="p-4 cursor-pointer hover:bg-gray-50"
-              >
-                <div className="flex justify-between items-center w-full">
-                  <div>
-                    <div className="font-medium text-gray-900">{account.name}</div>
-                    <div className="text-sm text-gray-500">{account.displayInfo}</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-semibold text-kitadi-navy">
-                      {account.balance.toLocaleString('pt-ST')} Db
-                    </div>
-                  </div>
-                </div>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       {/* Quick Actions */}
