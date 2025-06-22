@@ -10,6 +10,14 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 
 interface DashboardProps {
   onSend?: () => void;
@@ -69,71 +77,76 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw }: DashboardProps) => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-orange-300 px-6 pt-16 pb-8">
+      <div className="bg-kitadi-orange px-6 pt-16 pb-8">
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-gray-800 text-xl font-semibold">Olá, João!</h1>
           </div>
           
-          {/* Burger Menu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+          {/* Burger Menu Drawer */}
+          <Drawer direction="right">
+            <DrawerTrigger asChild>
               <Button variant="ghost" size="icon" className="text-gray-800 hover:bg-white/20">
                 <Menu className="w-6 h-6" />
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-64 bg-white border shadow-lg" align="end">
-              <DropdownMenuItem
-                onClick={() => handleMenuAction('profile')}
-                className="p-4 cursor-pointer hover:bg-gray-50"
-              >
-                <div className="flex items-center space-x-3 w-full">
-                  <User className="w-5 h-5 text-gray-600" />
-                  <div>
-                    <div className="font-medium text-gray-900">Perfil</div>
-                    <div className="text-sm text-gray-500">João Silva • +239 991 2345</div>
-                    <div className="text-sm text-gray-500">15/03/1990</div>
+            </DrawerTrigger>
+            <DrawerContent className="h-full w-80 mt-0 rounded-none border-l">
+              <DrawerHeader className="text-left">
+                <DrawerTitle>Menu</DrawerTitle>
+              </DrawerHeader>
+              <div className="px-4 pb-4 flex flex-col space-y-1">
+                {/* Profile Section */}
+                <button
+                  onClick={() => handleMenuAction('profile')}
+                  className="w-full p-4 text-left hover:bg-gray-50 rounded-lg transition-colors"
+                >
+                  <div className="flex items-center space-x-3">
+                    <User className="w-5 h-5 text-gray-600 flex-shrink-0" />
+                    <div className="flex-1">
+                      <div className="font-medium text-gray-900">Perfil</div>
+                      <div className="text-sm text-gray-500">João Silva</div>
+                      <div className="text-sm text-gray-500">+239 991 2345</div>
+                    </div>
                   </div>
-                </div>
-              </DropdownMenuItem>
-              
-              <DropdownMenuSeparator />
-              
-              <DropdownMenuItem
-                onClick={() => handleMenuAction('contacts')}
-                className="p-3 cursor-pointer hover:bg-gray-50"
-              >
-                <Phone className="w-5 h-5 text-gray-600 mr-3" />
-                <span className="text-gray-900">Contactos Kitadi</span>
-              </DropdownMenuItem>
-              
-              <DropdownMenuItem
-                onClick={() => handleMenuAction('change-pin')}
-                className="p-3 cursor-pointer hover:bg-gray-50"
-              >
-                <Lock className="w-5 h-5 text-gray-600 mr-3" />
-                <span className="text-gray-900">Alterar PIN</span>
-              </DropdownMenuItem>
-              
-              <DropdownMenuSeparator />
-              
-              <DropdownMenuItem
-                onClick={() => handleMenuAction('privacy-policy')}
-                className="p-3 cursor-pointer hover:bg-gray-50"
-              >
-                <Shield className="w-5 h-5 text-gray-600 mr-3" />
-                <span className="text-gray-900">Política de Privacidade</span>
-              </DropdownMenuItem>
-              
-              <DropdownMenuItem
-                onClick={() => handleMenuAction('terms')}
-                className="p-3 cursor-pointer hover:bg-gray-50"
-              >
-                <FileText className="w-5 h-5 text-gray-600 mr-3" />
-                <span className="text-gray-900">Termos e Condições</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                </button>
+                
+                {/* Menu Items */}
+                <button
+                  onClick={() => handleMenuAction('contacts')}
+                  className="w-full p-3 text-left hover:bg-gray-50 rounded-lg transition-colors flex items-center space-x-3"
+                >
+                  <Phone className="w-5 h-5 text-gray-600" />
+                  <span className="text-gray-900">Contactos Kitadi</span>
+                </button>
+                
+                <button
+                  onClick={() => handleMenuAction('change-pin')}
+                  className="w-full p-3 text-left hover:bg-gray-50 rounded-lg transition-colors flex items-center space-x-3"
+                >
+                  <Lock className="w-5 h-5 text-gray-600" />
+                  <span className="text-gray-900">Alterar PIN</span>
+                </button>
+                
+                <div className="border-t border-gray-200 my-2"></div>
+                
+                <button
+                  onClick={() => handleMenuAction('privacy-policy')}
+                  className="w-full p-3 text-left hover:bg-gray-50 rounded-lg transition-colors flex items-center space-x-3"
+                >
+                  <Shield className="w-5 h-5 text-gray-600" />
+                  <span className="text-gray-900">Política de Privacidade</span>
+                </button>
+                
+                <button
+                  onClick={() => handleMenuAction('terms')}
+                  className="w-full p-3 text-left hover:bg-gray-50 rounded-lg transition-colors flex items-center space-x-3"
+                >
+                  <FileText className="w-5 h-5 text-gray-600" />
+                  <span className="text-gray-900">Termos e Condições</span>
+                </button>
+              </div>
+            </DrawerContent>
+          </Drawer>
         </div>
 
         {/* Combined Balance & Account Switcher Card */}
