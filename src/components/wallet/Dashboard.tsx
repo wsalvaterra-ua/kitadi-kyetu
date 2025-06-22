@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Send, CreditCard, Plus, ArrowDownToLine, History, User, Eye, EyeOff, ChevronDown, Menu, Phone, Calendar, Shield, FileText, Lock } from 'lucide-react';
@@ -77,25 +78,25 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw }: DashboardProps) => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div 
-        className="bg-accent px-6 pt-16 pb-8 bg-cover bg-center bg-no-repeat relative"
+        className="bg-kitadi-navy px-6 pt-16 pb-8 bg-cover bg-center bg-no-repeat relative"
         style={{
           backgroundImage: `url('/lovable-uploads/8cbc59c8-d36c-4dd9-9b78-afd8ec0b6e3d.png')`,
           backgroundBlendMode: 'overlay'
         }}
       >
         {/* Overlay for better text readability */}
-        <div className="absolute inset-0 bg-accent/80"></div>
+        <div className="absolute inset-0 bg-kitadi-navy/80"></div>
         
         <div className="relative z-10">
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h1 className="text-gray-800 text-xl font-semibold">Olá, João!</h1>
+              <h1 className="text-white text-xl font-semibold">Olá, João!</h1>
             </div>
             
             {/* Burger Menu Drawer */}
             <Drawer direction="right">
               <DrawerTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-gray-800 hover:bg-white/20">
+                <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
                   <Menu className="w-6 h-6" />
                 </Button>
               </DrawerTrigger>
@@ -167,8 +168,8 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw }: DashboardProps) => {
                     <div className="flex-1">
                       <div className="flex justify-between items-center mb-2">
                         <div>
-                          <span className="text-gray-700 text-sm">{activeAccount.type}</span>
-                          <div className="text-gray-600 text-xs">{activeAccount.displayInfo}</div>
+                          <span className="text-gray-200 text-sm">{activeAccount.type}</span>
+                          <div className="text-gray-300 text-xs">{activeAccount.displayInfo}</div>
                         </div>
                         <div className="flex items-center space-x-2">
                           <Button
@@ -178,14 +179,14 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw }: DashboardProps) => {
                               e.stopPropagation();
                               setShowBalance(!showBalance);
                             }}
-                            className="text-gray-700 hover:text-gray-900 h-8 w-8"
+                            className="text-gray-200 hover:text-white h-8 w-8"
                           >
                             {showBalance ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                           </Button>
-                          <ChevronDown className="w-4 h-4 text-gray-700" />
+                          <ChevronDown className="w-4 h-4 text-gray-200" />
                         </div>
                       </div>
-                      <div className="text-gray-800 text-3xl font-bold">
+                      <div className="text-white text-3xl font-bold">
                         {showBalance ? `${activeAccount.balance.toLocaleString('pt-ST')} Db` : '••••••'}
                       </div>
                     </div>
