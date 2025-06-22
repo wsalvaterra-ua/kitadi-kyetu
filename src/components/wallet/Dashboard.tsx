@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Send, CreditCard, Plus, ArrowDownToLine, History, User, Eye, EyeOff, ChevronDown, Menu, Phone, Calendar, Shield, FileText, Lock } from 'lucide-react';
@@ -77,7 +76,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw }: DashboardProps) => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-kitadi-orange px-6 pt-16 pb-8">
+      <div className="bg-accent px-6 pt-16 pb-8">
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-gray-800 text-xl font-semibold">Olá, João!</h1>
@@ -90,7 +89,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw }: DashboardProps) => {
                 <Menu className="w-6 h-6" />
               </Button>
             </DrawerTrigger>
-            <DrawerContent className="h-full w-80 mt-0 rounded-none border-l">
+            <DrawerContent className="h-full w-80 mt-0 rounded-none border-l right-0 left-auto">
               <DrawerHeader className="text-left">
                 <DrawerTitle>Menu</DrawerTitle>
               </DrawerHeader>
