@@ -110,15 +110,7 @@ const Index = () => {
     setCurrentScreen('dashboard');
   };
 
-  const handleTopUpAgent = () => {
-    // Process agent top up
-    console.log('Agent top up');
-    setCurrentScreen('dashboard');
-  };
-
-  const handleTopUpBank = () => {
-    // Process bank top up
-    console.log('Bank top up');
+  const handleTopUpComplete = () => {
     setCurrentScreen('dashboard');
   };
 
@@ -210,7 +202,7 @@ const Index = () => {
       case 'withdraw':
         return <WithdrawScreen onBack={handleBackToDashboard} onContinueAgent={handleWithdrawAgent} onContinueBank={handleWithdrawBank} />;
       case 'topup':
-        return <TopUpScreen onBack={handleBackToDashboard} onSelectAgent={handleTopUpAgent} onSelectBank={handleTopUpBank} />;
+        return <TopUpScreen onBack={handleBackToDashboard} />;
       case 'merchant-login':
         return <MerchantLoginScreen onLoginSuccess={handleLoginSuccess} />;
       case 'merchant-dashboard':
