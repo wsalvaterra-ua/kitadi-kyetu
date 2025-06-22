@@ -1,12 +1,14 @@
+
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Send, CreditCard, Plus, ArrowDownToLine, History, User, Eye, EyeOff, ChevronDown } from 'lucide-react';
+import { Send, CreditCard, Plus, ArrowDownToLine, History, User, Eye, EyeOff, ChevronDown, Menu, Phone, Calendar, Shield, FileText, Lock } from 'lucide-react';
 import { useState } from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 
 interface DashboardProps {
@@ -59,17 +61,79 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw }: DashboardProps) => {
     { id: 3, type: 'received', amount: 1000, from: 'Pedro Costa', time: 'Ontem' },
   ];
 
+  const handleMenuAction = (action: string) => {
+    console.log(`Menu action: ${action}`);
+    // These would typically navigate to different screens or show modals
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-kitadi-navy px-6 pt-16 pb-8">
+      <div className="bg-orange-300 px-6 pt-16 pb-8">
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-white text-xl font-semibold">Olá, João!</h1>
+            <h1 className="text-gray-800 text-xl font-semibold">Olá, João!</h1>
           </div>
-          <Button variant="ghost" size="icon" className="text-white">
-            <User className="w-6 h-6" />
-          </Button>
+          
+          {/* Burger Menu */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="text-gray-800 hover:bg-white/20">
+                <Menu className="w-6 h-6" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-64 bg-white border shadow-lg" align="end">
+              <DropdownMenuItem
+                onClick={() => handleMenuAction('profile')}
+                className="p-4 cursor-pointer hover:bg-gray-50"
+              >
+                <div className="flex items-center space-x-3 w-full">
+                  <User className="w-5 h-5 text-gray-600" />
+                  <div>
+                    <div className="font-medium text-gray-900">Perfil</div>
+                    <div className="text-sm text-gray-500">João Silva • +239 991 2345</div>
+                    <div className="text-sm text-gray-500">15/03/1990</div>
+                  </div>
+                </div>
+              </DropdownMenuItem>
+              
+              <DropdownMenuSeparator />
+              
+              <DropdownMenuItem
+                onClick={() => handleMenuAction('contacts')}
+                className="p-3 cursor-pointer hover:bg-gray-50"
+              >
+                <Phone className="w-5 h-5 text-gray-600 mr-3" />
+                <span className="text-gray-900">Contactos Kitadi</span>
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem
+                onClick={() => handleMenuAction('change-pin')}
+                className="p-3 cursor-pointer hover:bg-gray-50"
+              >
+                <Lock className="w-5 h-5 text-gray-600 mr-3" />
+                <span className="text-gray-900">Alterar PIN</span>
+              </DropdownMenuItem>
+              
+              <DropdownMenuSeparator />
+              
+              <DropdownMenuItem
+                onClick={() => handleMenuAction('privacy-policy')}
+                className="p-3 cursor-pointer hover:bg-gray-50"
+              >
+                <Shield className="w-5 h-5 text-gray-600 mr-3" />
+                <span className="text-gray-900">Política de Privacidade</span>
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem
+                onClick={() => handleMenuAction('terms')}
+                className="p-3 cursor-pointer hover:bg-gray-50"
+              >
+                <FileText className="w-5 h-5 text-gray-600 mr-3" />
+                <span className="text-gray-900">Termos e Condições</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* Combined Balance & Account Switcher Card */}
@@ -81,8 +145,8 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw }: DashboardProps) => {
                   <div className="flex-1">
                     <div className="flex justify-between items-center mb-2">
                       <div>
-                        <span className="text-white/80 text-sm">{activeAccount.type}</span>
-                        <div className="text-white/60 text-xs">{activeAccount.displayInfo}</div>
+                        <span className="text-gray-700 text-sm">{activeAccount.type}</span>
+                        <div className="text-gray-600 text-xs">{activeAccount.displayInfo}</div>
                       </div>
                       <div className="flex items-center space-x-2">
                         <Button
@@ -92,14 +156,14 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw }: DashboardProps) => {
                             e.stopPropagation();
                             setShowBalance(!showBalance);
                           }}
-                          className="text-white/80 hover:text-white h-8 w-8"
+                          className="text-gray-700 hover:text-gray-900 h-8 w-8"
                         >
                           {showBalance ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         </Button>
-                        <ChevronDown className="w-4 h-4 text-white/80" />
+                        <ChevronDown className="w-4 h-4 text-gray-700" />
                       </div>
                     </div>
-                    <div className="text-white text-3xl font-bold">
+                    <div className="text-gray-800 text-3xl font-bold">
                       {showBalance ? `${activeAccount.balance.toLocaleString('pt-ST')} Db` : '••••••'}
                     </div>
                   </div>
