@@ -67,6 +67,18 @@ const Index = () => {
       time: '15:45',
       transactionId: 'TXN003',
       balanceAfter: 16000.00
+    },
+    'TXN004': {
+      id: 'TXN004',
+      type: 'payment' as const,
+      amount: -125,
+      to: 'Loja do João',
+      toAccount: 'REF123456789',
+      note: 'Compra de produtos',
+      date: '21 Jun 2025',
+      time: '14:20',
+      transactionId: 'TXN004',
+      balanceAfter: 15625.50
     }
   };
 

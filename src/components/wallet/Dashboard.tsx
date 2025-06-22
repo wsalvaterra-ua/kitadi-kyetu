@@ -84,6 +84,15 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick }: D
     },
     { 
       id: 3, 
+      type: 'payment', 
+      amount: -125, 
+      to: 'Loja do João', 
+      time: '14:20',
+      balanceAfter: 15625.50,
+      transactionId: 'TXN004'
+    },
+    { 
+      id: 4, 
       type: 'received', 
       amount: 1000, 
       from: 'Pedro Costa', 
