@@ -49,7 +49,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw }: DashboardProps) => {
   const quickActions = [
     { icon: Send, label: 'Enviar', color: 'bg-blue-500', onClick: onSend },
     { icon: CreditCard, label: 'Pagar', color: 'bg-green-500', onClick: onPay },
-    { icon: Plus, label: 'Carregar', color: 'bg-kitadi-orange', onClick: onTopUp },
+    { icon: Plus, label: 'Depositar', color: 'bg-kitadi-orange', onClick: onTopUp },
     { icon: ArrowDownToLine, label: 'Levantar', color: 'bg-purple-500', onClick: onWithdraw },
   ];
 

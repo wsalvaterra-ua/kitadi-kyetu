@@ -64,6 +64,7 @@ const Index = () => {
   const handleWithdraw = () => setCurrentScreen('withdraw');
 
   const handleSendConfirm = (phoneNumber: string, amount: number) => {
+    console.log('Setting send data:', { phoneNumber, amount });
     setSendData({ phoneNumber, amount });
     setCurrentScreen('send-confirmation');
   };
@@ -71,6 +72,7 @@ const Index = () => {
   const handleSendFinalConfirm = () => {
     // Process send money transaction
     console.log('Send money confirmed:', sendData);
+    setSendData(null);
     setCurrentScreen('dashboard');
   };
 
@@ -110,6 +112,9 @@ const Index = () => {
   };
 
   const renderScreen = () => {
+    console.log('Current screen:', currentScreen);
+    console.log('Send data:', sendData);
+
     switch (currentScreen) {
       case 'selection':
         return (
@@ -161,14 +166,19 @@ const Index = () => {
       case 'send':
         return <SendMoneyScreen onBack={handleBackToDashboard} onConfirm={handleSendConfirm} />;
       case 'send-confirmation':
-        return sendData ? (
+        if (!sendData) {
+          console.log('No send data, redirecting to dashboard');
+          setCurrentScreen('dashboard');
+          return null;
+        }
+        return (
           <SendConfirmationScreen 
             onBack={() => setCurrentScreen('send')} 
             onConfirm={handleSendFinalConfirm}
             phoneNumber={sendData.phoneNumber}
             amount={sendData.amount}
           />
-        ) : null;
+        );
       case 'pay':
         return <PayScreen onBack={handleBackToDashboard} onConfirm={handlePayConfirm} onScanQR={handleScanQR} />;
       case 'withdraw':
