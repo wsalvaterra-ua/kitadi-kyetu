@@ -316,9 +316,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick }: D
               <CardContent className="p-0">
                 <Button
                   variant="ghost"
-                  className={`w-full h-full ${action.color} hover:opacity-90 flex flex-col items-center justify-center ${
-                    action.isCompact ? 'space-y-1' : 'space-y-2'
-                  } py-6 px-2 rounded-none`}
+                  className={`w-full h-full ${action.color} hover:opacity-90 flex flex-col items-center justify-center space-y-2 py-6 px-2 rounded-none`}
                   onClick={action.onClick}
                 >
                   <action.icon className="w-6 h-6 text-white" />
