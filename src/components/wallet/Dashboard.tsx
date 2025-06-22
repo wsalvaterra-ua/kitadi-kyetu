@@ -23,9 +23,10 @@ interface DashboardProps {
   onPay?: () => void;
   onTopUp?: () => void;
   onWithdraw?: () => void;
+  onTransactionClick?: (transactionId: string) => void;
 }
 
-const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw }: DashboardProps) => {
+const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick }: DashboardProps) => {
   const [showBalance, setShowBalance] = useState(true);
   const [currentAccount, setCurrentAccount] = useState('personal');
 
@@ -63,9 +64,33 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw }: DashboardProps) => {
   ];
 
   const recentTransactions = [
-    { id: 1, type: 'received', amount: 500, from: 'João Silva', time: '10:30' },
-    { id: 2, type: 'sent', amount: -250, to: 'Maria Santos', time: '09:15' },
-    { id: 3, type: 'received', amount: 1000, from: 'Pedro Costa', time: 'Ontem' },
+    { 
+      id: 1, 
+      type: 'received', 
+      amount: 500, 
+      from: 'João Silva', 
+      time: '10:30',
+      balanceAfter: 16250.50,
+      transactionId: 'TXN001'
+    },
+    { 
+      id: 2, 
+      type: 'sent', 
+      amount: -250, 
+      to: 'Maria Santos', 
+      time: '09:15',
+      balanceAfter: 15750.50,
+      transactionId: 'TXN002'
+    },
+    { 
+      id: 3, 
+      type: 'received', 
+      amount: 1000, 
+      from: 'Pedro Costa', 
+      time: 'Ontem',
+      balanceAfter: 16000.00,
+      transactionId: 'TXN003'
+    },
   ];
 
   const handleMenuAction = (action: string) => {
@@ -250,36 +275,44 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw }: DashboardProps) => {
         <Card className="border-0 shadow-md">
           <CardContent className="p-0">
             {recentTransactions.map((transaction, index) => (
-              <div
+              <button
                 key={transaction.id}
-                className={`p-4 flex justify-between items-center ${
+                onClick={() => onTransactionClick?.(transaction.transactionId)}
+                className={`w-full p-4 text-left hover:bg-gray-50 transition-colors ${
                   index !== recentTransactions.length - 1 ? 'border-b border-gray-100' : ''
                 }`}
               >
-                <div className="flex items-center space-x-3">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                    transaction.type === 'received' ? 'bg-green-100' : 'bg-red-100'
-                  }`}>
-                    <Send className={`w-5 h-5 ${
-                      transaction.type === 'received' ? 'text-green-600 rotate-180' : 'text-red-600'
-                    }`} />
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center space-x-3">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                      transaction.type === 'received' ? 'bg-green-100' : 'bg-red-100'
+                    }`}>
+                      <Send className={`w-5 h-5 ${
+                        transaction.type === 'received' ? 'text-green-600 rotate-180' : 'text-red-600'
+                      }`} />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">
+                        {transaction.type === 'received' 
+                          ? `De ${transaction.from}` 
+                          : `Para ${transaction.to}`
+                        }
+                      </p>
+                      <p className="text-sm text-gray-500">{transaction.time}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-medium text-gray-900">
-                      {transaction.type === 'received' 
-                        ? `De ${transaction.from}` 
-                        : `Para ${transaction.to}`
-                      }
-                    </p>
-                    <p className="text-sm text-gray-500">{transaction.time}</p>
+                  <div className="text-right">
+                    <div className={`font-semibold ${
+                      transaction.amount > 0 ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {transaction.amount > 0 ? '+' : ''}{transaction.amount.toLocaleString('pt-ST')} Db
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      Saldo: {transaction.balanceAfter.toLocaleString('pt-ST')} Db
+                    </div>
                   </div>
                 </div>
-                <div className={`font-semibold ${
-                  transaction.amount > 0 ? 'text-green-600' : 'text-red-600'
-                }`}>
-                  {transaction.amount > 0 ? '+' : ''}{transaction.amount.toLocaleString('pt-ST')} Db
-                </div>
-              </div>
+              </button>
             ))}
           </CardContent>
         </Card>

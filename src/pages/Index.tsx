@@ -12,8 +12,9 @@ import TopUpScreen from '@/components/wallet/TopUpScreen';
 import MerchantLoginScreen from '@/components/merchant/MerchantLoginScreen';
 import MerchantDashboard from '@/components/merchant/MerchantDashboard';
 import QRPaymentScreen from '@/components/merchant/QRPaymentScreen';
+import TransactionDetailsScreen from '@/components/wallet/TransactionDetailsScreen';
 
-type AppScreen = 'selection' | 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment';
+type AppScreen = 'selection' | 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details';
 
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('selection');
@@ -25,6 +26,49 @@ const Index = () => {
   
   // Pay state
   const [payData, setPayData] = useState<{reference: string, amount: number} | null>(null);
+
+  // Transaction details state
+  const [selectedTransactionId, setSelectedTransactionId] = useState<string | null>(null);
+
+  // Mock transaction data - in a real app, this would come from your backend
+  const mockTransactions = {
+    'TXN001': {
+      id: 'TXN001',
+      type: 'received' as const,
+      amount: 500,
+      from: 'João Silva',
+      fromAccount: '+239 991 1234',
+      note: 'Pagamento do jantar',
+      date: '22 Jun 2025',
+      time: '10:30',
+      transactionId: 'TXN001',
+      balanceAfter: 16250.50
+    },
+    'TXN002': {
+      id: 'TXN002',
+      type: 'sent' as const,
+      amount: -250,
+      to: 'Maria Santos',
+      toAccount: '+239 991 5678',
+      note: 'Contribuição para o presente',
+      date: '22 Jun 2025',
+      time: '09:15',
+      transactionId: 'TXN002',
+      balanceAfter: 15750.50
+    },
+    'TXN003': {
+      id: 'TXN003',
+      type: 'received' as const,
+      amount: 1000,
+      from: 'Pedro Costa',
+      fromAccount: '+239 991 9876',
+      note: 'Reembolso',
+      date: '21 Jun 2025',
+      time: '15:45',
+      transactionId: 'TXN003',
+      balanceAfter: 16000.00
+    }
+  };
 
   const handleUserSelection = () => {
     setIsMerchant(false);
@@ -114,6 +158,11 @@ const Index = () => {
     setCurrentScreen('dashboard');
   };
 
+  const handleTransactionClick = (transactionId: string) => {
+    setSelectedTransactionId(transactionId);
+    setCurrentScreen('transaction-details');
+  };
+
   const renderScreen = () => {
     console.log('Current screen:', currentScreen);
     console.log('Send data:', sendData);
@@ -166,7 +215,7 @@ const Index = () => {
       case 'login':
         return <LoginScreen onLoginSuccess={handleLoginSuccess} />;
       case 'dashboard':
-        return <Dashboard onSend={handleSend} onPay={handlePay} onTopUp={handleTopUp} onWithdraw={handleWithdraw} />;
+        return <Dashboard onSend={handleSend} onPay={handlePay} onTopUp={handleTopUp} onWithdraw={handleWithdraw} onTransactionClick={handleTransactionClick} />;
       case 'send':
         return <SendMoneyScreen onBack={handleBackToDashboard} onConfirm={handleSendConfirm} />;
       case 'send-confirmation':
@@ -209,6 +258,17 @@ const Index = () => {
         return <MerchantDashboard onQRPayment={handleQRPayment} />;
       case 'qr-payment':
         return <QRPaymentScreen onBack={handleBackToDashboard} />;
+      case 'transaction-details':
+        if (!selectedTransactionId || !mockTransactions[selectedTransactionId as keyof typeof mockTransactions]) {
+          setCurrentScreen('dashboard');
+          return null;
+        }
+        return (
+          <TransactionDetailsScreen 
+            transaction={mockTransactions[selectedTransactionId as keyof typeof mockTransactions]}
+            onBack={handleBackToDashboard}
+          />
+        );
       default:
         return (
           <div className="min-h-screen bg-gray-50 flex flex-col">
