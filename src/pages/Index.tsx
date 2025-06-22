@@ -13,8 +13,11 @@ import MerchantLoginScreen from '@/components/merchant/MerchantLoginScreen';
 import MerchantDashboard from '@/components/merchant/MerchantDashboard';
 import QRPaymentScreen from '@/components/merchant/QRPaymentScreen';
 import TransactionDetailsScreen from '@/components/wallet/TransactionDetailsScreen';
+import CodeInputScreen from '@/components/wallet/CodeInputScreen';
+import UserManagementScreen from '@/components/wallet/UserManagementScreen';
+import ExtractScreen from '@/components/wallet/ExtractScreen';
 
-type AppScreen = 'selection' | 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details';
+type AppScreen = 'selection' | 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract';
 
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('selection');
@@ -202,6 +205,18 @@ const Index = () => {
     setCurrentScreen('transaction-details');
   };
 
+  const handleCodeInput = () => {
+    setCurrentScreen('code-input');
+  };
+
+  const handleUserManagement = () => {
+    setCurrentScreen('user-management');
+  };
+
+  const handleExtract = () => {
+    setCurrentScreen('extract');
+  };
+
   const renderScreen = () => {
     console.log('Current screen:', currentScreen);
     console.log('Send data:', sendData);
@@ -254,7 +269,7 @@ const Index = () => {
       case 'login':
         return <LoginScreen onLoginSuccess={handleLoginSuccess} />;
       case 'dashboard':
-        return <Dashboard onSend={handleSend} onPay={handlePay} onTopUp={handleTopUp} onWithdraw={handleWithdraw} onTransactionClick={handleTransactionClick} />;
+        return <Dashboard onSend={handleSend} onPay={handlePay} onTopUp={handleTopUp} onWithdraw={handleWithdraw} onTransactionClick={handleTransactionClick} onCodeInput={handleCodeInput} onUserManagement={handleUserManagement} onExtract={handleExtract} />;
       case 'send':
         return <SendMoneyScreen onBack={handleBackToDashboard} onConfirm={handleSendConfirm} onScanQR={handleScanQR} />;
       case 'send-confirmation':
@@ -308,6 +323,15 @@ const Index = () => {
             onBack={handleBackToDashboard}
           />
         );
+      case 'code-input':
+        return <CodeInputScreen onBack={handleBackToDashboard} onConfirm={(code, amount) => {
+          console.log('Code payment confirmed:', { code, amount });
+          setCurrentScreen('dashboard');
+        }} />;
+      case 'user-management':
+        return <UserManagementScreen onBack={handleBackToDashboard} />;
+      case 'extract':
+        return <ExtractScreen onBack={handleBackToDashboard} />;
       default:
         return (
           <div className="min-h-screen bg-gray-50 flex flex-col">

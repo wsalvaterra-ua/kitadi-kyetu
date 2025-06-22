@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Send, CreditCard, Plus, ArrowDownToLine, History, User, Eye, EyeOff, ChevronDown, Menu, Phone, Calendar, Shield, FileText, Lock, ArrowUpDown, Clock, Smartphone } from 'lucide-react';
+import { Send, CreditCard, Plus, ArrowDownToLine, History, User, Eye, EyeOff, ChevronDown, Menu, Phone, Calendar, Shield, FileText, Lock, ArrowUpDown, Clock, Smartphone, Users } from 'lucide-react';
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -37,32 +37,68 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick }: D
       name: 'Conta Pessoal', 
       balance: 15750.50, 
       type: 'Personal',
-      displayInfo: '+239 991 2345'
+      displayInfo: '+239 991 2345',
+      accountType: 'personal'
     },
     { 
       id: 'business', 
       name: 'Conta Comercial', 
       balance: 45230.25, 
       type: 'Business',
-      displayInfo: '41234'
+      displayInfo: '41234',
+      accountType: 'business'
+    },
+    { 
+      id: 'business-associated', 
+      name: 'Balcão A - Centro Comercial', 
+      balance: 125430.75, 
+      type: 'Business',
+      displayInfo: '52341',
+      accountType: 'business-associated'
     },
     { 
       id: 'savings', 
       name: 'Poupança', 
       balance: 8500.00, 
       type: 'Savings',
-      displayInfo: '+239 991 2345'
+      displayInfo: '+239 991 2345',
+      accountType: 'personal'
     },
   ];
 
   const activeAccount = accounts.find(acc => acc.id === currentAccount) || accounts[0];
 
-  const quickActions = [
+  // Base quick actions for personal accounts
+  const baseQuickActions = [
     { icon: Send, label: 'Enviar', color: 'bg-blue-500', onClick: onSend },
     { icon: Smartphone, label: 'Pagar', color: 'bg-green-500', onClick: onPay },
     { icon: Plus, label: 'Depósito', color: 'bg-kitadi-orange', onClick: onTopUp },
     { icon: ArrowDownToLine, label: 'Levantar', color: 'bg-red-500', onClick: onWithdraw },
   ];
+
+  // Additional business actions
+  const businessActions = [
+    { icon: Smartphone, label: 'Receber\nPagamento', color: 'bg-purple-500', onClick: () => console.log('Code Input') },
+    { icon: Users, label: 'Gerir\nUtilizadores', color: 'bg-indigo-500', onClick: () => console.log('User Management') },
+    { icon: FileText, label: 'Extrato\nCSV', color: 'bg-teal-500', onClick: () => console.log('Extract') },
+    { icon: CreditCard, label: 'Terminal\nPOS', color: 'bg-orange-500', onClick: () => console.log('POS Terminal') },
+    { icon: History, label: 'Relatórios', color: 'bg-pink-500', onClick: () => console.log('Reports') },
+    { icon: Shield, label: 'Segurança', color: 'bg-gray-500', onClick: () => console.log('Security') },
+  ];
+
+  // Determine which actions to show based on account type
+  const getQuickActions = () => {
+    if (activeAccount.accountType === 'business') {
+      return [...baseQuickActions, ...businessActions];
+    } else if (activeAccount.accountType === 'business-associated') {
+      // Only show extract for associated business accounts
+      return [{ icon: FileText, label: 'Extrato\nCSV', color: 'bg-teal-500', onClick: () => console.log('Extract') }];
+    }
+    return baseQuickActions;
+  };
+
+  const quickActions = getQuickActions();
+  const isScrollable = activeAccount.accountType === 'business';
 
   const recentTransactions = [
     { 
@@ -310,21 +346,26 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick }: D
 
       {/* Quick Actions */}
       <div className="px-6 -mt-8 mb-6 relative z-10">
-        <div className="grid grid-cols-4 gap-4">
-          {quickActions.map((action, index) => (
-            <Card key={index} className="border-0 shadow-md overflow-hidden">
-              <CardContent className="p-0">
-                <Button
-                  variant="ghost"
-                  className={`w-full h-full ${action.color} hover:opacity-90 flex flex-col items-center justify-center space-y-2 py-6 px-2 rounded-none`}
-                  onClick={action.onClick}
-                >
-                  <action.icon className="w-6 h-6 text-white" />
-                  <span className="text-xs font-medium text-white text-center leading-tight whitespace-pre-line">{action.label}</span>
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
+        <div className={`${isScrollable ? 'overflow-x-auto scrollbar-hide' : ''}`}>
+          <div className={`grid gap-4 ${isScrollable ? 'grid-flow-col auto-cols-max' : 'grid-cols-4'}`}>
+            {quickActions.map((action, index) => (
+              <Card key={index} className={`border-0 shadow-md overflow-hidden ${isScrollable ? 'w-20' : ''}`}>
+                <CardContent className="p-0">
+                  <Button
+                    variant="ghost"
+                    className={`w-full h-full ${action.color} hover:opacity-90 flex flex-col items-center justify-center space-y-2 py-6 px-2 rounded-none ${
+                      activeAccount.accountType === 'business-associated' && action.label !== 'Extrato\nCSV' ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
+                    onClick={activeAccount.accountType === 'business-associated' && action.label !== 'Extrato\nCSV' ? undefined : action.onClick}
+                    disabled={activeAccount.accountType === 'business-associated' && action.label !== 'Extrato\nCSV'}
+                  >
+                    <action.icon className="w-6 h-6 text-white" />
+                    <span className="text-xs font-medium text-white text-center leading-tight whitespace-pre-line">{action.label}</span>
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </div>
 
