@@ -1,7 +1,8 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Send, CreditCard, Plus, ArrowDownToLine, History, User, Eye, EyeOff, ChevronDown, Menu, Phone, Calendar, Shield, FileText, Lock, ArrowUpDown, Clock } from 'lucide-react';
+import { Send, CreditCard, Plus, ArrowDownToLine, History, User, Eye, EyeOff, ChevronDown, Menu, Phone, Calendar, Shield, FileText, Lock, ArrowUpDown, Clock, Smartphone } from 'lucide-react';
 import { useState } from 'react';
+import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -59,7 +60,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick }: D
   const quickActions = [
     { icon: Send, label: 'Enviar', color: 'bg-blue-500', onClick: onSend },
     { icon: CreditCard, label: 'Pagar', color: 'bg-green-500', onClick: onPay },
-    { icon: Plus, label: 'Depositar', color: 'bg-kitadi-orange', onClick: onTopUp },
+    { icon: Plus, label: 'Depósito', color: 'bg-kitadi-orange', onClick: onTopUp },
     { icon: ArrowDownToLine, label: 'Levantar', color: 'bg-red-500', onClick: onWithdraw },
   ];
 
@@ -124,62 +125,34 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick }: D
   ];
 
   const getTransactionIcon = (transaction: any) => {
-    const isPending = transaction.status === 'pending';
-    
     switch (transaction.type) {
       case 'received':
-        return (
-          <div className="relative">
-            <Send className="w-5 h-5 text-green-600 rotate-180" />
-          </div>
-        );
+        return <Send className="w-5 h-5 text-green-600 rotate-180" />;
       case 'sent':
-        return (
-          <div className="relative">
-            <Send className="w-5 h-5 text-red-600" />
-            {isPending && <Clock className="w-3 h-3 text-orange-500 absolute -top-1 -right-1" />}
-          </div>
-        );
+        return <Send className="w-5 h-5 text-red-600" />;
       case 'payment':
-        return (
-          <div className="relative">
-            <CreditCard className="w-5 h-5 text-blue-600" />
-          </div>
-        );
+        return <Smartphone className="w-5 h-5 text-blue-600" />;
       case 'topup':
-        return (
-          <div className="relative">
-            <Plus className="w-5 h-5 text-kitadi-orange" />
-            {isPending && <Clock className="w-3 h-3 text-orange-500 absolute -top-1 -right-1" />}
-          </div>
-        );
+        return <Plus className="w-5 h-5 text-kitadi-orange" />;
       case 'cashout':
-        return (
-          <div className="relative">
-            <ArrowDownToLine className="w-5 h-5 text-red-600" />
-            {isPending && <Clock className="w-3 h-3 text-orange-500 absolute -top-1 -right-1" />}
-          </div>
-        );
+        return <ArrowDownToLine className="w-5 h-5 text-red-600" />;
       default:
         return <ArrowUpDown className="w-5 h-5 text-gray-600" />;
     }
   };
 
   const getTransactionLabel = (transaction: any) => {
-    const isPending = transaction.status === 'pending';
-    const pendingText = isPending ? ' (Pendente)' : '';
-    
     switch (transaction.type) {
       case 'received':
-        return `De ${transaction.from}${pendingText}`;
+        return `De ${transaction.from}`;
       case 'sent':
-        return `Para ${transaction.to}${pendingText}`;
+        return `Para ${transaction.to}`;
       case 'payment':
-        return `Pagamento - ${transaction.to}${pendingText}`;
+        return `Pagamento - ${transaction.to}`;
       case 'topup':
-        return `Recarga - ${transaction.from}${pendingText}`;
+        return `Depósito - ${transaction.from}`;
       case 'cashout':
-        return `Levantamento - ${transaction.to}${pendingText}`;
+        return `Levantamento - ${transaction.to}`;
       default:
         return 'Transação';
     }
@@ -359,9 +332,6 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick }: D
       <div className="px-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold text-gray-900">Transações recentes</h2>
-          <Button variant="link" className="text-kitadi-orange p-0">
-            Ver todas
-          </Button>
         </div>
 
         <Card className="border-0 shadow-md">
@@ -385,7 +355,14 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick }: D
                       <p className="font-medium text-gray-900">
                         {getTransactionLabel(transaction)}
                       </p>
-                      <p className="text-sm text-gray-500">{transaction.time}</p>
+                      <div className="flex items-center space-x-2">
+                        <p className="text-sm text-gray-500">{transaction.time}</p>
+                        {transaction.status === 'pending' && (
+                          <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs px-2 py-0.5">
+                            Pendente
+                          </Badge>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <div className="text-right">

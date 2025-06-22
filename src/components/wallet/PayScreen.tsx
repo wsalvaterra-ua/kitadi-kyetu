@@ -58,7 +58,7 @@ const PayScreen = ({ onBack, onConfirm, onScanQR }: PayScreenProps) => {
         <Tabs defaultValue="payments" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
             <TabsTrigger value="payments">Pagamentos</TabsTrigger>
-            <TabsTrigger value="recharges">Recargas</TabsTrigger>
+            <TabsTrigger value="recharges">Recargas Móveis</TabsTrigger>
           </TabsList>
           
           <TabsContent value="payments">

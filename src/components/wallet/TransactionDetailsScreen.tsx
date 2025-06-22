@@ -1,7 +1,7 @@
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Send, Download, CreditCard, Plus, ArrowDownToLine, Clock } from 'lucide-react';
+import { ArrowLeft, Send, Download, Plus, ArrowDownToLine, Clock, Smartphone } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 interface Transaction {
@@ -33,7 +33,7 @@ const TransactionDetailsScreen = ({ transaction, onBack }: TransactionDetailsScr
       case 'sent':
         return <Send className="w-6 h-6 text-red-600" />;
       case 'payment':
-        return <CreditCard className="w-6 h-6 text-blue-600" />;
+        return <Smartphone className="w-6 h-6 text-blue-600" />;
       case 'topup':
         return <Plus className="w-6 h-6 text-kitadi-orange" />;
       case 'cashout':
@@ -52,7 +52,7 @@ const TransactionDetailsScreen = ({ transaction, onBack }: TransactionDetailsScr
       case 'payment':
         return 'Pagamento efetuado';
       case 'topup':
-        return 'Recarga efetuada';
+        return 'Depósito efetuado';
       case 'cashout':
         return 'Levantamento efetuado';
       default:
