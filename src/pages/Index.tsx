@@ -21,8 +21,8 @@ const Index = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isMerchant, setIsMerchant] = useState(false);
   
-  // Send money state
-  const [sendData, setSendData] = useState<{phoneNumber: string, amount: number} | null>(null);
+  // Send money state - changed from phoneNumber to accountNumber
+  const [sendData, setSendData] = useState<{accountNumber: string, amount: number} | null>(null);
   
   // Pay state
   const [payData, setPayData] = useState<{reference: string, amount: number} | null>(null);
@@ -150,9 +150,9 @@ const Index = () => {
   const handleTopUp = () => setCurrentScreen('topup');
   const handleWithdraw = () => setCurrentScreen('withdraw');
 
-  const handleSendConfirm = (phoneNumber: string, amount: number) => {
-    console.log('Setting send data:', { phoneNumber, amount });
-    setSendData({ phoneNumber, amount });
+  const handleSendConfirm = (accountNumber: string, amount: number) => {
+    console.log('Setting send data:', { accountNumber, amount });
+    setSendData({ accountNumber, amount });
     setCurrentScreen('send-confirmation');
   };
 
@@ -177,8 +177,8 @@ const Index = () => {
   };
 
   const handleScanQR = () => {
-    // Handle QR scan for payment
-    console.log('Scan QR for payment');
+    // Handle QR scan for sending money
+    console.log('Scan QR for sending money');
   };
 
   const handleWithdrawAgent = (amount: number, fee: number) => {
@@ -256,7 +256,7 @@ const Index = () => {
       case 'dashboard':
         return <Dashboard onSend={handleSend} onPay={handlePay} onTopUp={handleTopUp} onWithdraw={handleWithdraw} onTransactionClick={handleTransactionClick} />;
       case 'send':
-        return <SendMoneyScreen onBack={handleBackToDashboard} onConfirm={handleSendConfirm} />;
+        return <SendMoneyScreen onBack={handleBackToDashboard} onConfirm={handleSendConfirm} onScanQR={handleScanQR} />;
       case 'send-confirmation':
         if (!sendData) {
           console.log('No send data, redirecting to dashboard');
@@ -267,7 +267,7 @@ const Index = () => {
           <SendConfirmationScreen 
             onBack={() => setCurrentScreen('send')} 
             onConfirm={handleSendFinalConfirm}
-            phoneNumber={sendData.phoneNumber}
+            accountNumber={sendData.accountNumber}
             amount={sendData.amount}
           />
         );

@@ -1,19 +1,28 @@
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Check } from 'lucide-react';
+import { ArrowLeft, User, CheckCircle } from 'lucide-react';
 
 interface SendConfirmationScreenProps {
   onBack: () => void;
   onConfirm: () => void;
-  phoneNumber: string;
+  accountNumber: string;
   amount: number;
 }
 
-const SendConfirmationScreen = ({ onBack, onConfirm, phoneNumber, amount }: SendConfirmationScreenProps) => {
-  const fee = 25;
+const SendConfirmationScreen = ({ onBack, onConfirm, accountNumber, amount }: SendConfirmationScreenProps) => {
+  // Calculate fee based on account number
+  const getFee = (accountNumber: string) => {
+    if (accountNumber.startsWith('4')) {
+      return 0; // No fee for merchants (accounts starting with 4)
+    } else if (accountNumber.startsWith('9')) {
+      return 0.20; // 0.20 Db fee for accounts starting with 9
+    }
+    return 0.20; // Default fee
+  };
+
+  const fee = getFee(accountNumber);
   const total = amount + fee;
-  const recipientName = "Maria Santos"; // Mock name
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -28,18 +37,19 @@ const SendConfirmationScreen = ({ onBack, onConfirm, phoneNumber, amount }: Send
       </div>
 
       <div className="px-6 -mt-4">
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-6 space-y-6">
-            {/* Recipient Info */}
-            <div className="text-center pb-4 border-b border-gray-100">
-              <div className="w-16 h-16 bg-kitadi-orange rounded-full flex items-center justify-center mx-auto mb-3">
-                <span className="text-white text-xl font-bold">{recipientName.charAt(0)}</span>
+        <Card className="border-0 shadow-md mb-6">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-center mb-6">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                <User className="w-8 h-8 text-blue-600" />
               </div>
-              <h2 className="text-xl font-semibold text-gray-900">{recipientName}</h2>
-              <p className="text-gray-500">{phoneNumber}</p>
+            </div>
+            
+            <div className="text-center mb-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-2">Enviar para</h2>
+              <div className="text-2xl font-bold text-kitadi-navy">{accountNumber}</div>
             </div>
 
-            {/* Transaction Details */}
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <span className="text-gray-600">Montante:</span>
@@ -47,41 +57,35 @@ const SendConfirmationScreen = ({ onBack, onConfirm, phoneNumber, amount }: Send
               </div>
               
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Taxa:</span>
+                <span className="text-gray-600">Taxa de envio:</span>
                 <span className="font-semibold text-gray-900">{fee.toFixed(2)} Db</span>
               </div>
               
-              <div className="border-t border-gray-200 pt-4">
+              <div className="border-t pt-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-lg font-semibold text-gray-900">Total:</span>
-                  <span className="text-lg font-bold text-kitadi-orange">{total.toFixed(2)} Db</span>
+                  <span className="text-lg font-semibold text-gray-900">Total a debitar:</span>
+                  <span className="text-lg font-bold text-kitadi-navy">{total.toFixed(2)} Db</span>
                 </div>
               </div>
-            </div>
-
-            {/* Warning */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-sm text-blue-800">
-                Certifique-se de que os dados estão corretos. Esta operação não pode ser desfeita.
-              </p>
             </div>
           </CardContent>
         </Card>
 
-        <div className="flex space-x-4 mt-6">
-          <Button
-            variant="outline"
-            onClick={onBack}
-            className="flex-1 py-3 text-lg font-semibold border-kitadi-orange text-kitadi-orange hover:bg-kitadi-orange/5"
-          >
-            Voltar
-          </Button>
+        <div className="space-y-4">
           <Button
             onClick={onConfirm}
-            className="flex-1 bg-kitadi-orange hover:bg-kitadi-orange/90 text-white py-3 text-lg font-semibold"
+            className="w-full bg-kitadi-orange hover:bg-kitadi-orange/90 text-white py-3 text-lg font-semibold"
           >
-            <Check className="w-5 h-5 mr-2" />
-            Confirmar
+            <CheckCircle className="w-5 h-5 mr-2" />
+            Confirmar Envio
+          </Button>
+
+          <Button
+            onClick={onBack}
+            variant="outline"
+            className="w-full py-3 text-lg font-semibold"
+          >
+            Voltar
           </Button>
         </div>
       </div>
