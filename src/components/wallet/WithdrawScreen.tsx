@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,9 +7,11 @@ import { ArrowLeft, DollarSign, User, Building2, Copy } from 'lucide-react';
 
 interface WithdrawScreenProps {
   onBack: () => void;
+  onContinueAgent: (amount: number, fee: number) => void;
+  onContinueBank: (amount: number, fee: number) => void;
 }
 
-const WithdrawScreen = ({ onBack }: WithdrawScreenProps) => {
+const WithdrawScreen = ({ onBack, onContinueAgent, onContinueBank }: WithdrawScreenProps) => {
   const [amount, setAmount] = useState('');
   const [selectedMethod, setSelectedMethod] = useState<'agent' | 'bank' | null>(null);
   const [selectedBank, setSelectedBank] = useState('');
@@ -52,7 +53,15 @@ const WithdrawScreen = ({ onBack }: WithdrawScreenProps) => {
       bank: selectedBank, 
       account: accountNumber 
     });
-    onBack();
+    onContinueBank(withdrawAmount, fee);
+  };
+
+  const handleAgentConfirm = () => {
+    console.log('Agent withdrawal confirmed:', { 
+      amount: withdrawAmount, 
+      fee 
+    });
+    onContinueAgent(withdrawAmount, fee);
   };
 
   // Agent confirmation screen
@@ -117,7 +126,7 @@ const WithdrawScreen = ({ onBack }: WithdrawScreenProps) => {
               </div>
 
               <Button
-                onClick={onBack}
+                onClick={handleAgentConfirm}
                 className="w-full bg-kitadi-orange hover:bg-kitadi-orange/90 text-white py-3 text-lg font-semibold"
               >
                 Concluído
