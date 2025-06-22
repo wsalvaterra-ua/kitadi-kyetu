@@ -272,7 +272,7 @@ const Index = () => {
           />
         );
       case 'pay':
-        return <PayScreen onBack={handleBackToDashboard} onConfirm={handlePayConfirm} onScanQR={handleScanQR} />;
+        return <PayScreen onBack={handleBackToDashboard} onConfirm={handlePayConfirm} />;
       case 'pay-confirmation':
         if (!payData) {
           console.log('No pay data, redirecting to dashboard');
