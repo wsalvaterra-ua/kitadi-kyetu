@@ -1,11 +1,13 @@
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Send, Download } from 'lucide-react';
+import { ArrowLeft, Send, Download, CreditCard, Plus, ArrowDownToLine, Clock } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 interface Transaction {
   id: string;
-  type: 'sent' | 'received' | 'payment' | 'recharge';
+  type: 'sent' | 'received' | 'payment' | 'topup' | 'cashout';
+  status?: 'pending' | 'completed';
   amount: number;
   from?: string;
   to?: string;
@@ -31,9 +33,11 @@ const TransactionDetailsScreen = ({ transaction, onBack }: TransactionDetailsScr
       case 'sent':
         return <Send className="w-6 h-6 text-red-600" />;
       case 'payment':
-        return <Send className="w-6 h-6 text-blue-600" />;
-      case 'recharge':
-        return <Send className="w-6 h-6 text-orange-600" />;
+        return <CreditCard className="w-6 h-6 text-blue-600" />;
+      case 'topup':
+        return <Plus className="w-6 h-6 text-kitadi-orange" />;
+      case 'cashout':
+        return <ArrowDownToLine className="w-6 h-6 text-red-600" />;
       default:
         return <Send className="w-6 h-6 text-gray-600" />;
     }
@@ -47,8 +51,10 @@ const TransactionDetailsScreen = ({ transaction, onBack }: TransactionDetailsScr
         return `Enviado para ${transaction.to}`;
       case 'payment':
         return 'Pagamento efetuado';
-      case 'recharge':
+      case 'topup':
         return 'Recarga efetuada';
+      case 'cashout':
+        return 'Levantamento efetuado';
       default:
         return 'Transação';
     }
@@ -57,6 +63,8 @@ const TransactionDetailsScreen = ({ transaction, onBack }: TransactionDetailsScr
   const getAmountColor = () => {
     return transaction.amount > 0 ? 'text-green-600' : 'text-red-600';
   };
+
+  const isPending = transaction.status === 'pending';
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -75,13 +83,25 @@ const TransactionDetailsScreen = ({ transaction, onBack }: TransactionDetailsScr
         <Card className="border-0 shadow-md mb-6">
           <CardContent className="p-6">
             <div className="flex items-center justify-center mb-6">
-              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
+              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center relative">
                 {getTransactionIcon()}
+                {isPending && (
+                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center">
+                    <Clock className="w-3 h-3 text-orange-500" />
+                  </div>
+                )}
               </div>
             </div>
             
             <div className="text-center mb-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-2">{getTransactionTitle()}</h2>
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <h2 className="text-lg font-semibold text-gray-900">{getTransactionTitle()}</h2>
+                {isPending && (
+                  <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
+                    Pendente
+                  </Badge>
+                )}
+              </div>
               <div className={`text-3xl font-bold ${getAmountColor()}`}>
                 {transaction.amount > 0 ? '+' : ''}{transaction.amount.toLocaleString('pt-ST')} Db
               </div>
@@ -128,6 +148,14 @@ const TransactionDetailsScreen = ({ transaction, onBack }: TransactionDetailsScr
                 </div>
               </div>
             )}
+
+            {/* Status */}
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-500">Estado:</span>
+              <span className={`text-sm font-medium ${isPending ? 'text-orange-600' : 'text-green-600'}`}>
+                {isPending ? 'Pendente' : 'Concluída'}
+              </span>
+            </div>
 
             {/* Date and Time */}
             <div className="flex justify-between">

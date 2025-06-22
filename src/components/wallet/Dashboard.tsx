@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Send, CreditCard, Plus, ArrowDownToLine, History, User, Eye, EyeOff, ChevronDown, Menu, Phone, Calendar, Shield, FileText, Lock } from 'lucide-react';
+import { Send, CreditCard, Plus, ArrowDownToLine, History, User, Eye, EyeOff, ChevronDown, Menu, Phone, Calendar, Shield, FileText, Lock, ArrowUpDown, Clock } from 'lucide-react';
 import { useState } from 'react';
 import {
   DropdownMenu,
@@ -76,6 +76,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick }: D
     { 
       id: 2, 
       type: 'sent', 
+      status: 'pending',
       amount: -250, 
       to: 'Maria Santos', 
       time: '09:15',
@@ -93,6 +94,26 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick }: D
     },
     { 
       id: 4, 
+      type: 'topup', 
+      status: 'pending',
+      amount: 1000, 
+      from: 'Agente Pedro', 
+      time: '13:45',
+      balanceAfter: 16625.50,
+      transactionId: 'TXN005'
+    },
+    { 
+      id: 5, 
+      type: 'cashout', 
+      status: 'pending',
+      amount: -500, 
+      to: 'Agente Ana', 
+      time: '12:30',
+      balanceAfter: 16125.50,
+      transactionId: 'TXN006'
+    },
+    { 
+      id: 6, 
       type: 'received', 
       amount: 1000, 
       from: 'Pedro Costa', 
@@ -101,6 +122,68 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick }: D
       transactionId: 'TXN003'
     },
   ];
+
+  const getTransactionIcon = (transaction: any) => {
+    const isPending = transaction.status === 'pending';
+    
+    switch (transaction.type) {
+      case 'received':
+        return (
+          <div className="relative">
+            <Send className="w-5 h-5 text-green-600 rotate-180" />
+          </div>
+        );
+      case 'sent':
+        return (
+          <div className="relative">
+            <Send className="w-5 h-5 text-red-600" />
+            {isPending && <Clock className="w-3 h-3 text-orange-500 absolute -top-1 -right-1" />}
+          </div>
+        );
+      case 'payment':
+        return (
+          <div className="relative">
+            <CreditCard className="w-5 h-5 text-blue-600" />
+          </div>
+        );
+      case 'topup':
+        return (
+          <div className="relative">
+            <Plus className="w-5 h-5 text-kitadi-orange" />
+            {isPending && <Clock className="w-3 h-3 text-orange-500 absolute -top-1 -right-1" />}
+          </div>
+        );
+      case 'cashout':
+        return (
+          <div className="relative">
+            <ArrowDownToLine className="w-5 h-5 text-red-600" />
+            {isPending && <Clock className="w-3 h-3 text-orange-500 absolute -top-1 -right-1" />}
+          </div>
+        );
+      default:
+        return <ArrowUpDown className="w-5 h-5 text-gray-600" />;
+    }
+  };
+
+  const getTransactionLabel = (transaction: any) => {
+    const isPending = transaction.status === 'pending';
+    const pendingText = isPending ? ' (Pendente)' : '';
+    
+    switch (transaction.type) {
+      case 'received':
+        return `De ${transaction.from}${pendingText}`;
+      case 'sent':
+        return `Para ${transaction.to}${pendingText}`;
+      case 'payment':
+        return `Pagamento - ${transaction.to}${pendingText}`;
+      case 'topup':
+        return `Recarga - ${transaction.from}${pendingText}`;
+      case 'cashout':
+        return `Levantamento - ${transaction.to}${pendingText}`;
+      default:
+        return 'Transação';
+    }
+  };
 
   const handleMenuAction = (action: string) => {
     console.log(`Menu action: ${action}`);
@@ -294,18 +377,13 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick }: D
                 <div className="flex justify-between items-center">
                   <div className="flex items-center space-x-3">
                     <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                      transaction.type === 'received' ? 'bg-green-100' : 'bg-red-100'
+                      transaction.amount > 0 ? 'bg-green-100' : 'bg-red-100'
                     }`}>
-                      <Send className={`w-5 h-5 ${
-                        transaction.type === 'received' ? 'text-green-600 rotate-180' : 'text-red-600'
-                      }`} />
+                      {getTransactionIcon(transaction)}
                     </div>
                     <div>
                       <p className="font-medium text-gray-900">
-                        {transaction.type === 'received' 
-                          ? `De ${transaction.from}` 
-                          : `Para ${transaction.to}`
-                        }
+                        {getTransactionLabel(transaction)}
                       </p>
                       <p className="text-sm text-gray-500">{transaction.time}</p>
                     </div>

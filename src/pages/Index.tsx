@@ -47,6 +47,7 @@ const Index = () => {
     'TXN002': {
       id: 'TXN002',
       type: 'sent' as const,
+      status: 'pending' as const,
       amount: -250,
       to: 'Maria Santos',
       toAccount: '+239 991 5678',
@@ -79,6 +80,32 @@ const Index = () => {
       time: '14:20',
       transactionId: 'TXN004',
       balanceAfter: 15625.50
+    },
+    'TXN005': {
+      id: 'TXN005',
+      type: 'topup' as const,
+      status: 'pending' as const,
+      amount: 1000,
+      from: 'Agente Pedro',
+      fromAccount: 'AGT001',
+      note: 'Recarga via agente',
+      date: '22 Jun 2025',
+      time: '13:45',
+      transactionId: 'TXN005',
+      balanceAfter: 16625.50
+    },
+    'TXN006': {
+      id: 'TXN006',
+      type: 'cashout' as const,
+      status: 'pending' as const,
+      amount: -500,
+      to: 'Agente Ana',
+      toAccount: 'AGT002',
+      note: 'Levantamento via agente',
+      date: '22 Jun 2025',
+      time: '12:30',
+      transactionId: 'TXN006',
+      balanceAfter: 16125.50
     }
   };
 
