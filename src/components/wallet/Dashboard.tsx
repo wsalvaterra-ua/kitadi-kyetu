@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Send, CreditCard, Plus, ArrowDownToLine, History, User, Eye, EyeOff, ChevronDown } from 'lucide-react';
@@ -47,10 +48,10 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw }: DashboardProps) => {
   const activeAccount = accounts.find(acc => acc.id === currentAccount) || accounts[0];
 
   const quickActions = [
-    { icon: Send, label: 'Enviar', color: 'bg-blue-500', onClick: onSend },
+    { icon: Send, label: 'Enviar', color: 'bg-kitadi-navy', onClick: onSend },
     { icon: CreditCard, label: 'Pagar', color: 'bg-green-500', onClick: onPay },
     { icon: Plus, label: 'Depositar', color: 'bg-kitadi-orange', onClick: onTopUp },
-    { icon: ArrowDownToLine, label: 'Levantar', color: 'bg-purple-500', onClick: onWithdraw },
+    { icon: ArrowDownToLine, label: 'Levantar', color: 'bg-red-500', onClick: onWithdraw },
   ];
 
   const recentTransactions = [
@@ -135,17 +136,15 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw }: DashboardProps) => {
       <div className="px-6 -mt-8 mb-6">
         <div className="grid grid-cols-4 gap-4">
           {quickActions.map((action, index) => (
-            <Card key={index} className="border-0 shadow-md">
-              <CardContent className="p-4 text-center">
+            <Card key={index} className="border-0 shadow-md overflow-hidden">
+              <CardContent className="p-0">
                 <Button
                   variant="ghost"
-                  className="w-full h-auto p-0 flex flex-col items-center space-y-2"
+                  className={`w-full h-full ${action.color} hover:opacity-90 flex flex-col items-center justify-center space-y-2 py-6 px-2 rounded-none`}
                   onClick={action.onClick}
                 >
-                  <div className={`w-12 h-12 ${action.color} rounded-full flex items-center justify-center`}>
-                    <action.icon className="w-6 h-6 text-white" />
-                  </div>
-                  <span className="text-sm font-medium text-gray-700">{action.label}</span>
+                  <action.icon className="w-6 h-6 text-white" />
+                  <span className="text-sm font-medium text-white">{action.label}</span>
                 </Button>
               </CardContent>
             </Card>

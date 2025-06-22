@@ -6,13 +6,14 @@ import Dashboard from '@/components/wallet/Dashboard';
 import SendMoneyScreen from '@/components/wallet/SendMoneyScreen';
 import SendConfirmationScreen from '@/components/wallet/SendConfirmationScreen';
 import PayScreen from '@/components/wallet/PayScreen';
+import PayConfirmationScreen from '@/components/wallet/PayConfirmationScreen';
 import WithdrawScreen from '@/components/wallet/WithdrawScreen';
 import TopUpScreen from '@/components/wallet/TopUpScreen';
 import MerchantLoginScreen from '@/components/merchant/MerchantLoginScreen';
 import MerchantDashboard from '@/components/merchant/MerchantDashboard';
 import QRPaymentScreen from '@/components/merchant/QRPaymentScreen';
 
-type AppScreen = 'selection' | 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment';
+type AppScreen = 'selection' | 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment';
 
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('selection');
@@ -21,6 +22,9 @@ const Index = () => {
   
   // Send money state
   const [sendData, setSendData] = useState<{phoneNumber: string, amount: number} | null>(null);
+  
+  // Pay state
+  const [payData, setPayData] = useState<{reference: string, amount: number} | null>(null);
 
   const handleUserSelection = () => {
     setIsMerchant(false);
@@ -77,8 +81,15 @@ const Index = () => {
   };
 
   const handlePayConfirm = (reference: string, amount: number) => {
-    // Process payment
-    console.log('Payment confirmed:', { reference, amount });
+    console.log('Setting pay data:', { reference, amount });
+    setPayData({ reference, amount });
+    setCurrentScreen('pay-confirmation');
+  };
+
+  const handlePayFinalConfirm = () => {
+    // Process payment transaction
+    console.log('Payment confirmed:', payData);
+    setPayData(null);
     setCurrentScreen('dashboard');
   };
 
@@ -114,6 +125,7 @@ const Index = () => {
   const renderScreen = () => {
     console.log('Current screen:', currentScreen);
     console.log('Send data:', sendData);
+    console.log('Pay data:', payData);
 
     switch (currentScreen) {
       case 'selection':
@@ -181,6 +193,20 @@ const Index = () => {
         );
       case 'pay':
         return <PayScreen onBack={handleBackToDashboard} onConfirm={handlePayConfirm} onScanQR={handleScanQR} />;
+      case 'pay-confirmation':
+        if (!payData) {
+          console.log('No pay data, redirecting to dashboard');
+          setCurrentScreen('dashboard');
+          return null;
+        }
+        return (
+          <PayConfirmationScreen 
+            onBack={() => setCurrentScreen('pay')} 
+            onConfirm={handlePayFinalConfirm}
+            reference={payData.reference}
+            amount={payData.amount}
+          />
+        );
       case 'withdraw':
         return <WithdrawScreen onBack={handleBackToDashboard} onContinueAgent={handleWithdrawAgent} onContinueBank={handleWithdrawBank} />;
       case 'topup':
