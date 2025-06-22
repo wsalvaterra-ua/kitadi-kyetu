@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Send, CreditCard, Plus, ArrowDownToLine, History, User, Eye, EyeOff, ChevronDown, Menu, Phone, Calendar, Shield, FileText, Lock, ArrowUpDown, Clock, Smartphone } from 'lucide-react';
@@ -60,7 +59,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick }: D
 
   const quickActions = [
     { icon: Send, label: 'Enviar', color: 'bg-blue-500', onClick: onSend },
-    { icon: CreditCard, label: 'Pagar\nServiços', color: 'bg-green-500', onClick: onPay, isCompact: true },
+    { icon: Smartphone, label: 'Pagar', color: 'bg-green-500', onClick: onPay },
     { icon: Plus, label: 'Depósito', color: 'bg-kitadi-orange', onClick: onTopUp },
     { icon: ArrowDownToLine, label: 'Levantar', color: 'bg-red-500', onClick: onWithdraw },
   ];
