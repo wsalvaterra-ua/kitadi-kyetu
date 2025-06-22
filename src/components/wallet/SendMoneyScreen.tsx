@@ -23,7 +23,7 @@ const SendMoneyScreen = ({ onBack, onConfirm, onScanQR }: SendMoneyScreenProps) 
     }
   };
 
-  const isValid = accountNumber.length >= 4 && amount && parseFloat(amount) > 0;
+  const isValid = accountNumber.length > 0 && amount && parseFloat(amount) > 0;
 
   return (
     <div className="min-h-screen bg-gray-50">

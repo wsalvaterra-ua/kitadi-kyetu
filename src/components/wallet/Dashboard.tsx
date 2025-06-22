@@ -59,7 +59,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick }: D
 
   const quickActions = [
     { icon: Send, label: 'Enviar', color: 'bg-blue-500', onClick: onSend },
-    { icon: CreditCard, label: 'Pagar Serviços', color: 'bg-green-500', onClick: onPay },
+    { icon: CreditCard, label: 'Pagar\nServiços', color: 'bg-green-500', onClick: onPay },
     { icon: Plus, label: 'Depósito', color: 'bg-kitadi-orange', onClick: onTopUp },
     { icon: ArrowDownToLine, label: 'Levantar', color: 'bg-red-500', onClick: onWithdraw },
   ];
@@ -320,7 +320,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick }: D
                   onClick={action.onClick}
                 >
                   <action.icon className="w-6 h-6 text-white" />
-                  <span className="text-sm font-medium text-white">{action.label}</span>
+                  <span className="text-xs font-medium text-white text-center leading-tight whitespace-pre-line">{action.label}</span>
                 </Button>
               </CardContent>
             </Card>
