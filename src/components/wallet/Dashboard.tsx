@@ -1,4 +1,5 @@
 
+
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Send, CreditCard, Plus, ArrowDownToLine, History, User, Eye, EyeOff, ChevronDown, Menu, Phone, Calendar, Shield, FileText, Lock } from 'lucide-react';
@@ -86,6 +87,9 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw }: DashboardProps) => {
       >
         {/* Overlay for better text readability */}
         <div className="absolute inset-0 bg-kitadi-navy/80"></div>
+        
+        {/* Bottom fade effect */}
+        <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-gray-50 to-transparent"></div>
         
         <div className="relative z-10">
           <div className="flex justify-between items-center mb-6">
@@ -220,7 +224,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw }: DashboardProps) => {
       </div>
 
       {/* Quick Actions */}
-      <div className="px-6 -mt-8 mb-6">
+      <div className="px-6 -mt-8 mb-6 relative z-10">
         <div className="grid grid-cols-4 gap-4">
           {quickActions.map((action, index) => (
             <Card key={index} className="border-0 shadow-md overflow-hidden">
@@ -293,3 +297,4 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw }: DashboardProps) => {
 };
 
 export default Dashboard;
+
