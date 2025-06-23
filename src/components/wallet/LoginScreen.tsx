@@ -9,9 +9,11 @@ import NumericKeypad from './NumericKeypad';
 
 interface LoginScreenProps {
   onLoginSuccess: () => void;
+  onForgotPin: () => void;
+  onCreateAccount: () => void;
 }
 
-const LoginScreen = ({ onLoginSuccess }: LoginScreenProps) => {
+const LoginScreen = ({ onLoginSuccess, onForgotPin, onCreateAccount }: LoginScreenProps) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [pin, setPin] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -115,14 +117,14 @@ const LoginScreen = ({ onLoginSuccess }: LoginScreenProps) => {
             </form>
 
             <div className="mt-6 text-center">
-              <Button variant="link" className="text-kitadi-orange">
+              <Button variant="link" className="text-kitadi-orange" onClick={onForgotPin}>
                 Esqueceu seu PIN?
               </Button>
             </div>
 
             <div className="mt-8 text-center">
               <p className="text-gray-600">Não tem uma conta?</p>
-              <Button variant="link" className="text-kitadi-orange font-semibold">
+              <Button variant="link" className="text-kitadi-orange font-semibold" onClick={onCreateAccount}>
                 Criar conta
               </Button>
             </div>

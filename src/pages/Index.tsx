@@ -16,11 +16,16 @@ import TransactionDetailsScreen from '@/components/wallet/TransactionDetailsScre
 import CodeInputScreen from '@/components/wallet/CodeInputScreen';
 import UserManagementScreen from '@/components/wallet/UserManagementScreen';
 import ExtractScreen from '@/components/wallet/ExtractScreen';
+import ForgotPinScreen from '@/components/wallet/ForgotPinScreen';
+import TermsScreen from '@/components/wallet/TermsScreen';
+import CreatePinScreen from '@/components/wallet/CreatePinScreen';
+import IdVerificationIntroScreen from '@/components/wallet/IdVerificationIntroScreen';
+import DocumentSelectionScreen from '@/components/wallet/DocumentSelectionScreen';
 
-type AppScreen = 'selection' | 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract';
+type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'id-verification-intro' | 'document-selection';
 
 const Index = () => {
-  const [currentScreen, setCurrentScreen] = useState<AppScreen>('selection');
+  const [currentScreen, setCurrentScreen] = useState<AppScreen>('onboarding');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isMerchant, setIsMerchant] = useState(false);
   
@@ -110,16 +115,6 @@ const Index = () => {
       transactionId: 'TXN006',
       balanceAfter: 16125.50
     }
-  };
-
-  const handleUserSelection = () => {
-    setIsMerchant(false);
-    setCurrentScreen('onboarding');
-  };
-
-  const handleMerchantSelection = () => {
-    setIsMerchant(true);
-    setCurrentScreen('merchant-login');
   };
 
   const handleOnboardingComplete = () => {
@@ -217,57 +212,75 @@ const Index = () => {
     setCurrentScreen('extract');
   };
 
+  const handleForgotPin = () => {
+    setCurrentScreen('forgot-pin');
+  };
+
+  const handleCreateAccount = () => {
+    setCurrentScreen('terms');
+  };
+
+  const handleTermsAccepted = () => {
+    setCurrentScreen('create-pin');
+  };
+
+  const handlePinCreated = () => {
+    setCurrentScreen('id-verification-intro');
+  };
+
+  const handleStartVerification = () => {
+    setCurrentScreen('document-selection');
+  };
+
+  const handleSkipVerification = () => {
+    // For now, just go to dashboard with limited functionality
+    setIsAuthenticated(true);
+    setCurrentScreen('dashboard');
+  };
+
+  const handleDocumentSelected = (documentType: string) => {
+    console.log('Document selected:', documentType);
+    // For now, just complete the flow
+    setIsAuthenticated(true);
+    setCurrentScreen('dashboard');
+  };
+
   const renderScreen = () => {
     console.log('Current screen:', currentScreen);
     console.log('Send data:', sendData);
     console.log('Pay data:', payData);
 
     switch (currentScreen) {
-      case 'selection':
-        return (
-          <div className="min-h-screen bg-gray-50 flex flex-col">
-            {/* Header */}
-            <div className="bg-kitadi-navy pt-16 pb-8">
-              <div className="flex justify-center mb-4">
-                <div className="w-16 h-16 bg-kitadi-orange rounded-full flex items-center justify-center">
-                  <span className="text-white text-xl font-bold">K</span>
-                </div>
-              </div>
-              <h1 className="text-center text-white text-2xl font-bold">Bem-vindo ao Kitadi</h1>
-              <p className="text-center text-white/80 mt-2">Escolha como deseja usar o app</p>
-            </div>
-
-            {/* Selection Options */}
-            <div className="flex-1 px-6 py-8 space-y-4">
-              <Button
-                onClick={handleUserSelection}
-                className="w-full bg-kitadi-orange hover:bg-kitadi-orange/90 text-white py-8 rounded-xl text-lg font-semibold"
-              >
-                <div className="text-center">
-                  <div className="text-xl mb-2">👤</div>
-                  <div>Cliente</div>
-                  <div className="text-sm opacity-90">Enviar e receber dinheiro</div>
-                </div>
-              </Button>
-
-              <Button
-                onClick={handleMerchantSelection}
-                variant="outline"
-                className="w-full border-kitadi-navy text-kitadi-navy py-8 rounded-xl text-lg font-semibold hover:bg-kitadi-navy/5"
-              >
-                <div className="text-center">
-                  <div className="text-xl mb-2">🏪</div>
-                  <div>Comerciante</div>
-                  <div className="text-sm opacity-70">Aceitar pagamentos digitais</div>
-                </div>
-              </Button>
-            </div>
-          </div>
-        );
       case 'onboarding':
         return <OnboardingScreen onComplete={handleOnboardingComplete} />;
       case 'login':
-        return <LoginScreen onLoginSuccess={handleLoginSuccess} />;
+        return (
+          <LoginScreen 
+            onLoginSuccess={handleLoginSuccess} 
+            onForgotPin={handleForgotPin}
+            onCreateAccount={handleCreateAccount}
+          />
+        );
+      case 'forgot-pin':
+        return <ForgotPinScreen onBack={() => setCurrentScreen('login')} />;
+      case 'terms':
+        return <TermsScreen onBack={() => setCurrentScreen('login')} onAccept={handleTermsAccepted} />;
+      case 'create-pin':
+        return <CreatePinScreen onBack={() => setCurrentScreen('terms')} onPinCreated={handlePinCreated} />;
+      case 'id-verification-intro':
+        return (
+          <IdVerificationIntroScreen 
+            onStart={handleStartVerification} 
+            onSkip={handleSkipVerification} 
+          />
+        );
+      case 'document-selection':
+        return (
+          <DocumentSelectionScreen 
+            onBack={() => setCurrentScreen('id-verification-intro')} 
+            onDocumentSelected={handleDocumentSelected} 
+          />
+        );
       case 'dashboard':
         return <Dashboard onSend={handleSend} onPay={handlePay} onTopUp={handleTopUp} onWithdraw={handleWithdraw} onTransactionClick={handleTransactionClick} onCodeInput={handleCodeInput} onUserManagement={handleUserManagement} onExtract={handleExtract} />;
       case 'send':
@@ -333,46 +346,7 @@ const Index = () => {
       case 'extract':
         return <ExtractScreen onBack={handleBackToDashboard} />;
       default:
-        return (
-          <div className="min-h-screen bg-gray-50 flex flex-col">
-            {/* Header */}
-            <div className="bg-kitadi-navy pt-16 pb-8">
-              <div className="flex justify-center mb-4">
-                <div className="w-16 h-16 bg-kitadi-orange rounded-full flex items-center justify-center">
-                  <span className="text-white text-xl font-bold">K</span>
-                </div>
-              </div>
-              <h1 className="text-center text-white text-2xl font-bold">Bem-vindo ao Kitadi</h1>
-              <p className="text-center text-white/80 mt-2">Escolha como deseja usar o app</p>
-            </div>
-
-            {/* Selection Options */}
-            <div className="flex-1 px-6 py-8 space-y-4">
-              <Button
-                onClick={handleUserSelection}
-                className="w-full bg-kitadi-orange hover:bg-kitadi-orange/90 text-white py-8 rounded-xl text-lg font-semibold"
-              >
-                <div className="text-center">
-                  <div className="text-xl mb-2">👤</div>
-                  <div>Cliente</div>
-                  <div className="text-sm opacity-90">Enviar e receber dinheiro</div>
-                </div>
-              </Button>
-
-              <Button
-                onClick={handleMerchantSelection}
-                variant="outline"
-                className="w-full border-kitadi-navy text-kitadi-navy py-8 rounded-xl text-lg font-semibold hover:bg-kitadi-navy/5"
-              >
-                <div className="text-center">
-                  <div className="text-xl mb-2">🏪</div>
-                  <div>Comerciante</div>
-                  <div className="text-sm opacity-70">Aceitar pagamentos digitais</div>
-                </div>
-              </Button>
-            </div>
-          </div>
-        );
+        return <OnboardingScreen onComplete={handleOnboardingComplete} />;
     }
   };
 

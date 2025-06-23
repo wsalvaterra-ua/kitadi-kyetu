@@ -35,59 +35,61 @@ export const NotificationSettingsDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <div className="flex items-center space-x-2 mb-2">
-            <div className="w-10 h-10 bg-kitadi-orange/10 rounded-full flex items-center justify-center">
-              <Bell className="w-5 h-5 text-kitadi-orange" />
+          <div className="flex items-center justify-center mb-4">
+            <div className="w-16 h-16 bg-kitadi-orange/10 rounded-full flex items-center justify-center">
+              <Bell className="w-8 h-8 text-kitadi-orange" />
             </div>
-            <DialogTitle className="text-kitadi-navy">Receber Notificações</DialogTitle>
           </div>
-          <DialogDescription className="text-left">
+          <DialogTitle className="text-center text-kitadi-navy text-xl">
+            Receber Notificações
+          </DialogTitle>
+          <DialogDescription className="text-center mt-4">
             Deseja receber notificações para transações recebidas? As notificações serão enviadas por SMS.
           </DialogDescription>
         </DialogHeader>
         
-        <div className="space-y-6">
-          <div className="flex items-center space-x-2 p-3 bg-blue-50 rounded-lg">
-            <MessageSquare className="w-5 h-5 text-blue-600" />
+        <div className="space-y-6 mt-6">
+          <div className="flex items-center space-x-3 p-4 bg-blue-50 rounded-xl">
+            <MessageSquare className="w-6 h-6 text-blue-600 flex-shrink-0" />
             <p className="text-sm text-blue-700">
               As transações serão notificadas via SMS para o seu número registado.
             </p>
           </div>
 
           <RadioGroup value={notificationPreference} onValueChange={setNotificationPreference}>
-            <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 transition-colors">
-              <RadioGroupItem value="yes" id="yes" />
+            <div className="flex items-center space-x-3 p-4 border-2 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer">
+              <RadioGroupItem value="yes" id="yes" className="mt-1" />
               <Label htmlFor="yes" className="flex-1 cursor-pointer">
                 <div>
-                  <p className="font-medium text-kitadi-navy">Sim</p>
-                  <p className="text-sm text-gray-600">Receber notificações SMS para todas as transações recebidas</p>
+                  <p className="font-semibold text-kitadi-navy text-lg">Sim</p>
+                  <p className="text-sm text-gray-600 mt-1">Receber notificações SMS para todas as transações recebidas</p>
                 </div>
               </Label>
             </div>
             
-            <div className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 transition-colors">
-              <RadioGroupItem value="no" id="no" />
+            <div className="flex items-center space-x-3 p-4 border-2 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer">
+              <RadioGroupItem value="no" id="no" className="mt-1" />
               <Label htmlFor="no" className="flex-1 cursor-pointer">
                 <div>
-                  <p className="font-medium text-kitadi-navy">Não</p>
-                  <p className="text-sm text-gray-600">Não receber notificações SMS</p>
+                  <p className="font-semibold text-kitadi-navy text-lg">Não</p>
+                  <p className="text-sm text-gray-600 mt-1">Não receber notificações SMS</p>
                 </div>
               </Label>
             </div>
           </RadioGroup>
 
-          <div className="flex space-x-3">
+          <div className="flex space-x-3 mt-8">
             <Button 
               variant="outline" 
               onClick={() => onOpenChange(false)}
-              className="flex-1"
+              className="flex-1 py-3 text-base"
             >
               Cancelar
             </Button>
             <Button 
               onClick={handleSave}
               disabled={!notificationPreference}
-              className="flex-1 bg-kitadi-orange hover:bg-kitadi-orange/90 text-white"
+              className="flex-1 bg-kitadi-orange hover:bg-kitadi-orange/90 text-white py-3 text-base"
             >
               Guardar
             </Button>
