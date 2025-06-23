@@ -103,8 +103,11 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
     if (activeAccount.accountType === 'business') {
       return [...baseQuickActions, ...businessActions];
     } else if (activeAccount.accountType === 'business-associated') {
-      // Only show extract for associated business accounts
-      return [{ icon: FileText, label: 'Extrato\nCSV', color: 'bg-teal-500', onClick: onExtract }];
+      // Only show extract and dissociate for associated business accounts
+      return [
+        { icon: FileText, label: 'Extrato\nCSV', color: 'bg-teal-500', onClick: onExtract },
+        { icon: ArrowUpDown, label: 'Dissociar', color: 'bg-red-500', onClick: () => handleDissociate(activeAccount.id) }
+      ];
     }
     return baseQuickActions;
   };
@@ -236,7 +239,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       <div 
         className="bg-kitadi-navy px-6 pt-16 pb-8 bg-cover bg-center bg-no-repeat relative"
         style={{
-          backgroundImage: `url('/lovable-uploads/8cbc59c8-d36c-4dd9-9b78-afd8ec0b6e3d.png')`,
+          backgroundImage: `url('/lovable-uploads/021ecf80-ecf2-4552-b076-f66640273304.png')`,
           backgroundBlendMode: 'overlay'
         }}
       >
@@ -425,11 +428,8 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
                 <CardContent className="p-0">
                   <Button
                     variant="ghost"
-                    className={`w-full h-full ${action.color} hover:opacity-90 flex flex-col items-center justify-center space-y-2 py-6 px-2 rounded-none ${
-                      activeAccount.accountType === 'business-associated' && action.label !== 'Extrato\nCSV' ? 'opacity-50 cursor-not-allowed' : ''
-                    }`}
-                    onClick={activeAccount.accountType === 'business-associated' && action.label !== 'Extrato\nCSV' ? undefined : action.onClick}
-                    disabled={activeAccount.accountType === 'business-associated' && action.label !== 'Extrato\nCSV'}
+                    className={`w-full h-full ${action.color} hover:opacity-90 flex flex-col items-center justify-center space-y-2 py-6 px-2 rounded-none`}
+                    onClick={action.onClick}
                   >
                     <action.icon className="w-6 h-6 text-white" />
                     <span className="text-xs font-medium text-white text-center leading-tight whitespace-pre-line">{action.label}</span>
