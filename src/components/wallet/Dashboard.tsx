@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Send, CreditCard, Plus, ArrowDownToLine, History, User, Eye, EyeOff, ChevronDown, Menu, Phone, Calendar, Shield, FileText, Lock, ArrowUpDown, Clock, Smartphone, Users } from 'lucide-react';
@@ -25,6 +26,9 @@ interface DashboardProps {
   onTopUp?: () => void;
   onWithdraw?: () => void;
   onTransactionClick?: (transactionId: string) => void;
+  onCodeInput?: () => void;
+  onUserManagement?: () => void;
+  onExtract?: () => void;
 }
 
 const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick }: DashboardProps) => {
