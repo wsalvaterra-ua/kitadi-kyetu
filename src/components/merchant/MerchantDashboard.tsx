@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -31,6 +32,7 @@ const MerchantDashboard = ({ onQRPayment, onNotificationSettings }: MerchantDash
   const [totalCustomers] = useState(342);
   const [pendingPayments] = useState(5);
   const [activeTab, setActiveTab] = useState('home');
+  const [showNotificationSettings, setShowNotificationSettings] = useState(false);
 
   const recentTransactions = [
     { id: '1', customer: 'João Silva', amount: 2500, type: 'payment', time: '10:30' },
@@ -41,7 +43,6 @@ const MerchantDashboard = ({ onQRPayment, onNotificationSettings }: MerchantDash
 
   const accounts = [
     { id: '1', name: 'Conta Principal', type: 'Corrente', balance: 125750, currency: 'Db' },
-    { id: '2', name: 'Conta Poupança', type: 'Poupança', balance: 45200, currency: 'Db' },
     { id: '3', name: 'Conta USD', type: 'Moeda Estrangeira', balance: 1250, currency: 'USD' },
     { id: '4', name: 'Conta de Investimentos', type: 'Investimento', balance: 78900, currency: 'Db' },
     { id: '5', name: 'Conta Empresarial', type: 'Empresarial', balance: 234500, currency: 'Db' },
@@ -51,6 +52,18 @@ const MerchantDashboard = ({ onQRPayment, onNotificationSettings }: MerchantDash
   const formatCurrency = (amount: number, currency: string = 'Db') => {
     return `${amount.toLocaleString()} ${currency}`;
   };
+
+  const handleNotificationSettings = () => {
+    setShowNotificationSettings(true);
+  };
+
+  const handleBackFromNotifications = () => {
+    setShowNotificationSettings(false);
+  };
+
+  if (showNotificationSettings) {
+    return <NotificationSettingsScreen onBack={handleBackFromNotifications} />;
+  }
 
   const HomeContent = () => (
     <div className="space-y-4">
@@ -107,7 +120,7 @@ const MerchantDashboard = ({ onQRPayment, onNotificationSettings }: MerchantDash
             </Button>
           </div>
           <Button 
-            onClick={onNotificationSettings}
+            onClick={handleNotificationSettings}
             variant="outline" 
             className="w-full border-kitadi-navy text-kitadi-navy py-6 rounded-xl"
           >
@@ -216,7 +229,7 @@ const MerchantDashboard = ({ onQRPayment, onNotificationSettings }: MerchantDash
       <Card className="border-0 shadow-lg">
         <CardContent className="p-4">
           <Button 
-            onClick={onNotificationSettings}
+            onClick={handleNotificationSettings}
             variant="outline" 
             className="w-full border-kitadi-navy text-kitadi-navy py-6 rounded-xl"
           >

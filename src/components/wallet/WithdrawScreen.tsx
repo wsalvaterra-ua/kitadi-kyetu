@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,17 +19,17 @@ const WithdrawScreen = ({ onBack, onContinueAgent, onContinueBank }: WithdrawScr
   const [accountNumber, setAccountNumber] = useState('');
   const [showConfirmation, setShowConfirmation] = useState(false);
 
-  const calculateFee = (withdrawAmount: number, method: 'agent' | 'bank') => {
+  const calculateFee = (receiveAmount: number, method: 'agent' | 'bank') => {
     if (method === 'agent') {
-      return withdrawAmount * 0.02; // 2% fee for agent
+      return receiveAmount * 0.02; // 2% fee for agent
     } else {
-      return withdrawAmount * 0.015; // 1.5% fee for bank
+      return receiveAmount * 0.015; // 1.5% fee for bank
     }
   };
 
-  const withdrawAmount = parseFloat(amount) || 0;
-  const fee = selectedMethod ? calculateFee(withdrawAmount, selectedMethod) : 0;
-  const netAmount = withdrawAmount - fee;
+  const receiveAmount = parseFloat(amount) || 0;
+  const fee = selectedMethod ? calculateFee(receiveAmount, selectedMethod) : 0;
+  const totalDebited = receiveAmount + fee;
 
   const generateWithdrawCode = () => {
     return Math.floor(10000000 + Math.random() * 90000000).toString();
@@ -37,7 +38,7 @@ const WithdrawScreen = ({ onBack, onContinueAgent, onContinueBank }: WithdrawScr
   const [withdrawCode] = useState(generateWithdrawCode());
 
   const handleContinue = () => {
-    if (selectedMethod && withdrawAmount > 0) {
+    if (selectedMethod && receiveAmount > 0) {
       setShowConfirmation(true);
     }
   };
@@ -48,20 +49,22 @@ const WithdrawScreen = ({ onBack, onContinueAgent, onContinueBank }: WithdrawScr
 
   const handleBankConfirm = () => {
     console.log('Bank withdrawal confirmed:', { 
-      amount: withdrawAmount, 
+      receiveAmount, 
       fee, 
+      totalDebited,
       bank: selectedBank, 
       account: accountNumber 
     });
-    onContinueBank(withdrawAmount, fee);
+    onContinueBank(totalDebited, fee);
   };
 
   const handleAgentConfirm = () => {
     console.log('Agent withdrawal confirmed:', { 
-      amount: withdrawAmount, 
-      fee 
+      receiveAmount, 
+      fee,
+      totalDebited
     });
-    onContinueAgent(withdrawAmount, fee);
+    onContinueAgent(totalDebited, fee);
   };
 
   // Agent confirmation screen
@@ -106,22 +109,22 @@ const WithdrawScreen = ({ onBack, onContinueAgent, onContinueBank }: WithdrawScr
                   <li>Dirija-se a qualquer agente Kitadi</li>
                   <li>Diga ao agente este código: <strong>{withdrawCode}</strong></li>
                   <li>Aguarde a validação do agente</li>
-                  <li>Recolha o seu dinheiro: <strong>{netAmount.toFixed(2)} Db</strong></li>
+                  <li>Recolha o seu dinheiro: <strong>{receiveAmount.toFixed(0)} Db</strong></li>
                 </ol>
               </div>
 
               <div className="space-y-2 text-sm text-gray-600">
                 <div className="flex justify-between">
-                  <span>Montante solicitado:</span>
-                  <span>{withdrawAmount.toFixed(2)} Db</span>
+                  <span>Montante a receber:</span>
+                  <span>{receiveAmount.toFixed(0)} Db</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Taxa (2%):</span>
-                  <span className="text-red-600">-{fee.toFixed(2)} Db</span>
+                  <span className="text-red-600">{fee.toFixed(0)} Db</span>
                 </div>
                 <div className="flex justify-between font-semibold border-t pt-2">
-                  <span>Receberá:</span>
-                  <span className="text-green-600">{netAmount.toFixed(2)} Db</span>
+                  <span>Total debitado da carteira:</span>
+                  <span className="text-red-600">{totalDebited.toFixed(0)} Db</span>
                 </div>
               </div>
 
@@ -188,16 +191,16 @@ const WithdrawScreen = ({ onBack, onContinueAgent, onContinueBank }: WithdrawScr
 
               <div className="bg-gray-50 rounded-lg p-4 space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Montante:</span>
-                  <span>{withdrawAmount.toFixed(2)} Db</span>
+                  <span className="text-gray-600">Montante a receber:</span>
+                  <span>{receiveAmount.toFixed(0)} Db</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Taxa (1.5%):</span>
-                  <span className="text-red-600">-{fee.toFixed(2)} Db</span>
+                  <span className="text-red-600">{fee.toFixed(0)} Db</span>
                 </div>
                 <div className="flex justify-between font-semibold border-t pt-2">
-                  <span>Receberá na conta:</span>
-                  <span className="text-green-600">{netAmount.toFixed(2)} Db</span>
+                  <span>Total debitado da carteira:</span>
+                  <span className="text-red-600">{totalDebited.toFixed(0)} Db</span>
                 </div>
               </div>
 
@@ -232,18 +235,18 @@ const WithdrawScreen = ({ onBack, onContinueAgent, onContinueBank }: WithdrawScr
         <Card className="border-0 shadow-md">
           <CardContent className="p-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">Montante a levantar</label>
+              <label className="text-sm font-medium text-gray-700">Montante que deseja receber</label>
               <div className="relative">
                 <DollarSign className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
                 <Input
                   type="number"
-                  placeholder="0.00"
+                  placeholder="0"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   className="pl-10 text-lg"
                 />
               </div>
-              <span className="text-xs text-gray-500">Db (Dobras)</span>
+              <span className="text-xs text-gray-500">Db (Dobras) - valor que receberá em mãos</span>
             </div>
           </CardContent>
         </Card>
@@ -282,21 +285,21 @@ const WithdrawScreen = ({ onBack, onContinueAgent, onContinueBank }: WithdrawScr
         </div>
 
         {/* Fee Calculation */}
-        {selectedMethod && withdrawAmount > 0 && (
+        {selectedMethod && receiveAmount > 0 && (
           <Card className="border-0 shadow-md">
             <CardContent className="p-6 space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Montante:</span>
-                <span className="font-semibold">{withdrawAmount.toFixed(2)} Db</span>
+                <span className="text-gray-600">Montante a receber:</span>
+                <span className="font-semibold">{receiveAmount.toFixed(0)} Db</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-600">Taxa ({selectedMethod === 'agent' ? '2%' : '1.5%'}):</span>
-                <span className="font-semibold text-red-600">-{fee.toFixed(2)} Db</span>
+                <span className="font-semibold text-red-600">{fee.toFixed(0)} Db</span>
               </div>
               <div className="border-t border-gray-200 pt-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-lg font-semibold">Receberá:</span>
-                  <span className="text-lg font-bold text-green-600">{netAmount.toFixed(2)} Db</span>
+                  <span className="text-lg font-semibold">Total debitado da carteira:</span>
+                  <span className="text-lg font-bold text-red-600">{totalDebited.toFixed(0)} Db</span>
                 </div>
               </div>
             </CardContent>
@@ -305,7 +308,7 @@ const WithdrawScreen = ({ onBack, onContinueAgent, onContinueBank }: WithdrawScr
 
         <Button
           onClick={handleContinue}
-          disabled={!selectedMethod || !amount || withdrawAmount <= 0}
+          disabled={!selectedMethod || !amount || receiveAmount <= 0}
           className="w-full bg-kitadi-orange hover:bg-kitadi-orange/90 text-white py-3 text-lg font-semibold disabled:opacity-50"
         >
           Continuar
