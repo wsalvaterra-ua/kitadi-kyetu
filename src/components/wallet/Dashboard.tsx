@@ -325,13 +325,10 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
                       <div className="flex justify-between items-center mb-2">
                         <div>
                           <span className="text-gray-200 text-sm">
-                            {activeAccount.name} • {activeAccount.category === 'own' ? 'Própria' : 'Associada'}
+                            {activeAccount.name}
                           </span>
-                          <div className="text-gray-300 text-xs flex items-center justify-between">
-                            <span>{activeAccount.displayInfo}</span>
-                            <span className="text-xs text-gray-400 ml-2">
-                              {activeAccount.category === 'own' ? 'Própria' : 'Associada'}
-                            </span>
+                          <div className="text-gray-300 text-xs">
+                            {activeAccount.displayInfo} • {activeAccount.category === 'own' ? 'Própria' : 'Associada'}
                           </div>
                         </div>
                         <div className="flex items-center space-x-2">
@@ -371,9 +368,8 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
                   <div className="flex justify-between items-center w-full">
                     <div>
                       <div className="font-medium text-gray-900">{account.name}</div>
-                      <div className="text-sm text-gray-500 flex items-center justify-between">
-                        <span>{account.displayInfo}</span>
-                        <span className="text-xs text-gray-400 ml-2">Própria</span>
+                      <div className="text-sm text-gray-500">
+                        {account.displayInfo} • Própria
                       </div>
                     </div>
                     <div className="text-right">
@@ -401,9 +397,8 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
                       <div className="flex justify-between items-center w-full">
                         <div className="flex-1">
                           <div className="font-medium text-gray-900">{account.name}</div>
-                          <div className="text-sm text-gray-500 flex items-center justify-between">
-                            <span>{account.displayInfo}</span>
-                            <span className="text-xs text-gray-400 ml-2">Associada</span>
+                          <div className="text-sm text-gray-500">
+                            {account.displayInfo} • Associada
                           </div>
                           <div className="mt-2">
                             <Button
