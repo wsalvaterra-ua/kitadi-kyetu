@@ -19,10 +19,11 @@ import ExtractScreen from '@/components/wallet/ExtractScreen';
 import ForgotPinScreen from '@/components/wallet/ForgotPinScreen';
 import TermsScreen from '@/components/wallet/TermsScreen';
 import CreatePinScreen from '@/components/wallet/CreatePinScreen';
+import SmsVerificationScreen from '@/components/wallet/SmsVerificationScreen';
 import IdVerificationIntroScreen from '@/components/wallet/IdVerificationIntroScreen';
 import DocumentSelectionScreen from '@/components/wallet/DocumentSelectionScreen';
 
-type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'id-verification-intro' | 'document-selection';
+type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection';
 
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('onboarding');
@@ -37,6 +38,9 @@ const Index = () => {
 
   // Transaction details state
   const [selectedTransactionId, setSelectedTransactionId] = useState<string | null>(null);
+
+  // Registration state
+  const [registrationPhoneNumber, setRegistrationPhoneNumber] = useState('');
 
   // Mock transaction data - in a real app, this would come from your backend
   const mockTransactions = {
@@ -225,6 +229,12 @@ const Index = () => {
   };
 
   const handlePinCreated = () => {
+    // For demo purposes, set a mock phone number
+    setRegistrationPhoneNumber('+239 991 1234');
+    setCurrentScreen('sms-verification');
+  };
+
+  const handleSmsVerified = () => {
     setCurrentScreen('id-verification-intro');
   };
 
@@ -267,6 +277,14 @@ const Index = () => {
         return <TermsScreen onBack={() => setCurrentScreen('login')} onAccept={handleTermsAccepted} />;
       case 'create-pin':
         return <CreatePinScreen onBack={() => setCurrentScreen('terms')} onPinCreated={handlePinCreated} />;
+      case 'sms-verification':
+        return (
+          <SmsVerificationScreen 
+            onBack={() => setCurrentScreen('create-pin')} 
+            onVerified={handleSmsVerified}
+            phoneNumber={registrationPhoneNumber}
+          />
+        );
       case 'id-verification-intro':
         return (
           <IdVerificationIntroScreen 
