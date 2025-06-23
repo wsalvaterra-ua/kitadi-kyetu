@@ -320,7 +320,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
                       <div className="flex justify-between items-center mb-2">
                         <div>
                           <span className="text-gray-200 text-sm">
-                            {activeAccount.typePortuguese} • {activeAccount.name}
+                            {activeAccount.name} • {activeAccount.category === 'own' ? 'Própria' : 'Associada'}
                           </span>
                           <div className="text-gray-300 text-xs">{activeAccount.displayInfo}</div>
                         </div>
