@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Send, CreditCard, Plus, ArrowDownToLine, History, User, Eye, EyeOff, ChevronDown, Menu, Phone, Calendar, Shield, FileText, Lock, ArrowUpDown, Clock, Smartphone, Users } from 'lucide-react';
+import { Send, CreditCard, Plus, ArrowDownToLine, History, User, Eye, EyeOff, ChevronDown, Menu, Phone, Calendar, Shield, FileText, Lock, ArrowUpDown, Clock, Smartphone, Users, Unlink } from 'lucide-react';
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -106,7 +106,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       // Only show extract and dissociate for associated business accounts
       return [
         { icon: FileText, label: 'Extrato\nCSV', color: 'bg-teal-500', onClick: onExtract },
-        { icon: ArrowUpDown, label: 'Dissociar', color: 'bg-red-500', onClick: () => handleDissociate(activeAccount.id) }
+        { icon: Unlink, label: 'Dissociar', color: 'bg-red-500', onClick: () => handleDissociate(activeAccount.id) }
       ];
     }
     return baseQuickActions;
@@ -239,7 +239,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       <div 
         className="bg-kitadi-navy px-6 pt-16 pb-8 bg-cover bg-center bg-no-repeat relative"
         style={{
-          backgroundImage: `url('/lovable-uploads/021ecf80-ecf2-4552-b076-f66640273304.png')`,
+          backgroundImage: `url('/lovable-uploads/0a31d96f-afef-4ffe-a457-1581a4279cf8.png')`,
           backgroundBlendMode: 'overlay'
         }}
       >
