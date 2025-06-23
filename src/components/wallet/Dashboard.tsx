@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Send, CreditCard, Plus, ArrowDownToLine, History, User, Eye, EyeOff, ChevronDown, Menu, Phone, Calendar, Shield, FileText, Lock, ArrowUpDown, Clock, Smartphone, Users, Unlink } from 'lucide-react';
+import { Send, CreditCard, Plus, ArrowDownToLine, History, User, Eye, EyeOff, ChevronDown, Menu, Phone, Calendar, Shield, FileText, Lock, ArrowUpDown, Clock, Smartphone, Users, Unlink, Bell } from 'lucide-react';
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -19,6 +19,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import { NotificationSettingsDialog } from '../merchant/NotificationSettingsDialog';
 
 interface DashboardProps {
   onSend?: () => void;
@@ -34,6 +35,7 @@ interface DashboardProps {
 const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onCodeInput, onUserManagement, onExtract }: DashboardProps) => {
   const [showBalance, setShowBalance] = useState(true);
   const [currentAccount, setCurrentAccount] = useState('personal');
+  const [isNotificationDialogOpen, setIsNotificationDialogOpen] = useState(false);
 
   const accounts = [
     { 
@@ -93,9 +95,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
     { icon: Smartphone, label: 'Receber\nPagamento', color: 'bg-purple-500', onClick: onCodeInput },
     { icon: Users, label: 'Gerir\nUtilizadores', color: 'bg-indigo-500', onClick: onUserManagement },
     { icon: FileText, label: 'Extrato\nCSV', color: 'bg-teal-500', onClick: onExtract },
-    { icon: CreditCard, label: 'Terminal\nPOS', color: 'bg-orange-500', onClick: () => console.log('POS Terminal') },
-    { icon: History, label: 'Relatórios', color: 'bg-pink-500', onClick: () => console.log('Reports') },
-    { icon: Shield, label: 'Segurança', color: 'bg-gray-500', onClick: () => console.log('Security') },
+    { icon: Bell, label: 'Receber\nNotificações', color: 'bg-orange-500', onClick: () => setIsNotificationDialogOpen(true) },
   ];
 
   // Determine which actions to show based on account type
@@ -103,9 +103,10 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
     if (activeAccount.accountType === 'business') {
       return [...baseQuickActions, ...businessActions];
     } else if (activeAccount.accountType === 'business-associated') {
-      // Only show extract and dissociate for associated business accounts
+      // Only show extract, notifications and dissociate for associated business accounts
       return [
         { icon: FileText, label: 'Extrato\nCSV', color: 'bg-teal-500', onClick: onExtract },
+        { icon: Bell, label: 'Receber\nNotificações', color: 'bg-orange-500', onClick: () => setIsNotificationDialogOpen(true) },
         { icon: Unlink, label: 'Dissociar', color: 'bg-red-500', onClick: () => handleDissociate(activeAccount.id) }
       ];
     }
@@ -514,6 +515,12 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
 
       {/* Bottom spacing for mobile */}
       <div className="h-24" />
+
+      {/* Notification Settings Dialog */}
+      <NotificationSettingsDialog 
+        open={isNotificationDialogOpen}
+        onOpenChange={setIsNotificationDialogOpen}
+      />
     </div>
   );
 };
