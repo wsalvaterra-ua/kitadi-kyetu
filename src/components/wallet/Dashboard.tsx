@@ -42,7 +42,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       balance: 15750.50, 
       type: 'Personal',
       typePortuguese: 'Pessoal',
-      displayInfo: '+239 991 2345',
+      displayInfo: '991 2345',
       accountType: 'personal',
       category: 'own' // Contas Próprias
     },
@@ -62,7 +62,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       balance: 8500.00, 
       type: 'Savings',
       typePortuguese: 'Poupança',
-      displayInfo: '+239 991 2345',
+      displayInfo: '991 2345',
       accountType: 'personal',
       category: 'own' // Contas Próprias
     },
@@ -83,7 +83,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
   // Base quick actions for personal accounts
   const baseQuickActions = [
     { icon: Send, label: 'Enviar', color: 'bg-blue-500', onClick: onSend },
-    { icon: Smartphone, label: 'Pagar', color: 'bg-green-500', onClick: onPay },
+    { icon: Smartphone, label: 'Comprar\nRecarga', color: 'bg-green-500', onClick: onPay },
     { icon: Plus, label: 'Depósito', color: 'bg-kitadi-orange', onClick: onTopUp },
     { icon: ArrowDownToLine, label: 'Levantar', color: 'bg-red-500', onClick: onWithdraw },
   ];
@@ -225,6 +225,11 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
     // These would typically navigate to different screens or show modals
   };
 
+  const handleDissociate = (accountId: string) => {
+    console.log(`Dissociating account: ${accountId}`);
+    // Here you would implement the dissociation logic
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -322,7 +327,12 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
                           <span className="text-gray-200 text-sm">
                             {activeAccount.name} • {activeAccount.category === 'own' ? 'Própria' : 'Associada'}
                           </span>
-                          <div className="text-gray-300 text-xs">{activeAccount.displayInfo}</div>
+                          <div className="text-gray-300 text-xs flex items-center justify-between">
+                            <span>{activeAccount.displayInfo}</span>
+                            <span className="text-xs text-gray-400 ml-2">
+                              {activeAccount.category === 'own' ? 'Própria' : 'Associada'}
+                            </span>
+                          </div>
                         </div>
                         <div className="flex items-center space-x-2">
                           <Button
@@ -361,7 +371,10 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
                   <div className="flex justify-between items-center w-full">
                     <div>
                       <div className="font-medium text-gray-900">{account.name}</div>
-                      <div className="text-sm text-gray-500">{account.displayInfo}</div>
+                      <div className="text-sm text-gray-500 flex items-center justify-between">
+                        <span>{account.displayInfo}</span>
+                        <span className="text-xs text-gray-400 ml-2">Própria</span>
+                      </div>
                     </div>
                     <div className="text-right">
                       <div className="font-semibold text-kitadi-navy">
@@ -386,9 +399,25 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
                       className="p-4 cursor-pointer hover:bg-gray-50"
                     >
                       <div className="flex justify-between items-center w-full">
-                        <div>
+                        <div className="flex-1">
                           <div className="font-medium text-gray-900">{account.name}</div>
-                          <div className="text-sm text-gray-500">{account.displayInfo}</div>
+                          <div className="text-sm text-gray-500 flex items-center justify-between">
+                            <span>{account.displayInfo}</span>
+                            <span className="text-xs text-gray-400 ml-2">Associada</span>
+                          </div>
+                          <div className="mt-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDissociate(account.id);
+                              }}
+                              className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 text-xs"
+                            >
+                              Dissociar
+                            </Button>
+                          </div>
                         </div>
                         <div className="text-right">
                           <div className="font-semibold text-kitadi-navy">
