@@ -19,7 +19,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { NotificationSettingsDialog } from '../merchant/NotificationSettingsDialog';
+import { NotificationSettingsScreen } from '../merchant/NotificationSettingsScreen';
 
 interface DashboardProps {
   onSend?: () => void;
@@ -30,12 +30,24 @@ interface DashboardProps {
   onCodeInput?: () => void;
   onUserManagement?: () => void;
   onExtract?: () => void;
+  onNotificationSettings?: () => void;
+  onVerifyAccount?: () => void;
 }
 
-const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onCodeInput, onUserManagement, onExtract }: DashboardProps) => {
+const Dashboard = ({ 
+  onSend, 
+  onPay, 
+  onTopUp, 
+  onWithdraw, 
+  onTransactionClick, 
+  onCodeInput, 
+  onUserManagement, 
+  onExtract,
+  onNotificationSettings,
+  onVerifyAccount
+}: DashboardProps) => {
   const [showBalance, setShowBalance] = useState(true);
   const [currentAccount, setCurrentAccount] = useState('personal');
-  const [isNotificationDialogOpen, setIsNotificationDialogOpen] = useState(false);
 
   const accounts = [
     { 
@@ -46,7 +58,8 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       typePortuguese: 'Pessoal',
       displayInfo: '991 2345',
       accountType: 'personal',
-      category: 'own' // Contas Próprias
+      category: 'own',
+      verified: true
     },
     { 
       id: 'business', 
@@ -56,17 +69,19 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       typePortuguese: 'Comercial',
       displayInfo: '41234',
       accountType: 'business',
-      category: 'own' // Contas Próprias
+      category: 'own',
+      verified: true
     },
     { 
-      id: 'savings', 
-      name: 'Poupança', 
-      balance: 8500.00, 
-      type: 'Savings',
-      typePortuguese: 'Poupança',
-      displayInfo: '991 2345',
+      id: 'unverified', 
+      name: 'Conta Não Verificada', 
+      balance: 0.00, 
+      type: 'Personal',
+      typePortuguese: 'Pessoal',
+      displayInfo: '991 6789',
       accountType: 'personal',
-      category: 'own' // Contas Próprias
+      category: 'own',
+      verified: false
     },
     { 
       id: 'business-associated', 
@@ -76,7 +91,8 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       typePortuguese: 'Comercial',
       displayInfo: '52341',
       accountType: 'business-associated',
-      category: 'associated' // Contas Associadas
+      category: 'associated',
+      verified: true
     },
   ];
 
@@ -95,18 +111,25 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
     { icon: Smartphone, label: 'Receber\nPagamento', color: 'bg-purple-500', onClick: onCodeInput },
     { icon: Users, label: 'Gerir\nUtilizadores', color: 'bg-indigo-500', onClick: onUserManagement },
     { icon: FileText, label: 'Extrato\nCSV', color: 'bg-teal-500', onClick: onExtract },
-    { icon: Bell, label: 'Receber\nNotificações', color: 'bg-orange-500', onClick: () => setIsNotificationDialogOpen(true) },
+    { icon: Bell, label: 'Receber\nNotificações', color: 'bg-orange-500', onClick: onNotificationSettings },
+  ];
+
+  // Unverified account actions
+  const unverifiedActions = [
+    { icon: Shield, label: 'Verificar\nConta', color: 'bg-kitadi-orange', onClick: onVerifyAccount },
   ];
 
   // Determine which actions to show based on account type
   const getQuickActions = () => {
-    if (activeAccount.accountType === 'business') {
+    if (!activeAccount.verified) {
+      return unverifiedActions;
+    } else if (activeAccount.accountType === 'business') {
       return [...baseQuickActions, ...businessActions];
     } else if (activeAccount.accountType === 'business-associated') {
       // Only show extract, notifications and dissociate for associated business accounts
       return [
         { icon: FileText, label: 'Extrato\nCSV', color: 'bg-teal-500', onClick: onExtract },
-        { icon: Bell, label: 'Receber\nNotificações', color: 'bg-orange-500', onClick: () => setIsNotificationDialogOpen(true) },
+        { icon: Bell, label: 'Receber\nNotificações', color: 'bg-orange-500', onClick: onNotificationSettings },
         { icon: Unlink, label: 'Dissociar', color: 'bg-red-500', onClick: () => handleDissociate(activeAccount.id) }
       ];
     }
@@ -334,9 +357,16 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
                     <div className="flex-1">
                       <div className="flex justify-between items-center mb-2">
                         <div>
-                          <span className="text-gray-200 text-sm">
-                            {activeAccount.name}
-                          </span>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-gray-200 text-sm">
+                              {activeAccount.name}
+                            </span>
+                            {!activeAccount.verified && (
+                              <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200 text-xs">
+                                Não Verificada
+                              </Badge>
+                            )}
+                          </div>
                           <div className="text-gray-300 text-xs">
                             {activeAccount.displayInfo} • {activeAccount.category === 'own' ? 'Própria' : 'Associada'}
                           </div>
@@ -377,7 +407,14 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
                 >
                   <div className="flex justify-between items-center w-full">
                     <div>
-                      <div className="font-medium text-gray-900">{account.name}</div>
+                      <div className="flex items-center space-x-2">
+                        <span className="font-medium text-gray-900">{account.name}</span>
+                        {!account.verified && (
+                          <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200 text-xs">
+                            Não Verificada
+                          </Badge>
+                        )}
+                      </div>
                       <div className="text-sm text-gray-500">
                         {account.displayInfo} • Própria
                       </div>
@@ -448,79 +485,96 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
         </div>
       </div>
 
-      {/* Recent Transactions */}
-      <div className="px-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Transações recentes</h2>
-        </div>
+      {/* Recent Transactions - Only show if account is verified */}
+      {activeAccount.verified && (
+        <div className="px-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">Transações recentes</h2>
+          </div>
 
-        <Card className="border-0 shadow-md">
-          <CardContent className="p-0">
-            {Object.entries(groupedTransactions).map(([date, transactions], dateIndex) => (
-              <div key={date}>
-                {/* Date Header */}
-                <div className="flex justify-center py-4">
-                  <span className="text-sm font-medium text-gray-500 bg-gray-50 px-4 py-1 rounded-full">
-                    {date}
-                  </span>
-                </div>
-                
-                {transactions.map((transaction, index) => (
-                  <button
-                    key={transaction.id}
-                    onClick={() => onTransactionClick?.(transaction.transactionId)}
-                    className={`w-full p-4 text-left hover:bg-gray-50 transition-colors ${
-                      index !== transactions.length - 1 ? 'border-b border-gray-100' : ''
-                    }`}
-                  >
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center space-x-3">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                          transaction.amount > 0 ? 'bg-green-100' : 'bg-red-100'
-                        }`}>
-                          {getTransactionIcon(transaction)}
+          <Card className="border-0 shadow-md">
+            <CardContent className="p-0">
+              {Object.entries(groupedTransactions).map(([date, transactions], dateIndex) => (
+                <div key={date}>
+                  {/* Date Header */}
+                  <div className="flex justify-center py-4">
+                    <span className="text-sm font-medium text-gray-500 bg-gray-50 px-4 py-1 rounded-full">
+                      {date}
+                    </span>
+                  </div>
+                  
+                  {transactions.map((transaction, index) => (
+                    <button
+                      key={transaction.id}
+                      onClick={() => onTransactionClick?.(transaction.transactionId)}
+                      className={`w-full p-4 text-left hover:bg-gray-50 transition-colors ${
+                        index !== transactions.length - 1 ? 'border-b border-gray-100' : ''
+                      }`}
+                    >
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center space-x-3">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                            transaction.amount > 0 ? 'bg-green-100' : 'bg-red-100'
+                          }`}>
+                            {getTransactionIcon(transaction)}
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-900">
+                              {getTransactionLabel(transaction)}
+                            </p>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-sm text-gray-500">{transaction.time}</span>
+                              {transaction.status === 'pending' && (
+                                <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs px-2 py-0.5">
+                                  Pendente
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-medium text-gray-900">
-                            {getTransactionLabel(transaction)}
-                          </p>
-                          <div className="flex items-center space-x-2">
-                            <span className="text-sm text-gray-500">{transaction.time}</span>
-                            {transaction.status === 'pending' && (
-                              <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs px-2 py-0.5">
-                                Pendente
-                              </Badge>
-                            )}
+                        <div className="text-right">
+                          <div className={`font-semibold ${
+                            transaction.amount > 0 ? 'text-green-600' : 'text-red-600'
+                          }`}>
+                            {transaction.amount > 0 ? '+' : ''}{transaction.amount.toLocaleString('pt-ST')} Db
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {transaction.balanceAfter.toLocaleString('pt-ST')} Db
                           </div>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className={`font-semibold ${
-                          transaction.amount > 0 ? 'text-green-600' : 'text-red-600'
-                        }`}>
-                          {transaction.amount > 0 ? '+' : ''}{transaction.amount.toLocaleString('pt-ST')} Db
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {transaction.balanceAfter.toLocaleString('pt-ST')} Db
-                        </div>
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      </div>
+                    </button>
+                  ))}
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Unverified Account Message */}
+      {!activeAccount.verified && (
+        <div className="px-6">
+          <Card className="border-0 shadow-lg border-l-4 border-l-yellow-500">
+            <CardContent className="p-6 text-center">
+              <Shield className="w-12 h-12 text-yellow-600 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Conta Não Verificada</h3>
+              <p className="text-gray-600 mb-4">
+                Para aceder a todas as funcionalidades, precisa de verificar a sua identidade.
+              </p>
+              <Button 
+                onClick={onVerifyAccount}
+                className="bg-kitadi-orange hover:bg-kitadi-orange/90 text-white py-3 px-6 rounded-xl"
+              >
+                Verificar Agora
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* Bottom spacing for mobile */}
       <div className="h-24" />
-
-      {/* Notification Settings Dialog */}
-      <NotificationSettingsDialog 
-        open={isNotificationDialogOpen}
-        onOpenChange={setIsNotificationDialogOpen}
-      />
     </div>
   );
 };

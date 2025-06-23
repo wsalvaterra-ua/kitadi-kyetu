@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,18 +19,18 @@ import {
   CreditCard,
   PlusCircle
 } from 'lucide-react';
-import { NotificationSettingsDialog } from './NotificationSettingsDialog';
+import { NotificationSettingsScreen } from './NotificationSettingsScreen';
 
 interface MerchantDashboardProps {
   onQRPayment?: () => void;
+  onNotificationSettings?: () => void;
 }
 
-const MerchantDashboard = ({ onQRPayment }: MerchantDashboardProps) => {
+const MerchantDashboard = ({ onQRPayment, onNotificationSettings }: MerchantDashboardProps) => {
   const [todaysSales] = useState(125750);
   const [totalCustomers] = useState(342);
   const [pendingPayments] = useState(5);
   const [activeTab, setActiveTab] = useState('home');
-  const [isNotificationDialogOpen, setIsNotificationDialogOpen] = useState(false);
 
   const recentTransactions = [
     { id: '1', customer: 'João Silva', amount: 2500, type: 'payment', time: '10:30' },
@@ -108,7 +107,7 @@ const MerchantDashboard = ({ onQRPayment }: MerchantDashboardProps) => {
             </Button>
           </div>
           <Button 
-            onClick={() => setIsNotificationDialogOpen(true)}
+            onClick={onNotificationSettings}
             variant="outline" 
             className="w-full border-kitadi-navy text-kitadi-navy py-6 rounded-xl"
           >
@@ -217,7 +216,7 @@ const MerchantDashboard = ({ onQRPayment }: MerchantDashboardProps) => {
       <Card className="border-0 shadow-lg">
         <CardContent className="p-4">
           <Button 
-            onClick={() => setIsNotificationDialogOpen(true)}
+            onClick={onNotificationSettings}
             variant="outline" 
             className="w-full border-kitadi-navy text-kitadi-navy py-6 rounded-xl"
           >
@@ -297,12 +296,6 @@ const MerchantDashboard = ({ onQRPayment }: MerchantDashboardProps) => {
           </div>
         </div>
       </div>
-
-      {/* Notification Settings Dialog */}
-      <NotificationSettingsDialog 
-        open={isNotificationDialogOpen}
-        onOpenChange={setIsNotificationDialogOpen}
-      />
     </div>
   );
 };
