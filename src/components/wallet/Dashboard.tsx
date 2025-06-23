@@ -127,7 +127,8 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       from: 'João Silva', 
       date: 'Hoje',
       time: '10:30',
-      transactionId: 'TXN001'
+      transactionId: 'TXN001',
+      balanceAfter: 16250.50
     },
     { 
       id: 2, 
@@ -137,7 +138,8 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       to: 'Maria Santos', 
       date: 'Hoje',
       time: '09:15',
-      transactionId: 'TXN002'
+      transactionId: 'TXN002',
+      balanceAfter: 15750.50
     },
     { 
       id: 3, 
@@ -146,7 +148,8 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       to: 'Loja do João', 
       date: 'Hoje',
       time: '14:20',
-      transactionId: 'TXN004'
+      transactionId: 'TXN004',
+      balanceAfter: 15625.50
     },
     { 
       id: 4, 
@@ -156,7 +159,8 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       from: 'Agente Pedro', 
       date: 'Hoje',
       time: '13:45',
-      transactionId: 'TXN005'
+      transactionId: 'TXN005',
+      balanceAfter: 16625.50
     },
     { 
       id: 5, 
@@ -166,7 +170,8 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       to: 'Agente Ana', 
       date: 'Hoje',
       time: '12:30',
-      transactionId: 'TXN006'
+      transactionId: 'TXN006',
+      balanceAfter: 16125.50
     },
     { 
       id: 6, 
@@ -175,7 +180,8 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       from: 'Pedro Costa', 
       date: 'Ontem',
       time: '15:45',
-      transactionId: 'TXN003'
+      transactionId: 'TXN003',
+      balanceAfter: 16000.00
     },
   ];
 
@@ -244,7 +250,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
         }}
       >
         {/* Overlay for better text readability */}
-        <div className="absolute inset-0 bg-kitadi-navy/80"></div>
+        <div className="absolute inset-0 bg-kitadi-navy-overlay"></div>
         
         <div className="relative z-10">
           <div className="flex justify-between items-center mb-6">
@@ -492,6 +498,9 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
                           transaction.amount > 0 ? 'text-green-600' : 'text-red-600'
                         }`}>
                           {transaction.amount > 0 ? '+' : ''}{transaction.amount.toLocaleString('pt-ST')} Db
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {transaction.balanceAfter.toLocaleString('pt-ST')} Db
                         </div>
                       </div>
                     </div>

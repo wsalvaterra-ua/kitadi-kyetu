@@ -51,6 +51,7 @@
 
     /* Custom Kitadi brand colors */
     --kitadi-navy: 210 60% 15%;
+    --kitadi-navy-overlay: 210deg 60% 15% / 57%;
     --kitadi-orange: 35 85% 55%;
     --kitadi-red-orange: 20 85% 55%;
     --kitadi-light-orange: 35 85% 70%;
@@ -96,6 +97,7 @@
 
     /* Custom Kitadi brand colors for dark mode */
     --kitadi-navy: 210 60% 15%;
+    --kitadi-navy-overlay: 210deg 60% 15% / 57%;
     --kitadi-orange: 35 85% 55%;
     --kitadi-red-orange: 20 85% 55%;
     --kitadi-light-orange: 35 85% 70%;
@@ -116,6 +118,10 @@
 @layer utilities {
   .bg-kitadi-navy {
     background-color: hsl(var(--kitadi-navy));
+  }
+  
+  .bg-kitadi-navy-overlay {
+    background-color: hsl(var(--kitadi-navy-overlay));
   }
   
   .bg-kitadi-orange {
