@@ -41,6 +41,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       name: 'Conta Pessoal', 
       balance: 15750.50, 
       type: 'Personal',
+      typePortuguese: 'Pessoal',
       displayInfo: '+239 991 2345',
       accountType: 'personal',
       category: 'own' // Contas Próprias
@@ -50,6 +51,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       name: 'Conta Comercial', 
       balance: 45230.25, 
       type: 'Business',
+      typePortuguese: 'Comercial',
       displayInfo: '41234',
       accountType: 'business',
       category: 'own' // Contas Próprias
@@ -59,6 +61,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       name: 'Poupança', 
       balance: 8500.00, 
       type: 'Savings',
+      typePortuguese: 'Poupança',
       displayInfo: '+239 991 2345',
       accountType: 'personal',
       category: 'own' // Contas Próprias
@@ -68,6 +71,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       name: 'Balcão A - Centro Comercial', 
       balance: 125430.75, 
       type: 'Business',
+      typePortuguese: 'Comercial',
       displayInfo: '52341',
       accountType: 'business-associated',
       category: 'associated' // Contas Associadas
@@ -315,11 +319,10 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
                     <div className="flex-1">
                       <div className="flex justify-between items-center mb-2">
                         <div>
-                          <span className="text-gray-200 text-sm">{activeAccount.type}</span>
+                          <span className="text-gray-200 text-sm">
+                            {activeAccount.typePortuguese} • {activeAccount.name}
+                          </span>
                           <div className="text-gray-300 text-xs">{activeAccount.displayInfo}</div>
-                          <div className="text-gray-300 text-xs">
-                            {activeAccount.category === 'own' ? 'Conta Própria' : 'Conta Associada'}
-                          </div>
                         </div>
                         <div className="flex items-center space-x-2">
                           <Button
