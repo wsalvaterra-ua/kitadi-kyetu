@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Send, CreditCard, Plus, ArrowDownToLine, History, User, Eye, EyeOff, ChevronDown, Menu, Phone, Calendar, Shield, FileText, Lock, ArrowUpDown, Clock, Smartphone, Users } from 'lucide-react';
@@ -82,9 +83,9 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
 
   // Additional business actions
   const businessActions = [
-    { icon: Smartphone, label: 'Receber\nPagamento', color: 'bg-purple-500', onClick: () => console.log('Code Input') },
-    { icon: Users, label: 'Gerir\nUtilizadores', color: 'bg-indigo-500', onClick: () => console.log('User Management') },
-    { icon: FileText, label: 'Extrato\nCSV', color: 'bg-teal-500', onClick: () => console.log('Extract') },
+    { icon: Smartphone, label: 'Receber\nPagamento', color: 'bg-purple-500', onClick: onCodeInput },
+    { icon: Users, label: 'Gerir\nUtilizadores', color: 'bg-indigo-500', onClick: onUserManagement },
+    { icon: FileText, label: 'Extrato\nCSV', color: 'bg-teal-500', onClick: onExtract },
     { icon: CreditCard, label: 'Terminal\nPOS', color: 'bg-orange-500', onClick: () => console.log('POS Terminal') },
     { icon: History, label: 'Relatórios', color: 'bg-pink-500', onClick: () => console.log('Reports') },
     { icon: Shield, label: 'Segurança', color: 'bg-gray-500', onClick: () => console.log('Security') },
@@ -96,7 +97,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       return [...baseQuickActions, ...businessActions];
     } else if (activeAccount.accountType === 'business-associated') {
       // Only show extract for associated business accounts
-      return [{ icon: FileText, label: 'Extrato\nCSV', color: 'bg-teal-500', onClick: () => console.log('Extract') }];
+      return [{ icon: FileText, label: 'Extrato\nCSV', color: 'bg-teal-500', onClick: onExtract }];
     }
     return baseQuickActions;
   };
@@ -111,7 +112,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       amount: 500, 
       from: 'João Silva', 
       date: 'Hoje',
-      balanceAfter: 16250.50,
+      time: '10:30',
       transactionId: 'TXN001'
     },
     { 
@@ -121,7 +122,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       amount: -250, 
       to: 'Maria Santos', 
       date: 'Hoje',
-      balanceAfter: 15750.50,
+      time: '09:15',
       transactionId: 'TXN002'
     },
     { 
@@ -130,7 +131,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       amount: -125, 
       to: 'Loja do João', 
       date: 'Hoje',
-      balanceAfter: 15625.50,
+      time: '14:20',
       transactionId: 'TXN004'
     },
     { 
@@ -140,7 +141,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       amount: 1000, 
       from: 'Agente Pedro', 
       date: 'Hoje',
-      balanceAfter: 16625.50,
+      time: '13:45',
       transactionId: 'TXN005'
     },
     { 
@@ -150,7 +151,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       amount: -500, 
       to: 'Agente Ana', 
       date: 'Hoje',
-      balanceAfter: 16125.50,
+      time: '12:30',
       transactionId: 'TXN006'
     },
     { 
@@ -159,7 +160,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       amount: 1000, 
       from: 'Pedro Costa', 
       date: 'Ontem',
-      balanceAfter: 16000.00,
+      time: '15:45',
       transactionId: 'TXN003'
     },
   ];
@@ -393,10 +394,13 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
           <CardContent className="p-0">
             {Object.entries(groupedTransactions).map(([date, transactions], dateIndex) => (
               <div key={date}>
-                {dateIndex > 0 && <Separator className="my-4" />}
-                <div className="px-4 py-2">
-                  <h3 className="text-sm font-medium text-gray-500">{date}</h3>
+                {/* Date Header */}
+                <div className="flex justify-center py-4">
+                  <span className="text-sm font-medium text-gray-500 bg-gray-50 px-4 py-1 rounded-full">
+                    {date}
+                  </span>
                 </div>
+                
                 {transactions.map((transaction, index) => (
                   <button
                     key={transaction.id}
@@ -417,6 +421,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
                             {getTransactionLabel(transaction)}
                           </p>
                           <div className="flex items-center space-x-2">
+                            <span className="text-sm text-gray-500">{transaction.time}</span>
                             {transaction.status === 'pending' && (
                               <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs px-2 py-0.5">
                                 Pendente
