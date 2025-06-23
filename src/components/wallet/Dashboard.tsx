@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Send, CreditCard, Plus, ArrowDownToLine, History, User, Eye, EyeOff, ChevronDown, Menu, Phone, Calendar, Shield, FileText, Lock, ArrowUpDown, Clock, Smartphone, Users } from 'lucide-react';
@@ -43,7 +42,8 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       balance: 15750.50, 
       type: 'Personal',
       displayInfo: '+239 991 2345',
-      accountType: 'personal'
+      accountType: 'personal',
+      category: 'own' // Contas Próprias
     },
     { 
       id: 'business', 
@@ -51,15 +51,8 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       balance: 45230.25, 
       type: 'Business',
       displayInfo: '41234',
-      accountType: 'business'
-    },
-    { 
-      id: 'business-associated', 
-      name: 'Balcão A - Centro Comercial', 
-      balance: 125430.75, 
-      type: 'Business',
-      displayInfo: '52341',
-      accountType: 'business-associated'
+      accountType: 'business',
+      category: 'own' // Contas Próprias
     },
     { 
       id: 'savings', 
@@ -67,7 +60,17 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       balance: 8500.00, 
       type: 'Savings',
       displayInfo: '+239 991 2345',
-      accountType: 'personal'
+      accountType: 'personal',
+      category: 'own' // Contas Próprias
+    },
+    { 
+      id: 'business-associated', 
+      name: 'Balcão A - Centro Comercial', 
+      balance: 125430.75, 
+      type: 'Business',
+      displayInfo: '52341',
+      accountType: 'business-associated',
+      category: 'associated' // Contas Associadas
     },
   ];
 
@@ -104,6 +107,10 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
 
   const quickActions = getQuickActions();
   const isScrollable = activeAccount.accountType === 'business';
+
+  // Group accounts by category
+  const ownAccounts = accounts.filter(acc => acc.category === 'own');
+  const associatedAccounts = accounts.filter(acc => acc.category === 'associated');
 
   const recentTransactions = [
     { 
@@ -310,6 +317,9 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
                         <div>
                           <span className="text-gray-200 text-sm">{activeAccount.type}</span>
                           <div className="text-gray-300 text-xs">{activeAccount.displayInfo}</div>
+                          <div className="text-gray-300 text-xs">
+                            {activeAccount.category === 'own' ? 'Conta Própria' : 'Conta Associada'}
+                          </div>
                         </div>
                         <div className="flex items-center space-x-2">
                           <Button
@@ -335,7 +345,11 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
               </Card>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-80 bg-white border shadow-lg">
-              {accounts.map((account) => (
+              {/* Own Accounts Section */}
+              <div className="px-2 py-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Contas Próprias
+              </div>
+              {ownAccounts.map((account) => (
                 <DropdownMenuItem
                   key={account.id}
                   onClick={() => setCurrentAccount(account.id)}
@@ -354,6 +368,35 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
                   </div>
                 </DropdownMenuItem>
               ))}
+              
+              {/* Divider */}
+              {associatedAccounts.length > 0 && (
+                <>
+                  <DropdownMenuSeparator />
+                  <div className="px-2 py-1.5 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Contas Associadas
+                  </div>
+                  {associatedAccounts.map((account) => (
+                    <DropdownMenuItem
+                      key={account.id}
+                      onClick={() => setCurrentAccount(account.id)}
+                      className="p-4 cursor-pointer hover:bg-gray-50"
+                    >
+                      <div className="flex justify-between items-center w-full">
+                        <div>
+                          <div className="font-medium text-gray-900">{account.name}</div>
+                          <div className="text-sm text-gray-500">{account.displayInfo}</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-semibold text-kitadi-navy">
+                            {account.balance.toLocaleString('pt-ST')} Db
+                          </div>
+                        </div>
+                      </div>
+                    </DropdownMenuItem>
+                  ))}
+                </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
