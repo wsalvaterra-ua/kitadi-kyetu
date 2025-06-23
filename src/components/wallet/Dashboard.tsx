@@ -271,7 +271,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
                       <div className="flex-1">
                         <div className="font-medium text-gray-900">Perfil</div>
                         <div className="text-sm text-gray-500">João Silva</div>
-                        <div className="text-sm text-gray-500">+239 991 2345</div>
+                        <div className="text-sm text-gray-500">991 2345</div>
                       </div>
                     </div>
                   </button>
@@ -395,23 +395,10 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
                       className="p-4 cursor-pointer hover:bg-gray-50"
                     >
                       <div className="flex justify-between items-center w-full">
-                        <div className="flex-1">
+                        <div>
                           <div className="font-medium text-gray-900">{account.name}</div>
                           <div className="text-sm text-gray-500">
                             {account.displayInfo} • Associada
-                          </div>
-                          <div className="mt-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDissociate(account.id);
-                              }}
-                              className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 text-xs"
-                            >
-                              Dissociar
-                            </Button>
                           </div>
                         </div>
                         <div className="text-right">
