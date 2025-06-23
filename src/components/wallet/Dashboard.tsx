@@ -1,9 +1,9 @@
-
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Send, CreditCard, Plus, ArrowDownToLine, History, User, Eye, EyeOff, ChevronDown, Menu, Phone, Calendar, Shield, FileText, Lock, ArrowUpDown, Clock, Smartphone, Users } from 'lucide-react';
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,7 +31,7 @@ interface DashboardProps {
   onExtract?: () => void;
 }
 
-const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick }: DashboardProps) => {
+const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onCodeInput, onUserManagement, onExtract }: DashboardProps) => {
   const [showBalance, setShowBalance] = useState(true);
   const [currentAccount, setCurrentAccount] = useState('personal');
 
@@ -110,7 +110,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick }: D
       type: 'received', 
       amount: 500, 
       from: 'João Silva', 
-      time: '10:30',
+      date: 'Hoje',
       balanceAfter: 16250.50,
       transactionId: 'TXN001'
     },
@@ -120,7 +120,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick }: D
       status: 'pending',
       amount: -250, 
       to: 'Maria Santos', 
-      time: '09:15',
+      date: 'Hoje',
       balanceAfter: 15750.50,
       transactionId: 'TXN002'
     },
@@ -129,7 +129,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick }: D
       type: 'payment', 
       amount: -125, 
       to: 'Loja do João', 
-      time: '14:20',
+      date: 'Hoje',
       balanceAfter: 15625.50,
       transactionId: 'TXN004'
     },
@@ -139,7 +139,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick }: D
       status: 'pending',
       amount: 1000, 
       from: 'Agente Pedro', 
-      time: '13:45',
+      date: 'Hoje',
       balanceAfter: 16625.50,
       transactionId: 'TXN005'
     },
@@ -149,7 +149,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick }: D
       status: 'pending',
       amount: -500, 
       to: 'Agente Ana', 
-      time: '12:30',
+      date: 'Hoje',
       balanceAfter: 16125.50,
       transactionId: 'TXN006'
     },
@@ -158,7 +158,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick }: D
       type: 'received', 
       amount: 1000, 
       from: 'Pedro Costa', 
-      time: 'Ontem',
+      date: 'Ontem',
       balanceAfter: 16000.00,
       transactionId: 'TXN003'
     },
@@ -197,6 +197,16 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick }: D
         return 'Transação';
     }
   };
+
+  // Group transactions by date
+  const groupedTransactions = recentTransactions.reduce((groups, transaction) => {
+    const date = transaction.date;
+    if (!groups[date]) {
+      groups[date] = [];
+    }
+    groups[date].push(transaction);
+    return groups;
+  }, {} as Record<string, typeof recentTransactions>);
 
   const handleMenuAction = (action: string) => {
     console.log(`Menu action: ${action}`);
@@ -381,47 +391,51 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick }: D
 
         <Card className="border-0 shadow-md">
           <CardContent className="p-0">
-            {recentTransactions.map((transaction, index) => (
-              <button
-                key={transaction.id}
-                onClick={() => onTransactionClick?.(transaction.transactionId)}
-                className={`w-full p-4 text-left hover:bg-gray-50 transition-colors ${
-                  index !== recentTransactions.length - 1 ? 'border-b border-gray-100' : ''
-                }`}
-              >
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center space-x-3">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                      transaction.amount > 0 ? 'bg-green-100' : 'bg-red-100'
-                    }`}>
-                      {getTransactionIcon(transaction)}
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-900">
-                        {getTransactionLabel(transaction)}
-                      </p>
-                      <div className="flex items-center space-x-2">
-                        <p className="text-sm text-gray-500">{transaction.time}</p>
-                        {transaction.status === 'pending' && (
-                          <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs px-2 py-0.5">
-                            Pendente
-                          </Badge>
-                        )}
+            {Object.entries(groupedTransactions).map(([date, transactions], dateIndex) => (
+              <div key={date}>
+                {dateIndex > 0 && <Separator className="my-4" />}
+                <div className="px-4 py-2">
+                  <h3 className="text-sm font-medium text-gray-500">{date}</h3>
+                </div>
+                {transactions.map((transaction, index) => (
+                  <button
+                    key={transaction.id}
+                    onClick={() => onTransactionClick?.(transaction.transactionId)}
+                    className={`w-full p-4 text-left hover:bg-gray-50 transition-colors ${
+                      index !== transactions.length - 1 ? 'border-b border-gray-100' : ''
+                    }`}
+                  >
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center space-x-3">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                          transaction.amount > 0 ? 'bg-green-100' : 'bg-red-100'
+                        }`}>
+                          {getTransactionIcon(transaction)}
+                        </div>
+                        <div>
+                          <p className="font-medium text-gray-900">
+                            {getTransactionLabel(transaction)}
+                          </p>
+                          <div className="flex items-center space-x-2">
+                            {transaction.status === 'pending' && (
+                              <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs px-2 py-0.5">
+                                Pendente
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className={`font-semibold ${
+                          transaction.amount > 0 ? 'text-green-600' : 'text-red-600'
+                        }`}>
+                          {transaction.amount > 0 ? '+' : ''}{transaction.amount.toLocaleString('pt-ST')} Db
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <div className={`font-semibold ${
-                      transaction.amount > 0 ? 'text-green-600' : 'text-red-600'
-                    }`}>
-                      {transaction.amount > 0 ? '+' : ''}{transaction.amount.toLocaleString('pt-ST')} Db
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      Saldo: {transaction.balanceAfter.toLocaleString('pt-ST')} Db
-                    </div>
-                  </div>
-                </div>
-              </button>
+                  </button>
+                ))}
+              </div>
             ))}
           </CardContent>
         </Card>
