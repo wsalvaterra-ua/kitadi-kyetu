@@ -239,7 +239,7 @@ const Dashboard = ({ onSend, onPay, onTopUp, onWithdraw, onTransactionClick, onC
       <div 
         className="bg-kitadi-navy px-6 pt-16 pb-8 bg-cover bg-center bg-no-repeat relative"
         style={{
-          backgroundImage: `url('/lovable-uploads/0a31d96f-afef-4ffe-a457-1581a4279cf8.png')`,
+          backgroundImage: `url('/lovable-uploads/2ac0f969-7525-4b47-89c8-2e3e615c3de1.png')`,
           backgroundBlendMode: 'overlay'
         }}
       >
