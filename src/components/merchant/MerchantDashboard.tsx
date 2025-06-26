@@ -54,6 +54,7 @@ const MerchantDashboard = ({ onQRPayment, onNotificationSettings }: MerchantDash
   };
 
   const handleNotificationSettings = () => {
+    console.log('Notification settings button clicked');
     setShowNotificationSettings(true);
   };
 
