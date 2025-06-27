@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -54,15 +53,17 @@ const MerchantDashboard = ({ onQRPayment, onNotificationSettings }: MerchantDash
   };
 
   const handleNotificationSettings = () => {
-    console.log('Notification settings button clicked');
+    console.log('Notification settings button clicked - showing screen');
     setShowNotificationSettings(true);
   };
 
   const handleBackFromNotifications = () => {
+    console.log('Back from notifications clicked');
     setShowNotificationSettings(false);
   };
 
   if (showNotificationSettings) {
+    console.log('Rendering NotificationSettingsScreen');
     return <NotificationSettingsScreen onBack={handleBackFromNotifications} />;
   }
 
