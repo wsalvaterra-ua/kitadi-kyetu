@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Send, CreditCard, Plus, ArrowDownToLine, History, User, Eye, EyeOff, ChevronDown, Menu, Phone, Calendar, Shield, FileText, Lock, ArrowUpDown, Clock, Smartphone, Users, Unlink, Bell } from 'lucide-react';
+import { Send, CreditCard, Plus, ArrowDownToLine, History, User, Eye, EyeOff, ChevronDown, Menu, Phone, Calendar, Shield, FileText, Lock, ArrowUpDown, Clock, Smartphone, Users, Unlink, Bell, Receipt } from 'lucide-react';
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -32,6 +32,7 @@ interface DashboardProps {
   onExtract?: () => void;
   onNotificationSettings?: () => void;
   onVerifyAccount?: () => void;
+  onReconciliation?: () => void;
 }
 
 const Dashboard = ({ 
@@ -44,7 +45,8 @@ const Dashboard = ({
   onUserManagement, 
   onExtract,
   onNotificationSettings,
-  onVerifyAccount
+  onVerifyAccount,
+  onReconciliation
 }: DashboardProps) => {
   const [showBalance, setShowBalance] = useState(true);
   const [currentAccount, setCurrentAccount] = useState('personal');
@@ -69,6 +71,17 @@ const Dashboard = ({
       typePortuguese: 'Comercial',
       displayInfo: '41234',
       accountType: 'business',
+      category: 'own',
+      verified: true
+    },
+    { 
+      id: 'agent', 
+      name: 'Conta Agente', 
+      balance: 89340.75, 
+      type: 'Agent',
+      typePortuguese: 'Agente',
+      displayInfo: 'AGT001',
+      accountType: 'agent',
       category: 'own',
       verified: true
     },
@@ -114,6 +127,15 @@ const Dashboard = ({
     { icon: Bell, label: 'Receber\nNotificações', color: 'bg-orange-500', onClick: onNotificationSettings },
   ];
 
+  // Agent specific actions
+  const agentActions = [
+    { icon: Send, label: 'Enviar\nDinheiro', color: 'bg-blue-500', onClick: onSend },
+    { icon: Smartphone, label: 'Receber\nPagamento', color: 'bg-purple-500', onClick: onCodeInput },
+    { icon: Receipt, label: 'Reconciliação', color: 'bg-amber-500', onClick: onReconciliation },
+    { icon: FileText, label: 'Extrato\nCSV', color: 'bg-teal-500', onClick: onExtract },
+    { icon: Bell, label: 'Receber\nNotificações', color: 'bg-orange-500', onClick: onNotificationSettings },
+  ];
+
   // Unverified account actions
   const unverifiedActions = [
     { icon: Shield, label: 'Verificar\nConta', color: 'bg-kitadi-orange', onClick: onVerifyAccount },
@@ -123,6 +145,8 @@ const Dashboard = ({
   const getQuickActions = () => {
     if (!activeAccount.verified) {
       return unverifiedActions;
+    } else if (activeAccount.accountType === 'agent') {
+      return agentActions;
     } else if (activeAccount.accountType === 'business') {
       return [...baseQuickActions, ...businessActions];
     } else if (activeAccount.accountType === 'business-associated') {
@@ -137,7 +161,7 @@ const Dashboard = ({
   };
 
   const quickActions = getQuickActions();
-  const isScrollable = activeAccount.accountType === 'business';
+  const isScrollable = activeAccount.accountType === 'business' || activeAccount.accountType === 'agent';
 
   // Group accounts by category
   const ownAccounts = accounts.filter(acc => acc.category === 'own');

@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import OnboardingScreen from '@/components/wallet/OnboardingScreen';
@@ -22,8 +23,9 @@ import CreatePinScreen from '@/components/wallet/CreatePinScreen';
 import SmsVerificationScreen from '@/components/wallet/SmsVerificationScreen';
 import IdVerificationIntroScreen from '@/components/wallet/IdVerificationIntroScreen';
 import DocumentSelectionScreen from '@/components/wallet/DocumentSelectionScreen';
+import ReconciliationScreen from '@/components/wallet/ReconciliationScreen';
 
-type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection';
+type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation';
 
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('onboarding');
@@ -151,6 +153,7 @@ const Index = () => {
   const handlePay = () => setCurrentScreen('pay');
   const handleTopUp = () => setCurrentScreen('topup');
   const handleWithdraw = () => setCurrentScreen('withdraw');
+  const handleReconciliation = () => setCurrentScreen('reconciliation');
 
   const handleSendConfirm = (accountNumber: string, amount: number) => {
     console.log('Setting send data:', { accountNumber, amount });
@@ -300,7 +303,7 @@ const Index = () => {
           />
         );
       case 'dashboard':
-        return <Dashboard onSend={handleSend} onPay={handlePay} onTopUp={handleTopUp} onWithdraw={handleWithdraw} onTransactionClick={handleTransactionClick} onCodeInput={handleCodeInput} onUserManagement={handleUserManagement} onExtract={handleExtract} />;
+        return <Dashboard onSend={handleSend} onPay={handlePay} onTopUp={handleTopUp} onWithdraw={handleWithdraw} onTransactionClick={handleTransactionClick} onCodeInput={handleCodeInput} onUserManagement={handleUserManagement} onExtract={handleExtract} onReconciliation={handleReconciliation} />;
       case 'send':
         return <SendMoneyScreen onBack={handleBackToDashboard} onConfirm={handleSendConfirm} onScanQR={handleScanQR} />;
       case 'send-confirmation':
@@ -337,6 +340,8 @@ const Index = () => {
         return <WithdrawScreen onBack={handleBackToDashboard} onContinueAgent={handleWithdrawAgent} onContinueBank={handleWithdrawBank} />;
       case 'topup':
         return <TopUpScreen onBack={handleBackToDashboard} />;
+      case 'reconciliation':
+        return <ReconciliationScreen onBack={handleBackToDashboard} />;
       case 'merchant-login':
         return <MerchantLoginScreen onLoginSuccess={handleLoginSuccess} />;
       case 'merchant-dashboard':
