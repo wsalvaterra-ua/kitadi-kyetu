@@ -1,10 +1,11 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Receipt, Calendar, DollarSign, Search, FileText, Check, X, AlertCircle } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { ArrowLeft, Receipt, Calendar, DollarSign, Search, FileText, Check, X, AlertCircle, Plus, Banknote, CreditCard } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface ReconciliationScreenProps {
@@ -14,12 +15,23 @@ interface ReconciliationScreenProps {
 const ReconciliationScreen = ({ onBack }: ReconciliationScreenProps) => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [searchTerm, setSearchTerm] = useState('');
+  
+  // Form state for manual transaction entry
+  const [transactionForm, setTransactionForm] = useState({
+    depositId: '',
+    bank: '',
+    value: '',
+    operationType: 'deposit' // 'deposit' or 'cash'
+  });
+
   const [reconciliationData] = useState({
     totalTransactions: 147,
     totalAmount: 2456780,
     reconciled: 145,
     pending: 2,
-    discrepancies: 0
+    discrepancies: 0,
+    expectedCash: 1850000,
+    reconciledCash: 1650000
   });
 
   const [transactions] = useState([
@@ -126,6 +138,20 @@ const ReconciliationScreen = ({ onBack }: ReconciliationScreenProps) => {
     return `${Math.abs(amount).toLocaleString()} Db`;
   };
 
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Submitting manual transaction:', transactionForm);
+    // Here you would implement the transaction submission logic
+    
+    // Reset form after submission
+    setTransactionForm({
+      depositId: '',
+      bank: '',
+      value: '',
+      operationType: 'deposit'
+    });
+  };
+
   const handleReconcileAll = () => {
     console.log('Reconciling all pending transactions');
     // Here you would implement the reconciliation logic
@@ -135,6 +161,8 @@ const ReconciliationScreen = ({ onBack }: ReconciliationScreenProps) => {
     console.log('Exporting reconciliation report');
     // Here you would implement the export functionality
   };
+
+  const cashDifference = reconciliationData.expectedCash - reconciliationData.reconciledCash;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -154,6 +182,154 @@ const ReconciliationScreen = ({ onBack }: ReconciliationScreenProps) => {
       </div>
 
       <div className="px-6 py-6 space-y-6">
+        {/* Date Selection and Cash Summary */}
+        <Card className="border-0 shadow-lg">
+          <CardContent className="p-4 space-y-4">
+            <div className="grid grid-cols-1 gap-4">
+              <div>
+                <Label className="block text-sm font-medium text-gray-700 mb-2">
+                  Data da Reconciliação
+                </Label>
+                <Input
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  className="w-full"
+                />
+              </div>
+            </div>
+
+            {/* Cash Summary */}
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="font-semibold text-kitadi-navy mb-3">Resumo de Caixa</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="text-center">
+                  <div className="text-lg font-bold text-blue-600">
+                    {formatCurrency(reconciliationData.expectedCash)}
+                  </div>
+                  <div className="text-sm text-gray-600">Caixa Esperado</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-lg font-bold text-green-600">
+                    {formatCurrency(reconciliationData.reconciledCash)}
+                  </div>
+                  <div className="text-sm text-gray-600">Caixa Reconciliado</div>
+                </div>
+              </div>
+              <div className="mt-3 pt-3 border-t border-gray-200">
+                <div className="text-center">
+                  <div className={`text-lg font-bold ${
+                    cashDifference === 0 ? 'text-green-600' : 
+                    cashDifference > 0 ? 'text-red-600' : 'text-blue-600'
+                  }`}>
+                    {cashDifference === 0 ? '0 Db' : 
+                     `${cashDifference > 0 ? '+' : ''}${formatCurrency(cashDifference)}`}
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    {cashDifference === 0 ? 'Reconciliado' : 'Diferença'}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Manual Transaction Entry */}
+        <Card className="border-0 shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-kitadi-navy flex items-center">
+              <Plus className="w-5 h-5 mr-2" />
+              Adicionar Transação Manual
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleFormSubmit} className="space-y-4">
+              {/* Operation Type Selection */}
+              <div>
+                <Label className="block text-sm font-medium text-gray-700 mb-2">
+                  Tipo de Operação
+                </Label>
+                <RadioGroup
+                  value={transactionForm.operationType}
+                  onValueChange={(value) => setTransactionForm({...transactionForm, operationType: value})}
+                  className="flex space-x-6"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="deposit" id="deposit" />
+                    <Label htmlFor="deposit" className="flex items-center">
+                      <CreditCard className="w-4 h-4 mr-1" />
+                      Depósito
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="cash" id="cash" />
+                    <Label htmlFor="cash" className="flex items-center">
+                      <Banknote className="w-4 h-4 mr-1" />
+                      Dinheiro
+                    </Label>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              {/* Conditional Fields */}
+              {transactionForm.operationType === 'deposit' && (
+                <>
+                  <div>
+                    <Label htmlFor="depositId" className="block text-sm font-medium text-gray-700 mb-2">
+                      ID do Depósito
+                    </Label>
+                    <Input
+                      id="depositId"
+                      type="text"
+                      placeholder="Ex: DEP-2024-001"
+                      value={transactionForm.depositId}
+                      onChange={(e) => setTransactionForm({...transactionForm, depositId: e.target.value})}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="bank" className="block text-sm font-medium text-gray-700 mb-2">
+                      Banco
+                    </Label>
+                    <Input
+                      id="bank"
+                      type="text"
+                      placeholder="Nome do banco"
+                      value={transactionForm.bank}
+                      onChange={(e) => setTransactionForm({...transactionForm, bank: e.target.value})}
+                      required
+                    />
+                  </div>
+                </>
+              )}
+
+              <div>
+                <Label htmlFor="value" className="block text-sm font-medium text-gray-700 mb-2">
+                  Valor da Transação (Db)
+                </Label>
+                <Input
+                  id="value"
+                  type="number"
+                  placeholder="0"
+                  value={transactionForm.value}
+                  onChange={(e) => setTransactionForm({...transactionForm, value: e.target.value})}
+                  required
+                  min="0"
+                  step="0.01"
+                />
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full bg-kitadi-orange hover:bg-kitadi-orange/90 text-white"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Adicionar Transação
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+
         {/* Summary Cards */}
         <div className="grid grid-cols-2 gap-4">
           <Card className="border-0 shadow-lg">
@@ -201,35 +377,22 @@ const ReconciliationScreen = ({ onBack }: ReconciliationScreenProps) => {
           </Card>
         </div>
 
-        {/* Date and Search Controls */}
+        {/* Search and Actions */}
         <Card className="border-0 shadow-lg">
           <CardContent className="p-4 space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Data
-                </label>
+            <div>
+              <Label className="block text-sm font-medium text-gray-700 mb-2">
+                Pesquisar Transações
+              </Label>
+              <div className="relative">
+                <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
                 <Input
-                  type="date"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  className="w-full"
+                  type="text"
+                  placeholder="Cliente ou referência"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
                 />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Pesquisar
-                </label>
-                <div className="relative">
-                  <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                  <Input
-                    type="text"
-                    placeholder="Cliente ou referência"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
               </div>
             </div>
 
