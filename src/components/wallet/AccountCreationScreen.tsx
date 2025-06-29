@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -5,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, User, Building, Link, Phone } from 'lucide-react';
+import { ArrowLeft, User, Building, Link, Phone, Upload, FileImage } from 'lucide-react';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 
@@ -17,6 +18,8 @@ const AccountCreationScreen = ({ onBack }: AccountCreationScreenProps) => {
   const [userPhoneNumber, setUserPhoneNumber] = useState('');
   const [showTabs, setShowTabs] = useState(false);
   const [activeTab, setActiveTab] = useState('personal');
+  const [documentFrontFile, setDocumentFrontFile] = useState<File | null>(null);
+  const [documentBackFile, setDocumentBackFile] = useState<File | null>(null);
 
   // Personal account form
   const personalForm = useForm({
@@ -100,11 +103,30 @@ const AccountCreationScreen = ({ onBack }: AccountCreationScreenProps) => {
     setShowTabs(false);
     setUserPhoneNumber('');
     setAssociationForm({...associationForm, phoneNumber: ''});
+    // Clear document files
+    setDocumentFrontFile(null);
+    setDocumentBackFile(null);
+  };
+
+  const handleDocumentFrontUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setDocumentFrontFile(file);
+    }
+  };
+
+  const handleDocumentBackUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setDocumentBackFile(file);
+    }
   };
 
   const handlePersonalSubmit = (data: any) => {
     console.log('Creating personal account for:', userPhoneNumber, data);
-    // Here you would typically send to your backend
+    console.log('Document front file:', documentFrontFile);
+    console.log('Document back file:', documentBackFile);
+    // Here you would typically send to your backend including the document files
   };
 
   const handleBusinessSubmit = (data: any) => {
@@ -333,6 +355,72 @@ const AccountCreationScreen = ({ onBack }: AccountCreationScreenProps) => {
                               </FormItem>
                             )}
                           />
+                        </div>
+
+                        {/* Document Upload Section */}
+                        <div className="space-y-4 mt-6 p-4 bg-gray-50 rounded-lg">
+                          <h3 className="font-semibold text-gray-900 flex items-center space-x-2">
+                            <FileImage className="w-5 h-5" />
+                            <span>Documentos de Identificação</span>
+                          </h3>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {/* Document Front */}
+                            <div className="space-y-2">
+                              <Label htmlFor="documentFront">Frente do Documento</Label>
+                              <div className="relative">
+                                <Input
+                                  id="documentFront"
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={handleDocumentFrontUpload}
+                                  className="hidden"
+                                />
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  onClick={() => document.getElementById('documentFront')?.click()}
+                                  className="w-full h-24 border-2 border-dashed border-gray-300 hover:border-gray-400 flex flex-col items-center justify-center space-y-2"
+                                >
+                                  <Upload className="w-6 h-6 text-gray-500" />
+                                  <span className="text-sm text-gray-600">
+                                    {documentFrontFile ? documentFrontFile.name : 'Carregar Frente'}
+                                  </span>
+                                </Button>
+                              </div>
+                            </div>
+
+                            {/* Document Back */}
+                            <div className="space-y-2">
+                              <Label htmlFor="documentBack">Verso do Documento</Label>
+                              <div className="relative">
+                                <Input
+                                  id="documentBack"
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={handleDocumentBackUpload}
+                                  className="hidden"
+                                />
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  onClick={() => document.getElementById('documentBack')?.click()}
+                                  className="w-full h-24 border-2 border-dashed border-gray-300 hover:border-gray-400 flex flex-col items-center justify-center space-y-2"
+                                >
+                                  <Upload className="w-6 h-6 text-gray-500" />
+                                  <span className="text-sm text-gray-600">
+                                    {documentBackFile ? documentBackFile.name : 'Carregar Verso'}
+                                  </span>
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="text-xs text-gray-600 mt-2">
+                            <p>• Formatos aceites: JPG, PNG, PDF</p>
+                            <p>• Tamanho máximo: 5MB por ficheiro</p>
+                            <p>• Certifique-se de que o documento está legível</p>
+                          </div>
                         </div>
 
                         <Button type="submit" className="w-full bg-kitadi-orange hover:bg-kitadi-orange/90">
