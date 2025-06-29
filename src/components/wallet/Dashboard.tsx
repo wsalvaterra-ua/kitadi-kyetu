@@ -19,7 +19,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { NotificationSettingsScreen } from '../merchant/NotificationSettingsScreen';
+import { NotificationSettingsDialog } from '../merchant/NotificationSettingsDialog';
 
 interface DashboardProps {
   onSend?: () => void;
@@ -52,6 +52,7 @@ const Dashboard = ({
 }: DashboardProps) => {
   const [showBalance, setShowBalance] = useState(true);
   const [currentAccount, setCurrentAccount] = useState('personal');
+  const [showNotificationDialog, setShowNotificationDialog] = useState(false);
 
   const accounts = [
     { 
@@ -113,6 +114,11 @@ const Dashboard = ({
 
   const activeAccount = accounts.find(acc => acc.id === currentAccount) || accounts[0];
 
+  const handleNotificationSettings = () => {
+    console.log('Opening notification settings dialog');
+    setShowNotificationDialog(true);
+  };
+
   // Base quick actions for personal accounts
   const baseQuickActions = [
     { icon: Send, label: 'Enviar', color: 'bg-blue-500', onClick: onSend },
@@ -126,7 +132,7 @@ const Dashboard = ({
     { icon: Smartphone, label: 'Receber\nPagamento', color: 'bg-purple-500', onClick: onCodeInput },
     { icon: Users, label: 'Gerir\nUtilizadores', color: 'bg-indigo-500', onClick: onUserManagement },
     { icon: FileText, label: 'Extrato\nCSV', color: 'bg-teal-500', onClick: onExtract },
-    { icon: Bell, label: 'Receber\nNotificações', color: 'bg-orange-500', onClick: onNotificationSettings },
+    { icon: Bell, label: 'Receber\nNotificações', color: 'bg-orange-500', onClick: handleNotificationSettings },
   ];
 
   // Agent specific actions
@@ -136,7 +142,7 @@ const Dashboard = ({
     { icon: Receipt, label: 'Reconciliação', color: 'bg-amber-500', onClick: onReconciliation },
     { icon: Users, label: 'Criar\nContas', color: 'bg-green-500', onClick: onAccountCreation },
     { icon: FileText, label: 'Extrato\nCSV', color: 'bg-teal-500', onClick: onExtract },
-    { icon: Bell, label: 'Receber\nNotificações', color: 'bg-orange-500', onClick: onNotificationSettings },
+    { icon: Bell, label: 'Receber\nNotificações', color: 'bg-orange-500', onClick: handleNotificationSettings },
   ];
 
   // Unverified account actions
@@ -156,7 +162,7 @@ const Dashboard = ({
       // Only show extract, notifications and dissociate for associated business accounts
       return [
         { icon: FileText, label: 'Extrato\nCSV', color: 'bg-teal-500', onClick: onExtract },
-        { icon: Bell, label: 'Receber\nNotificações', color: 'bg-orange-500', onClick: onNotificationSettings },
+        { icon: Bell, label: 'Receber\nNotificações', color: 'bg-orange-500', onClick: handleNotificationSettings },
         { icon: Unlink, label: 'Dissociar', color: 'bg-red-500', onClick: () => handleDissociate(activeAccount.id) }
       ];
     }
@@ -599,6 +605,12 @@ const Dashboard = ({
           </Card>
         </div>
       )}
+
+      {/* Notification Settings Dialog */}
+      <NotificationSettingsDialog 
+        open={showNotificationDialog} 
+        onOpenChange={setShowNotificationDialog}
+      />
 
       {/* Bottom spacing for mobile */}
       <div className="h-24" />
