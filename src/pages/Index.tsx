@@ -24,8 +24,9 @@ import IdVerificationIntroScreen from '@/components/wallet/IdVerificationIntroSc
 import DocumentSelectionScreen from '@/components/wallet/DocumentSelectionScreen';
 import ReconciliationScreen from '@/components/wallet/ReconciliationScreen';
 import AddReconciliationScreen from '@/components/wallet/AddReconciliationScreen';
+import AccountCreationScreen from '@/components/wallet/AccountCreationScreen';
 
-type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation' | 'add-reconciliation';
+type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation' | 'add-reconciliation' | 'account-creation';
 
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('onboarding');
@@ -260,6 +261,10 @@ const Index = () => {
     setCurrentScreen('dashboard');
   };
 
+  const handleAccountCreation = () => {
+    setCurrentScreen('account-creation');
+  };
+
   const renderScreen = () => {
     console.log('Current screen:', currentScreen);
     console.log('Send data:', sendData);
@@ -305,7 +310,7 @@ const Index = () => {
           />
         );
       case 'dashboard':
-        return <Dashboard onSend={handleSend} onPay={handlePay} onTopUp={handleTopUp} onWithdraw={handleWithdraw} onTransactionClick={handleTransactionClick} onCodeInput={handleCodeInput} onUserManagement={handleUserManagement} onExtract={handleExtract} onReconciliation={handleReconciliation} />;
+        return <Dashboard onSend={handleSend} onPay={handlePay} onTopUp={handleTopUp} onWithdraw={handleWithdraw} onTransactionClick={handleTransactionClick} onCodeInput={handleCodeInput} onUserManagement={handleUserManagement} onExtract={handleExtract} onReconciliation={handleReconciliation} onAccountCreation={handleAccountCreation} />;
       case 'send':
         return <SendMoneyScreen onBack={handleBackToDashboard} onConfirm={handleSendConfirm} onScanQR={handleScanQR} />;
       case 'send-confirmation':
@@ -372,6 +377,8 @@ const Index = () => {
         return <UserManagementScreen onBack={handleBackToDashboard} />;
       case 'extract':
         return <ExtractScreen onBack={handleBackToDashboard} />;
+      case 'account-creation':
+        return <AccountCreationScreen onBack={handleBackToDashboard} />;
       default:
         return <OnboardingScreen onComplete={handleOnboardingComplete} />;
     }

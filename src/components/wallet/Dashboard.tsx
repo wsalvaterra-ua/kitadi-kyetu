@@ -33,6 +33,7 @@ interface DashboardProps {
   onNotificationSettings?: () => void;
   onVerifyAccount?: () => void;
   onReconciliation?: () => void;
+  onAccountCreation?: () => void;
 }
 
 const Dashboard = ({ 
@@ -46,7 +47,8 @@ const Dashboard = ({
   onExtract,
   onNotificationSettings,
   onVerifyAccount,
-  onReconciliation
+  onReconciliation,
+  onAccountCreation
 }: DashboardProps) => {
   const [showBalance, setShowBalance] = useState(true);
   const [currentAccount, setCurrentAccount] = useState('personal');
@@ -132,6 +134,7 @@ const Dashboard = ({
     { icon: Send, label: 'Enviar\nDinheiro', color: 'bg-blue-500', onClick: onSend },
     { icon: Smartphone, label: 'Receber\nPagamento', color: 'bg-purple-500', onClick: onCodeInput },
     { icon: Receipt, label: 'Reconciliação', color: 'bg-amber-500', onClick: onReconciliation },
+    { icon: Users, label: 'Criar\nContas', color: 'bg-green-500', onClick: onAccountCreation },
     { icon: FileText, label: 'Extrato\nCSV', color: 'bg-teal-500', onClick: onExtract },
     { icon: Bell, label: 'Receber\nNotificações', color: 'bg-orange-500', onClick: onNotificationSettings },
   ];
