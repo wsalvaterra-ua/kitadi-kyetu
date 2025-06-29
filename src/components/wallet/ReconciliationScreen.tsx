@@ -1,35 +1,20 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { ArrowLeft, Receipt, Calendar, DollarSign, Search, FileText, Check, X, AlertCircle, Plus, Banknote, CreditCard } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ArrowLeft, Receipt, DollarSign, Check, X, AlertCircle, Plus } from 'lucide-react';
 
 interface ReconciliationScreenProps {
   onBack: () => void;
+  onAddRecord: () => void;
 }
 
-const ReconciliationScreen = ({ onBack }: ReconciliationScreenProps) => {
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-  const [searchTerm, setSearchTerm] = useState('');
+const ReconciliationScreen = ({ onBack, onAddRecord }: ReconciliationScreenProps) => {
+  const [selectedDate, setSelectedDate] = useState('');
   
-  // Form state for manual transaction entry
-  const [transactionForm, setTransactionForm] = useState({
-    depositId: '',
-    bank: '',
-    value: '',
-    operationType: 'deposit' // 'deposit' or 'cash'
-  });
-
   const [reconciliationData] = useState({
-    totalTransactions: 147,
-    totalAmount: 2456780,
-    reconciled: 145,
-    pending: 2,
-    discrepancies: 0,
     expectedCash: 1850000,
     reconciledCash: 1650000
   });
@@ -87,6 +72,21 @@ const ReconciliationScreen = ({ onBack }: ReconciliationScreenProps) => {
     }
   ]);
 
+  // Generate date options (last 30 days)
+  const dateOptions = Array.from({ length: 30 }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    return {
+      value: date.toISOString().split('T')[0],
+      label: date.toLocaleDateString('pt-BR', { 
+        weekday: 'short', 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+      })
+    };
+  });
+
   const getTransactionTypeLabel = (type: string) => {
     switch (type) {
       case 'cash_in': return 'Depósito';
@@ -129,37 +129,8 @@ const ReconciliationScreen = ({ onBack }: ReconciliationScreenProps) => {
     }
   };
 
-  const filteredTransactions = transactions.filter(transaction =>
-    transaction.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    transaction.reference.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   const formatCurrency = (amount: number) => {
     return `${Math.abs(amount).toLocaleString()} Db`;
-  };
-
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Submitting manual transaction:', transactionForm);
-    // Here you would implement the transaction submission logic
-    
-    // Reset form after submission
-    setTransactionForm({
-      depositId: '',
-      bank: '',
-      value: '',
-      operationType: 'deposit'
-    });
-  };
-
-  const handleReconcileAll = () => {
-    console.log('Reconciling all pending transactions');
-    // Here you would implement the reconciliation logic
-  };
-
-  const handleExportReport = () => {
-    console.log('Exporting reconciliation report');
-    // Here you would implement the export functionality
   };
 
   const cashDifference = reconciliationData.expectedCash - reconciliationData.reconciledCash;
@@ -168,249 +139,84 @@ const ReconciliationScreen = ({ onBack }: ReconciliationScreenProps) => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-kitadi-navy pt-16 pb-6">
-        <div className="px-6 flex items-center space-x-4">
+        <div className="px-6 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onBack}
+              className="text-white hover:bg-white/20"
+            >
+              <ArrowLeft className="w-6 h-6" />
+            </Button>
+            <h1 className="text-white text-xl font-semibold">Reconciliação</h1>
+          </div>
           <Button
-            variant="ghost"
-            size="icon"
-            onClick={onBack}
-            className="text-white hover:bg-white/20"
+            onClick={onAddRecord}
+            size="sm"
+            className="bg-kitadi-orange hover:bg-kitadi-orange/90 text-white"
           >
-            <ArrowLeft className="w-6 h-6" />
+            <Plus className="w-4 h-4 mr-2" />
+            Adicionar
           </Button>
-          <h1 className="text-white text-xl font-semibold">Reconciliação</h1>
         </div>
       </div>
 
       <div className="px-6 py-6 space-y-6">
-        {/* Date Selection and Cash Summary */}
+        {/* Date Selection */}
         <Card className="border-0 shadow-lg">
-          <CardContent className="p-4 space-y-4">
-            <div className="grid grid-cols-1 gap-4">
-              <div>
-                <Label className="block text-sm font-medium text-gray-700 mb-2">
-                  Data da Reconciliação
-                </Label>
-                <Input
-                  type="date"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  className="w-full"
-                />
-              </div>
-            </div>
-
-            {/* Cash Summary */}
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h3 className="font-semibold text-kitadi-navy mb-3">Resumo de Caixa</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center">
-                  <div className="text-lg font-bold text-blue-600">
-                    {formatCurrency(reconciliationData.expectedCash)}
-                  </div>
-                  <div className="text-sm text-gray-600">Caixa Esperado</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-lg font-bold text-green-600">
-                    {formatCurrency(reconciliationData.reconciledCash)}
-                  </div>
-                  <div className="text-sm text-gray-600">Caixa Reconciliado</div>
-                </div>
-              </div>
-              <div className="mt-3 pt-3 border-t border-gray-200">
-                <div className="text-center">
-                  <div className={`text-lg font-bold ${
-                    cashDifference === 0 ? 'text-green-600' : 
-                    cashDifference > 0 ? 'text-red-600' : 'text-blue-600'
-                  }`}>
-                    {cashDifference === 0 ? '0 Db' : 
-                     `${cashDifference > 0 ? '+' : ''}${formatCurrency(cashDifference)}`}
-                  </div>
-                  <div className="text-sm text-gray-600">
-                    {cashDifference === 0 ? 'Reconciliado' : 'Diferença'}
-                  </div>
-                </div>
-              </div>
+          <CardContent className="p-4">
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Data da Reconciliação
+              </label>
+              <Select value={selectedDate} onValueChange={setSelectedDate}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Selecionar data" />
+                </SelectTrigger>
+                <SelectContent>
+                  {dateOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </CardContent>
         </Card>
 
-        {/* Manual Transaction Entry */}
+        {/* Cash Summary */}
         <Card className="border-0 shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-kitadi-navy flex items-center">
-              <Plus className="w-5 h-5 mr-2" />
-              Adicionar Transação Manual
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleFormSubmit} className="space-y-4">
-              {/* Operation Type Selection */}
-              <div>
-                <Label className="block text-sm font-medium text-gray-700 mb-2">
-                  Tipo de Operação
-                </Label>
-                <RadioGroup
-                  value={transactionForm.operationType}
-                  onValueChange={(value) => setTransactionForm({...transactionForm, operationType: value})}
-                  className="flex space-x-6"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="deposit" id="deposit" />
-                    <Label htmlFor="deposit" className="flex items-center">
-                      <CreditCard className="w-4 h-4 mr-1" />
-                      Depósito
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="cash" id="cash" />
-                    <Label htmlFor="cash" className="flex items-center">
-                      <Banknote className="w-4 h-4 mr-1" />
-                      Dinheiro
-                    </Label>
-                  </div>
-                </RadioGroup>
-              </div>
-
-              {/* Conditional Fields */}
-              {transactionForm.operationType === 'deposit' && (
-                <>
-                  <div>
-                    <Label htmlFor="depositId" className="block text-sm font-medium text-gray-700 mb-2">
-                      ID do Depósito
-                    </Label>
-                    <Input
-                      id="depositId"
-                      type="text"
-                      placeholder="Ex: DEP-2024-001"
-                      value={transactionForm.depositId}
-                      onChange={(e) => setTransactionForm({...transactionForm, depositId: e.target.value})}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="bank" className="block text-sm font-medium text-gray-700 mb-2">
-                      Banco
-                    </Label>
-                    <Input
-                      id="bank"
-                      type="text"
-                      placeholder="Nome do banco"
-                      value={transactionForm.bank}
-                      onChange={(e) => setTransactionForm({...transactionForm, bank: e.target.value})}
-                      required
-                    />
-                  </div>
-                </>
-              )}
-
-              <div>
-                <Label htmlFor="value" className="block text-sm font-medium text-gray-700 mb-2">
-                  Valor da Transação (Db)
-                </Label>
-                <Input
-                  id="value"
-                  type="number"
-                  placeholder="0"
-                  value={transactionForm.value}
-                  onChange={(e) => setTransactionForm({...transactionForm, value: e.target.value})}
-                  required
-                  min="0"
-                  step="0.01"
-                />
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full bg-kitadi-orange hover:bg-kitadi-orange/90 text-white"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Adicionar Transação
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-
-        {/* Summary Cards */}
-        <div className="grid grid-cols-2 gap-4">
-          <Card className="border-0 shadow-lg">
-            <CardContent className="p-4">
+          <CardContent className="p-4">
+            <h3 className="font-semibold text-kitadi-navy mb-3">Resumo de Caixa</h3>
+            <div className="grid grid-cols-2 gap-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-kitadi-navy">
-                  {reconciliationData.totalTransactions}
+                <div className="text-lg font-bold text-blue-600">
+                  {formatCurrency(reconciliationData.expectedCash)}
                 </div>
-                <div className="text-sm text-gray-600">Total Transações</div>
+                <div className="text-sm text-gray-600">Caixa Esperado</div>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-0 shadow-lg">
-            <CardContent className="p-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-kitadi-navy">
-                  {formatCurrency(reconciliationData.totalAmount)}
+                <div className="text-lg font-bold text-green-600">
+                  {formatCurrency(reconciliationData.reconciledCash)}
                 </div>
-                <div className="text-sm text-gray-600">Valor Total</div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-0 shadow-lg">
-            <CardContent className="p-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">
-                  {reconciliationData.reconciled}
-                </div>
-                <div className="text-sm text-gray-600">Reconciliadas</div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-0 shadow-lg">
-            <CardContent className="p-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-yellow-600">
-                  {reconciliationData.pending}
-                </div>
-                <div className="text-sm text-gray-600">Pendentes</div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Search and Actions */}
-        <Card className="border-0 shadow-lg">
-          <CardContent className="p-4 space-y-4">
-            <div>
-              <Label className="block text-sm font-medium text-gray-700 mb-2">
-                Pesquisar Transações
-              </Label>
-              <div className="relative">
-                <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                <Input
-                  type="text"
-                  placeholder="Cliente ou referência"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
+                <div className="text-sm text-gray-600">Caixa Reconciliado</div>
               </div>
             </div>
-
-            <div className="flex space-x-2">
-              <Button
-                onClick={handleReconcileAll}
-                className="flex-1 bg-kitadi-orange hover:bg-kitadi-orange/90 text-white"
-              >
-                Reconciliar Tudo
-              </Button>
-              <Button
-                onClick={handleExportReport}
-                variant="outline"
-                className="flex-1 border-kitadi-navy text-kitadi-navy"
-              >
-                <FileText className="w-4 h-4 mr-2" />
-                Exportar
-              </Button>
+            <div className="mt-3 pt-3 border-t border-gray-200">
+              <div className="text-center">
+                <div className={`text-lg font-bold ${
+                  cashDifference === 0 ? 'text-green-600' : 
+                  cashDifference > 0 ? 'text-red-600' : 'text-blue-600'
+                }`}>
+                  {cashDifference === 0 ? '0 Db' : 
+                   `${cashDifference > 0 ? '+' : ''}${formatCurrency(cashDifference)}`}
+                </div>
+                <div className="text-sm text-gray-600">
+                  {cashDifference === 0 ? 'Reconciliado' : 'Diferença'}
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -421,10 +227,10 @@ const ReconciliationScreen = ({ onBack }: ReconciliationScreenProps) => {
             <CardTitle className="text-kitadi-navy">Transações do Dia</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            {filteredTransactions.map((transaction, index) => (
+            {transactions.map((transaction, index) => (
               <div
                 key={transaction.id}
-                className={`p-4 ${index !== filteredTransactions.length - 1 ? 'border-b border-gray-100' : ''}`}
+                className={`p-4 ${index !== transactions.length - 1 ? 'border-b border-gray-100' : ''}`}
               >
                 <div className="flex justify-between items-start">
                   <div className="flex items-center space-x-3 flex-1">
