@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import OnboardingScreen from '@/components/wallet/OnboardingScreen';
@@ -24,8 +23,9 @@ import SmsVerificationScreen from '@/components/wallet/SmsVerificationScreen';
 import IdVerificationIntroScreen from '@/components/wallet/IdVerificationIntroScreen';
 import DocumentSelectionScreen from '@/components/wallet/DocumentSelectionScreen';
 import ReconciliationScreen from '@/components/wallet/ReconciliationScreen';
+import AddReconciliationScreen from '@/components/wallet/AddReconciliationScreen';
 
-type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation';
+type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation' | 'add-reconciliation';
 
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('onboarding');
@@ -154,6 +154,8 @@ const Index = () => {
   const handleTopUp = () => setCurrentScreen('topup');
   const handleWithdraw = () => setCurrentScreen('withdraw');
   const handleReconciliation = () => setCurrentScreen('reconciliation');
+
+  const handleAddReconciliation = () => setCurrentScreen('add-reconciliation');
 
   const handleSendConfirm = (accountNumber: string, amount: number) => {
     console.log('Setting send data:', { accountNumber, amount });
@@ -341,7 +343,9 @@ const Index = () => {
       case 'topup':
         return <TopUpScreen onBack={handleBackToDashboard} />;
       case 'reconciliation':
-        return <ReconciliationScreen onBack={handleBackToDashboard} />;
+        return <ReconciliationScreen onBack={handleBackToDashboard} onAddRecord={handleAddReconciliation} />;
+      case 'add-reconciliation':
+        return <AddReconciliationScreen onBack={() => setCurrentScreen('reconciliation')} />;
       case 'merchant-login':
         return <MerchantLoginScreen onLoginSuccess={handleLoginSuccess} />;
       case 'merchant-dashboard':
