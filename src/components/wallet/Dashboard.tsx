@@ -300,7 +300,7 @@ const Dashboard = ({
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div 
-        className="bg-kitadi-navy px-6 pt-16 pb-8 bg-cover bg-center bg-no-repeat relative"
+        className="bg-kitadi-navy px-6 pt-4 pb-8 bg-cover bg-center bg-no-repeat relative"
         style={{
           backgroundImage: `url('/lovable-uploads/2ac0f969-7525-4b47-89c8-2e3e615c3de1.png')`,
           backgroundBlendMode: 'overlay'
@@ -311,11 +311,11 @@ const Dashboard = ({
         
         <div className="relative z-10">
           {/* Kitadi Logo */}
-          <div className="flex justify-center mb-4">
+          <div className="flex justify-center mb-2">
             <img 
               src="/lovable-uploads/eaf20c9f-d9d2-4df9-a59b-9270a930044e.png" 
               alt="Kitadi Logo" 
-              className="h-8 w-auto"
+              className="h-6 w-auto"
             />
           </div>
           
