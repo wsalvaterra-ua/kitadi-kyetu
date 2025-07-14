@@ -387,15 +387,21 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-md mx-auto bg-white min-h-screen shadow-lg">
-        {/* App Logo Header */}
-        <div className="flex justify-center pt-4 pb-2 bg-white">
-          <img 
-            src="/lovable-uploads/eaf20c9f-d9d2-4df9-a59b-9270a930044e.png" 
-            alt="Kitadi Logo" 
-            className="h-10 w-auto"
-          />
+        {/* Persistent App Logo Header */}
+        <div className="fixed top-0 left-1/2 transform -translate-x-1/2 max-w-md w-full bg-white z-50 shadow-sm">
+          <div className="flex justify-center py-3 px-4">
+            <img 
+              src="/lovable-uploads/eaf20c9f-d9d2-4df9-a59b-9270a930044e.png" 
+              alt="Kitadi Logo" 
+              className="h-8 w-auto"
+            />
+          </div>
         </div>
-        {renderScreen()}
+        
+        {/* Content with top padding to account for fixed header */}
+        <div className="pt-14">
+          {renderScreen()}
+        </div>
       </div>
     </div>
   );
