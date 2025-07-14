@@ -25,8 +25,12 @@ import DocumentSelectionScreen from '@/components/wallet/DocumentSelectionScreen
 import ReconciliationScreen from '@/components/wallet/ReconciliationScreen';
 import AddReconciliationScreen from '@/components/wallet/AddReconciliationScreen';
 import AccountCreationScreen from '@/components/wallet/AccountCreationScreen';
+import WebLoginScreen from '@/components/web/WebLoginScreen';
+import WebDashboard from '@/components/web/WebDashboard';
+import WebTransactionsScreen from '@/components/web/WebTransactionsScreen';
+import WebExtractScreen from '@/components/web/WebExtractScreen';
 
-type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation' | 'add-reconciliation' | 'account-creation';
+type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation' | 'add-reconciliation' | 'account-creation' | 'web-login' | 'web-dashboard' | 'web-transactions' | 'web-extract';
 
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('onboarding');
@@ -44,6 +48,10 @@ const Index = () => {
 
   // Registration state
   const [registrationPhoneNumber, setRegistrationPhoneNumber] = useState('');
+
+  // Web version state
+  const [isWebVersion, setIsWebVersion] = useState(false);
+  const [webUserType, setWebUserType] = useState<'user' | 'merchant'>('user');
 
   // Mock transaction data - in a real app, this would come from your backend
   const mockTransactions = {
@@ -126,6 +134,37 @@ const Index = () => {
 
   const handleOnboardingComplete = () => {
     setCurrentScreen('login');
+  };
+
+  const handleWebVersion = () => {
+    setIsWebVersion(true);
+    setCurrentScreen('web-login');
+  };
+
+  const handleWebLogin = (userType: 'user' | 'merchant') => {
+    setWebUserType(userType);
+    setIsAuthenticated(true);
+    setIsMerchant(userType === 'merchant');
+    setCurrentScreen('web-dashboard');
+  };
+
+  const handleWebLogout = () => {
+    setIsAuthenticated(false);
+    setIsMerchant(false);
+    setIsWebVersion(false);
+    setCurrentScreen('onboarding');
+  };
+
+  const handleWebTransactions = () => {
+    setCurrentScreen('web-transactions');
+  };
+
+  const handleWebExtract = () => {
+    setCurrentScreen('web-extract');
+  };
+
+  const handleWebBack = () => {
+    setCurrentScreen('web-dashboard');
   };
 
   const handleLoginSuccess = () => {
@@ -272,7 +311,7 @@ const Index = () => {
 
     switch (currentScreen) {
       case 'onboarding':
-        return <OnboardingScreen onComplete={handleOnboardingComplete} />;
+        return <OnboardingScreen onComplete={handleOnboardingComplete} onWebVersion={handleWebVersion} />;
       case 'login':
         return (
           <LoginScreen 
@@ -379,14 +418,47 @@ const Index = () => {
         return <ExtractScreen onBack={handleBackToDashboard} />;
       case 'account-creation':
         return <AccountCreationScreen onBack={handleBackToDashboard} />;
+      case 'web-login':
+        return (
+          <WebLoginScreen 
+            onLoginSuccess={handleWebLogin}
+            onBack={() => {
+              setIsWebVersion(false);
+              setCurrentScreen('onboarding');
+            }}
+          />
+        );
+      case 'web-dashboard':
+        return (
+          <WebDashboard 
+            userType={webUserType}
+            onLogout={handleWebLogout}
+            onViewTransactions={handleWebTransactions}
+            onDownloadExtract={handleWebExtract}
+          />
+        );
+      case 'web-transactions':
+        return (
+          <WebTransactionsScreen 
+            userType={webUserType}
+            onBack={handleWebBack}
+          />
+        );
+      case 'web-extract':
+        return (
+          <WebExtractScreen 
+            userType={webUserType}
+            onBack={handleWebBack}
+          />
+        );
       default:
-        return <OnboardingScreen onComplete={handleOnboardingComplete} />;
+        return <OnboardingScreen onComplete={handleOnboardingComplete} onWebVersion={handleWebVersion} />;
     }
   };
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-md mx-auto bg-white min-h-screen shadow-lg">
+      <div className={`${isWebVersion ? 'max-w-6xl' : 'max-w-md'} mx-auto bg-white min-h-screen ${isWebVersion ? '' : 'shadow-lg'}`}>
         {renderScreen()}
       </div>
     </div>

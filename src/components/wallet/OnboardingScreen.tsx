@@ -5,9 +5,10 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface OnboardingScreenProps {
   onComplete: () => void;
+  onWebVersion: () => void;
 }
 
-const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
+const OnboardingScreen = ({ onComplete, onWebVersion }: OnboardingScreenProps) => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const slides = [
@@ -93,6 +94,17 @@ const OnboardingScreen = ({ onComplete }: OnboardingScreenProps) => {
           >
             {currentSlide === slides.length - 1 ? 'Começar' : 'Próximo'}
             <ChevronRight className="w-4 h-4 ml-2" />
+          </Button>
+        </div>
+        
+        {/* Web Version Link */}
+        <div className="text-center">
+          <Button
+            variant="ghost"
+            onClick={onWebVersion}
+            className="text-white/70 hover:text-white hover:bg-white/10 text-sm underline"
+          >
+            Acessar Versão Web
           </Button>
         </div>
       </div>
