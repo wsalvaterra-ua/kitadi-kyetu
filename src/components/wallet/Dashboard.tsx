@@ -310,6 +310,15 @@ const Dashboard = ({
         <div className="absolute inset-0 bg-kitadi-navy-overlay"></div>
         
         <div className="relative z-10">
+          {/* Kitadi Logo */}
+          <div className="flex justify-center mb-4">
+            <img 
+              src="/lovable-uploads/eaf20c9f-d9d2-4df9-a59b-9270a930044e.png" 
+              alt="Kitadi Logo" 
+              className="h-8 w-auto"
+            />
+          </div>
+          
           <div className="flex justify-between items-center mb-6">
             <div>
               <h1 className="text-white text-xl font-semibold">Olá, João!</h1>
