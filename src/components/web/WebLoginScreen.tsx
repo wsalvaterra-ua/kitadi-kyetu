@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { ArrowLeft } from 'lucide-react';
 
 interface WebLoginScreenProps {
-  onLoginSuccess: (userType: 'user' | 'merchant') => void;
+  onLoginSuccess: (userType: 'personal' | 'business' | 'agent' | 'business-associated' | 'merchant') => void;
   onBack: () => void;
 }
 
@@ -21,8 +21,21 @@ const WebLoginScreen = ({ onLoginSuccess, onBack }: WebLoginScreenProps) => {
     // Simulate API call
     setTimeout(() => {
       setLoading(false);
-      // Mock login - determine user type based on code
-      const userType = code.startsWith('M') ? 'merchant' : 'user';
+      // Mock login - determine user type based on code prefix
+      let userType: 'personal' | 'business' | 'agent' | 'business-associated' | 'merchant';
+      
+      if (code.startsWith('M')) {
+        userType = 'merchant';
+      } else if (code.startsWith('B')) {
+        userType = 'business';
+      } else if (code.startsWith('A')) {
+        userType = 'agent';
+      } else if (code.startsWith('BA')) {
+        userType = 'business-associated';
+      } else {
+        userType = 'personal';
+      }
+      
       onLoginSuccess(userType);
     }, 1500);
   };
@@ -76,7 +89,8 @@ const WebLoginScreen = ({ onLoginSuccess, onBack }: WebLoginScreenProps) => {
               required
             />
             <p className="text-xs text-gray-500 mt-2">
-              Obtenha este código na versão mobile do Kitadi
+              Obtenha este código na versão mobile do Kitadi<br/>
+              <span className="text-xs">Personal: P**** | Business: B**** | Agent: A**** | Merchant: M****</span>
             </p>
           </div>
 

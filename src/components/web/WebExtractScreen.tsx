@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ArrowLeft, Download, Calendar, FileText } from 'lucide-react';
 
 interface WebExtractScreenProps {
-  userType: 'user' | 'merchant';
+  userType: 'personal' | 'business' | 'agent' | 'business-associated' | 'merchant';
   onBack: () => void;
 }
 
@@ -40,10 +40,20 @@ const WebExtractScreen = ({ userType, onBack }: WebExtractScreenProps) => {
     setTimeout(() => {
       setIsGenerating(false);
       
-      // Create mock CSV content
-      const csvContent = userType === 'merchant' 
-        ? `Data,Hora,Tipo,Valor,Cliente,Status\n2024-01-15,14:30,Pagamento QR,15000 STN,João Silva,Concluído\n2024-01-15,12:15,Pagamento QR,8500 STN,Maria Santos,Concluído`
-        : `Data,Hora,Tipo,Valor,Descrição,Status\n2024-01-15,14:30,Envio,5000 STN,Para Maria,Concluído\n2024-01-14,16:45,Recebimento,10000 STN,De João,Concluído`;
+      // Create mock CSV content based on user type
+      let csvContent = '';
+      
+      if (userType === 'merchant') {
+        csvContent = `Data,Hora,Tipo,Valor,Cliente,Status\n2024-01-15,14:30,Pagamento QR,15000 STN,João Silva,Concluído\n2024-01-15,12:15,Pagamento QR,8500 STN,Maria Santos,Concluído`;
+      } else if (userType === 'business') {
+        csvContent = `Data,Hora,Tipo,Valor,Descrição,Status\n2024-01-15,14:30,Recebimento,25000 STN,Pagamento Cliente,Concluído\n2024-01-15,12:15,Envio,8500 STN,Pagamento Fornecedor,Concluído`;
+      } else if (userType === 'agent') {
+        csvContent = `Data,Hora,Tipo,Valor,Cliente,Status\n2024-01-15,14:30,Comissão,2500 STN,Cliente #12345,Concluído\n2024-01-15,12:15,Taxa Serviço,1200 STN,Cliente #67890,Concluído`;
+      } else if (userType === 'business-associated') {
+        csvContent = `Data,Hora,Tipo,Valor,Descrição,Status\n2024-01-15,14:30,Venda,15000 STN,Venda no Balcão,Concluído\n2024-01-15,12:15,Comissão,750 STN,Comissão de Venda,Concluído`;
+      } else {
+        csvContent = `Data,Hora,Tipo,Valor,Descrição,Status\n2024-01-15,14:30,Envio,5000 STN,Para Maria,Concluído\n2024-01-14,16:45,Recebimento,10000 STN,De João,Concluído`;
+      }
       
       // Create and download file
       const blob = new Blob([csvContent], { type: 'text/csv' });
@@ -88,7 +98,11 @@ const WebExtractScreen = ({ userType, onBack }: WebExtractScreenProps) => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <FileText className="w-5 h-5" />
-              {userType === 'merchant' ? 'Extrato de Vendas' : 'Extrato de Transações'}
+              {userType === 'merchant' && 'Extrato de Vendas'}
+              {userType === 'business' && 'Extrato Comercial'}
+              {userType === 'agent' && 'Extrato de Operações'}
+              {userType === 'business-associated' && 'Extrato do Balcão'}
+              {userType === 'personal' && 'Extrato de Transações'}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -136,7 +150,13 @@ const WebExtractScreen = ({ userType, onBack }: WebExtractScreenProps) => {
                 <h3 className="font-medium text-blue-900">Sobre o Extrato</h3>
               </div>
               <p className="text-sm text-blue-800">
-                O extrato será gerado em formato CSV contendo todas as {userType === 'merchant' ? 'vendas' : 'transações'} do período selecionado. 
+                O extrato será gerado em formato CSV contendo todas as {
+                  userType === 'merchant' ? 'vendas' : 
+                  userType === 'business' ? 'transações comerciais' :
+                  userType === 'agent' ? 'operações' :
+                  userType === 'business-associated' ? 'vendas do balcão' :
+                  'transações'
+                } do período selecionado. 
                 Este arquivo pode ser aberto em Excel ou outras planilhas.
               </p>
             </div>

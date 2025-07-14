@@ -3,15 +3,61 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LogOut, Download, Eye, CreditCard, Users } from 'lucide-react';
 
 interface WebDashboardProps {
-  userType: 'user' | 'merchant';
+  userType: 'personal' | 'business' | 'agent' | 'business-associated' | 'merchant';
   onLogout: () => void;
   onViewTransactions: () => void;
   onDownloadExtract: () => void;
 }
 
 const WebDashboard = ({ userType, onLogout, onViewTransactions, onDownloadExtract }: WebDashboardProps) => {
-  const mockBalance = userType === 'merchant' ? '1,250,000 STN' : '45,000 STN';
-  const mockTransactionCount = userType === 'merchant' ? 234 : 12;
+  const getUserTypeInfo = () => {
+    switch (userType) {
+      case 'personal':
+        return { 
+          title: 'Carteira Pessoal', 
+          balance: '45,000 STN', 
+          transactions: 12,
+          description: 'Conta pessoal verificada'
+        };
+      case 'business':
+        return { 
+          title: 'Conta Comercial', 
+          balance: '125,000 STN', 
+          transactions: 89,
+          description: 'Conta comercial ativa'
+        };
+      case 'agent':
+        return { 
+          title: 'Conta Agente', 
+          balance: '89,340 STN', 
+          transactions: 156,
+          description: 'Agente autorizado'
+        };
+      case 'business-associated':
+        return { 
+          title: 'Conta Comercial Associada', 
+          balance: '67,890 STN', 
+          transactions: 45,
+          description: 'Balcão associado'
+        };
+      case 'merchant':
+        return { 
+          title: 'Painel Comerciante', 
+          balance: '1,250,000 STN', 
+          transactions: 234,
+          description: 'Dashboard comercial'
+        };
+      default:
+        return { 
+          title: 'Carteira Digital', 
+          balance: '0 STN', 
+          transactions: 0,
+          description: 'Conta não identificada'
+        };
+    }
+  };
+
+  const userInfo = getUserTypeInfo();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -27,7 +73,7 @@ const WebDashboard = ({ userType, onLogout, onViewTransactions, onDownloadExtrac
             <div>
               <h1 className="text-xl font-bold text-kitadi-navy">Kitadi Web</h1>
               <p className="text-sm text-gray-500">
-                {userType === 'merchant' ? 'Painel Comerciante' : 'Carteira Digital'} - Modo Consulta
+                {userInfo.title} - Modo Consulta
               </p>
             </div>
           </div>
@@ -49,15 +95,16 @@ const WebDashboard = ({ userType, onLogout, onViewTransactions, onDownloadExtrac
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CreditCard className="w-5 h-5" />
-              {userType === 'merchant' ? 'Saldo Comercial' : 'Saldo Disponível'}
+              {userInfo.title}
             </CardTitle>
+            <p className="text-sm text-gray-600">{userInfo.description}</p>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-kitadi-navy mb-2">
-              {mockBalance}
+              {userInfo.balance}
             </div>
             <p className="text-gray-600">
-              {mockTransactionCount} transações este mês
+              {userInfo.transactions} transações este mês
             </p>
           </CardContent>
         </Card>
@@ -99,29 +146,84 @@ const WebDashboard = ({ userType, onLogout, onViewTransactions, onDownloadExtrac
           </Card>
         </div>
 
-        {/* Additional Info for Merchants */}
-        {userType === 'merchant' && (
+        {/* Additional Info for Business/Agent/Merchant accounts */}
+        {(userType === 'merchant' || userType === 'business' || userType === 'agent' || userType === 'business-associated') && (
           <Card className="mt-6">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users className="w-5 h-5" />
-                Informações Comerciais
+                {userType === 'merchant' && 'Informações Comerciais'}
+                {userType === 'business' && 'Métricas do Negócio'}
+                {userType === 'agent' && 'Estatísticas de Agente'}
+                {userType === 'business-associated' && 'Dados do Balcão'}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid md:grid-cols-3 gap-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-kitadi-orange">156</div>
-                  <p className="text-sm text-gray-600">Pagamentos Hoje</p>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-kitadi-orange">2,340</div>
-                  <p className="text-sm text-gray-600">Total este Mês</p>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-kitadi-orange">98%</div>
-                  <p className="text-sm text-gray-600">Taxa de Sucesso</p>
-                </div>
+                {userType === 'merchant' && (
+                  <>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-kitadi-orange">156</div>
+                      <p className="text-sm text-gray-600">Pagamentos Hoje</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-kitadi-orange">2,340</div>
+                      <p className="text-sm text-gray-600">Total este Mês</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-kitadi-orange">98%</div>
+                      <p className="text-sm text-gray-600">Taxa de Sucesso</p>
+                    </div>
+                  </>
+                )}
+                {userType === 'business' && (
+                  <>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-kitadi-orange">89</div>
+                      <p className="text-sm text-gray-600">Transações Hoje</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-kitadi-orange">1,567</div>
+                      <p className="text-sm text-gray-600">Total este Mês</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-kitadi-orange">95%</div>
+                      <p className="text-sm text-gray-600">Operações Concluídas</p>
+                    </div>
+                  </>
+                )}
+                {userType === 'agent' && (
+                  <>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-kitadi-orange">234</div>
+                      <p className="text-sm text-gray-600">Clientes Atendidos</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-kitadi-orange">3,456</div>
+                      <p className="text-sm text-gray-600">Operações este Mês</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-kitadi-orange">99%</div>
+                      <p className="text-sm text-gray-600">Taxa de Aprovação</p>
+                    </div>
+                  </>
+                )}
+                {userType === 'business-associated' && (
+                  <>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-kitadi-orange">45</div>
+                      <p className="text-sm text-gray-600">Vendas Hoje</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-kitadi-orange">789</div>
+                      <p className="text-sm text-gray-600">Total este Mês</p>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-kitadi-orange">97%</div>
+                      <p className="text-sm text-gray-600">Balcão Ativo</p>
+                    </div>
+                  </>
+                )}
               </div>
             </CardContent>
           </Card>

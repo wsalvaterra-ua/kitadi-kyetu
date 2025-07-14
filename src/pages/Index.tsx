@@ -51,7 +51,7 @@ const Index = () => {
 
   // Web version state
   const [isWebVersion, setIsWebVersion] = useState(false);
-  const [webUserType, setWebUserType] = useState<'user' | 'merchant'>('user');
+  const [webUserType, setWebUserType] = useState<'personal' | 'business' | 'agent' | 'business-associated' | 'merchant'>('personal');
 
   // Mock transaction data - in a real app, this would come from your backend
   const mockTransactions = {
@@ -141,7 +141,7 @@ const Index = () => {
     setCurrentScreen('web-login');
   };
 
-  const handleWebLogin = (userType: 'user' | 'merchant') => {
+  const handleWebLogin = (userType: 'personal' | 'business' | 'agent' | 'business-associated' | 'merchant') => {
     setWebUserType(userType);
     setIsAuthenticated(true);
     setIsMerchant(userType === 'merchant');

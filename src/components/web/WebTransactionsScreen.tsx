@@ -3,12 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, ArrowUpRight, ArrowDownLeft, QrCode } from 'lucide-react';
 
 interface WebTransactionsScreenProps {
-  userType: 'user' | 'merchant';
+  userType: 'personal' | 'business' | 'agent' | 'business-associated' | 'merchant';
   onBack: () => void;
 }
 
 const WebTransactionsScreen = ({ userType, onBack }: WebTransactionsScreenProps) => {
-  // Mock transaction data
+  // Mock transaction data based on account type
   const mockTransactions = userType === 'merchant' ? [
     {
       id: '1',
@@ -36,6 +36,63 @@ const WebTransactionsScreen = ({ userType, onBack }: WebTransactionsScreenProps)
       date: '2024-01-14',
       time: '16:45',
       customer: 'Carlos Mendes'
+    }
+  ] : userType === 'business' ? [
+    {
+      id: '1',
+      type: 'received',
+      amount: '25,000 STN',
+      description: 'Pagamento de Cliente',
+      date: '2024-01-15',
+      time: '14:30',
+      customer: 'Empresa ABC Lda'
+    },
+    {
+      id: '2',
+      type: 'sent',
+      amount: '8,500 STN',
+      description: 'Pagamento a Fornecedor',
+      date: '2024-01-15',
+      time: '12:15',
+      recipient: 'Fornecedor XYZ'
+    }
+  ] : userType === 'agent' ? [
+    {
+      id: '1',
+      type: 'commission',
+      amount: '2,500 STN',
+      description: 'Comissão de Transação',
+      date: '2024-01-15',
+      time: '14:30',
+      client: 'Cliente #12345'
+    },
+    {
+      id: '2',
+      type: 'service',
+      amount: '1,200 STN',
+      description: 'Taxa de Serviço',
+      date: '2024-01-15',
+      time: '12:15',
+      client: 'Cliente #67890'
+    }
+  ] : userType === 'business-associated' ? [
+    {
+      id: '1',
+      type: 'sale',
+      amount: '15,000 STN',
+      description: 'Venda no Balcão',
+      date: '2024-01-15',
+      time: '14:30',
+      item: 'Produtos diversos'
+    },
+    {
+      id: '2',
+      type: 'commission',
+      amount: '750 STN',
+      description: 'Comissão de Venda',
+      date: '2024-01-15',
+      time: '12:15',
+      source: 'Balcão Principal'
     }
   ] : [
     {
@@ -74,6 +131,12 @@ const WebTransactionsScreen = ({ userType, onBack }: WebTransactionsScreenProps)
         return <ArrowDownLeft className="w-5 h-5 text-green-500" />;
       case 'topup':
         return <QrCode className="w-5 h-5 text-blue-500" />;
+      case 'commission':
+        return <ArrowDownLeft className="w-5 h-5 text-green-500" />;
+      case 'service':
+        return <QrCode className="w-5 h-5 text-blue-500" />;
+      case 'sale':
+        return <ArrowDownLeft className="w-5 h-5 text-green-500" />;
       default:
         return <ArrowUpRight className="w-5 h-5 text-gray-500" />;
     }
@@ -84,8 +147,11 @@ const WebTransactionsScreen = ({ userType, onBack }: WebTransactionsScreenProps)
       case 'sent':
         return 'text-red-600';
       case 'received':
+      case 'commission':
+      case 'sale':
         return 'text-green-600';
       case 'topup':
+      case 'service':
         return 'text-blue-600';
       default:
         return 'text-gray-600';
@@ -112,7 +178,11 @@ const WebTransactionsScreen = ({ userType, onBack }: WebTransactionsScreenProps)
               className="h-6 w-auto mr-2"
             />
             <h1 className="text-xl font-bold text-kitadi-navy">
-              {userType === 'merchant' ? 'Histórico de Vendas' : 'Histórico de Transações'}
+              {userType === 'merchant' && 'Histórico de Vendas'}
+              {userType === 'business' && 'Histórico de Transações Comerciais'}
+              {userType === 'agent' && 'Histórico de Operações'}
+              {userType === 'business-associated' && 'Histórico do Balcão'}
+              {userType === 'personal' && 'Histórico de Transações'}
             </h1>
           </div>
         </div>
@@ -123,7 +193,11 @@ const WebTransactionsScreen = ({ userType, onBack }: WebTransactionsScreenProps)
         <Card>
           <CardHeader>
             <CardTitle>
-              {userType === 'merchant' ? 'Últimas Vendas' : 'Últimas Transações'}
+              {userType === 'merchant' && 'Últimas Vendas'}
+              {userType === 'business' && 'Últimas Transações Comerciais'}
+              {userType === 'agent' && 'Últimas Operações'}
+              {userType === 'business-associated' && 'Últimas Vendas do Balcão'}
+              {userType === 'personal' && 'Últimas Transações'}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -147,12 +221,37 @@ const WebTransactionsScreen = ({ userType, onBack }: WebTransactionsScreenProps)
                           Cliente: {transaction.customer}
                         </p>
                       )}
-                      {userType === 'user' && transaction.recipient && (
+                      {userType === 'business' && transaction.customer && (
+                        <p className="text-xs text-gray-400">
+                          Cliente: {transaction.customer}
+                        </p>
+                      )}
+                      {userType === 'business' && transaction.recipient && (
                         <p className="text-xs text-gray-400">
                           Para: {transaction.recipient}
                         </p>
                       )}
-                      {userType === 'user' && transaction.sender && (
+                      {userType === 'agent' && transaction.client && (
+                        <p className="text-xs text-gray-400">
+                          Cliente: {transaction.client}
+                        </p>
+                      )}
+                      {userType === 'business-associated' && transaction.item && (
+                        <p className="text-xs text-gray-400">
+                          Item: {transaction.item}
+                        </p>
+                      )}
+                      {userType === 'business-associated' && transaction.source && (
+                        <p className="text-xs text-gray-400">
+                          Origem: {transaction.source}
+                        </p>
+                      )}
+                      {userType === 'personal' && transaction.recipient && (
+                        <p className="text-xs text-gray-400">
+                          Para: {transaction.recipient}
+                        </p>
+                      )}
+                      {userType === 'personal' && transaction.sender && (
                         <p className="text-xs text-gray-400">
                           De: {transaction.sender}
                         </p>
