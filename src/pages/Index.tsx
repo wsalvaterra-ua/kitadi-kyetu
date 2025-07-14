@@ -387,6 +387,14 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-md mx-auto bg-white min-h-screen shadow-lg">
+        {/* App Logo Header */}
+        <div className="flex justify-center pt-4 pb-2 bg-white">
+          <img 
+            src="/lovable-uploads/eaf20c9f-d9d2-4df9-a59b-9270a930044e.png" 
+            alt="Kitadi Logo" 
+            className="h-10 w-auto"
+          />
+        </div>
         {renderScreen()}
       </div>
     </div>
