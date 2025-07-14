@@ -1,6 +1,24 @@
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, ArrowUpRight, ArrowDownLeft, QrCode } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft, Download, Send, Smartphone, Plus, ArrowDownToLine, Clock, RefreshCw, ArrowUpDown } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { useState } from 'react';
+
+interface Transaction {
+  id: string;
+  type: 'sent' | 'received' | 'payment' | 'topup' | 'cashout';
+  status?: 'pending' | 'completed';
+  amount: number;
+  from?: string;
+  to?: string;
+  note?: string;
+  date: string;
+  time: string;
+  transactionId: string;
+  balanceAfter: number;
+  fromAccount?: string;
+  toAccount?: string;
+}
 
 interface WebTransactionsScreenProps {
   userType: 'personal' | 'business' | 'agent' | 'business-associated' | 'merchant';
@@ -8,155 +26,453 @@ interface WebTransactionsScreenProps {
 }
 
 const WebTransactionsScreen = ({ userType, onBack }: WebTransactionsScreenProps) => {
-  // Mock transaction data based on account type
-  const mockTransactions = userType === 'merchant' ? [
-    {
-      id: '1',
-      type: 'received',
-      amount: '15,000 STN',
-      description: 'Pagamento QR Code',
-      date: '2024-01-15',
-      time: '14:30',
-      customer: 'João Silva'
-    },
-    {
-      id: '2',
-      type: 'received',
-      amount: '8,500 STN',
-      description: 'Pagamento QR Code',
-      date: '2024-01-15',
-      time: '12:15',
-      customer: 'Maria Santos'
-    },
-    {
-      id: '3',
-      type: 'received',
-      amount: '25,000 STN',
-      description: 'Pagamento QR Code',
-      date: '2024-01-14',
-      time: '16:45',
-      customer: 'Carlos Mendes'
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  // Mock data based on user type
+  const getTransactions = (): Transaction[] => {
+    if (userType === 'personal') {
+      return [
+        { 
+          id: '1', 
+          type: 'received', 
+          amount: 500, 
+          from: 'João Silva', 
+          date: 'Hoje', 
+          time: '10:30',
+          transactionId: 'TXN001',
+          balanceAfter: 16250.50,
+          note: 'Pagamento de serviços'
+        },
+        { 
+          id: '2', 
+          type: 'sent', 
+          status: 'pending',
+          amount: -250, 
+          to: 'Maria Santos', 
+          date: 'Hoje', 
+          time: '09:15',
+          transactionId: 'TXN002',
+          balanceAfter: 15750.50
+        },
+        { 
+          id: '3', 
+          type: 'payment', 
+          amount: -125, 
+          to: 'Loja do João', 
+          date: 'Hoje', 
+          time: '14:20',
+          transactionId: 'TXN004',
+          balanceAfter: 15625.50
+        },
+        { 
+          id: '4', 
+          type: 'topup', 
+          status: 'pending',
+          amount: 1000, 
+          from: 'Agente Pedro', 
+          date: 'Hoje', 
+          time: '13:45',
+          transactionId: 'TXN005',
+          balanceAfter: 16625.50
+        },
+        { 
+          id: '5', 
+          type: 'received', 
+          amount: 300, 
+          from: 'Ana Costa', 
+          date: 'Ontem', 
+          time: '15:45',
+          transactionId: 'TXN003',
+          balanceAfter: 16000.00
+        },
+      ];
     }
-  ] : userType === 'business' ? [
-    {
-      id: '1',
-      type: 'received',
-      amount: '25,000 STN',
-      description: 'Pagamento de Cliente',
-      date: '2024-01-15',
-      time: '14:30',
-      customer: 'Empresa ABC Lda'
-    },
-    {
-      id: '2',
-      type: 'sent',
-      amount: '8,500 STN',
-      description: 'Pagamento a Fornecedor',
-      date: '2024-01-15',
-      time: '12:15',
-      recipient: 'Fornecedor XYZ'
+
+    if (userType === 'business') {
+      return [
+        { 
+          id: '1', 
+          type: 'received', 
+          amount: 1500, 
+          from: 'Cliente A', 
+          date: 'Hoje', 
+          time: '11:30',
+          transactionId: 'TXN101',
+          balanceAfter: 47230.25,
+          fromAccount: 'Conta Pessoal - 991 2345'
+        },
+        { 
+          id: '2', 
+          type: 'received', 
+          amount: 800, 
+          from: 'Cliente B', 
+          date: 'Hoje', 
+          time: '10:15',
+          transactionId: 'TXN102',
+          balanceAfter: 45730.25,
+          fromAccount: 'Conta Pessoal - 991 6789'
+        },
+        { 
+          id: '3', 
+          type: 'payment', 
+          amount: -200, 
+          to: 'Fornecedor X', 
+          date: 'Hoje', 
+          time: '09:20',
+          transactionId: 'TXN103',
+          balanceAfter: 44930.25,
+          toAccount: 'Conta Comercial - 78901'
+        },
+        { 
+          id: '4', 
+          type: 'topup', 
+          amount: 5000, 
+          from: 'Banco', 
+          date: 'Ontem', 
+          time: '16:45',
+          transactionId: 'TXN104',
+          balanceAfter: 45130.25
+        },
+      ];
     }
-  ] : userType === 'agent' ? [
-    {
-      id: '1',
-      type: 'commission',
-      amount: '2,500 STN',
-      description: 'Comissão de Transação',
-      date: '2024-01-15',
-      time: '14:30',
-      client: 'Cliente #12345'
-    },
-    {
-      id: '2',
-      type: 'service',
-      amount: '1,200 STN',
-      description: 'Taxa de Serviço',
-      date: '2024-01-15',
-      time: '12:15',
-      client: 'Cliente #67890'
+
+    if (userType === 'agent') {
+      return [
+        { 
+          id: '1', 
+          type: 'cashout', 
+          amount: -2000, 
+          to: 'Cliente X', 
+          date: 'Hoje', 
+          time: '12:30',
+          transactionId: 'TXN201',
+          balanceAfter: 87340.75,
+          toAccount: 'Conta Pessoal - 991 1111'
+        },
+        { 
+          id: '2', 
+          type: 'topup', 
+          amount: 1500, 
+          from: 'Cliente Y', 
+          date: 'Hoje', 
+          time: '11:15',
+          transactionId: 'TXN202',
+          balanceAfter: 89340.75,
+          fromAccount: 'Conta Pessoal - 991 2222'
+        },
+        { 
+          id: '3', 
+          type: 'received', 
+          amount: 300, 
+          from: 'Comissão', 
+          date: 'Hoje', 
+          time: '10:20',
+          transactionId: 'TXN203',
+          balanceAfter: 87840.75,
+          note: 'Comissão por transações'
+        },
+        { 
+          id: '4', 
+          type: 'topup', 
+          amount: 800, 
+          from: 'Cliente Z', 
+          date: 'Ontem', 
+          time: '17:45',
+          transactionId: 'TXN204',
+          balanceAfter: 87540.75,
+          fromAccount: 'Conta Pessoal - 991 3333'
+        },
+      ];
     }
-  ] : userType === 'business-associated' ? [
-    {
-      id: '1',
-      type: 'sale',
-      amount: '15,000 STN',
-      description: 'Venda no Balcão',
-      date: '2024-01-15',
-      time: '14:30',
-      item: 'Produtos diversos'
-    },
-    {
-      id: '2',
-      type: 'commission',
-      amount: '750 STN',
-      description: 'Comissão de Venda',
-      date: '2024-01-15',
-      time: '12:15',
-      source: 'Balcão Principal'
+
+    if (userType === 'business-associated') {
+      return [
+        { 
+          id: '1', 
+          type: 'received', 
+          amount: 750, 
+          from: 'Venda A', 
+          date: 'Hoje', 
+          time: '13:30',
+          transactionId: 'TXN301',
+          balanceAfter: 126180.75,
+          note: 'Venda de produtos'
+        },
+        { 
+          id: '2', 
+          type: 'received', 
+          amount: 450, 
+          from: 'Venda B', 
+          date: 'Hoje', 
+          time: '12:15',
+          transactionId: 'TXN302',
+          balanceAfter: 125430.75
+        },
+        { 
+          id: '3', 
+          type: 'payment', 
+          amount: -100, 
+          to: 'Taxa', 
+          date: 'Hoje', 
+          time: '09:20',
+          transactionId: 'TXN303',
+          balanceAfter: 124980.75,
+          note: 'Taxa de manutenção'
+        },
+      ];
     }
-  ] : [
-    {
-      id: '1',
-      type: 'sent',
-      amount: '5,000 STN',
-      description: 'Transferência para Maria',
-      date: '2024-01-15',
-      time: '14:30',
-      recipient: '+239 999 1234'
-    },
-    {
-      id: '2',
-      type: 'received',
-      amount: '10,000 STN',
-      description: 'Recebido de João',
-      date: '2024-01-14',
-      time: '16:45',
-      sender: '+239 991 5678'
-    },
-    {
-      id: '3',
-      type: 'topup',
-      amount: '50,000 STN',
-      description: 'Carregamento de saldo',
-      date: '2024-01-13',
-      time: '09:20'
-    }
-  ];
+
+    // Default merchant transactions
+    return [
+      { 
+        id: '1', 
+        type: 'received', 
+        amount: 250, 
+        from: 'Pagamento QR', 
+        date: 'Hoje', 
+        time: '14:30',
+        transactionId: 'TXN401',
+        balanceAfter: 8750.00,
+        note: 'Pagamento via QR Code'
+      },
+      { 
+        id: '2', 
+        type: 'received', 
+        amount: 180, 
+        from: 'Pagamento QR', 
+        date: 'Hoje', 
+        time: '13:15',
+        transactionId: 'TXN402',
+        balanceAfter: 8500.00,
+        note: 'Pagamento via QR Code'
+      },
+      { 
+        id: '3', 
+        type: 'payment', 
+        amount: -50, 
+        to: 'Taxa', 
+        date: 'Hoje', 
+        time: '12:20',
+        transactionId: 'TXN403',
+        balanceAfter: 8320.00,
+        note: 'Taxa de processamento'
+      },
+    ];
+  };
+
+  const transactions = getTransactions();
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setIsRefreshing(false);
+  };
 
   const getTransactionIcon = (type: string) => {
     switch (type) {
-      case 'sent':
-        return <ArrowUpRight className="w-5 h-5 text-red-500" />;
       case 'received':
-        return <ArrowDownLeft className="w-5 h-5 text-green-500" />;
+        return <Send className="w-5 h-5 text-green-600 rotate-180" />;
+      case 'sent':
+        return <Send className="w-5 h-5 text-red-600" />;
+      case 'payment':
+        return <Smartphone className="w-5 h-5 text-blue-600" />;
       case 'topup':
-        return <QrCode className="w-5 h-5 text-blue-500" />;
-      case 'commission':
-        return <ArrowDownLeft className="w-5 h-5 text-green-500" />;
-      case 'service':
-        return <QrCode className="w-5 h-5 text-blue-500" />;
-      case 'sale':
-        return <ArrowDownLeft className="w-5 h-5 text-green-500" />;
+        return <Plus className="w-5 h-5 text-kitadi-orange" />;
+      case 'cashout':
+        return <ArrowDownToLine className="w-5 h-5 text-red-600" />;
       default:
-        return <ArrowUpRight className="w-5 h-5 text-gray-500" />;
+        return <ArrowUpDown className="w-5 h-5 text-gray-600" />;
     }
   };
 
-  const getTransactionColor = (type: string) => {
+  const getTransactionLabel = (type: string, transaction: Transaction) => {
     switch (type) {
-      case 'sent':
-        return 'text-red-600';
       case 'received':
-      case 'commission':
-      case 'sale':
-        return 'text-green-600';
+        return `De ${transaction.from}`;
+      case 'sent':
+        return `Para ${transaction.to}`;
+      case 'payment':
+        return `Pagamento - ${transaction.to}`;
       case 'topup':
-      case 'service':
-        return 'text-blue-600';
+        return `Depósito - ${transaction.from}`;
+      case 'cashout':
+        return `Levantamento - ${transaction.to}`;
       default:
-        return 'text-gray-600';
+        return 'Transação';
     }
   };
+
+  // Group transactions by date
+  const groupedTransactions = transactions.reduce((groups, transaction) => {
+    const date = transaction.date;
+    if (!groups[date]) {
+      groups[date] = [];
+    }
+    groups[date].push(transaction);
+    return groups;
+  }, {} as Record<string, Transaction[]>);
+
+  // Transaction Details Modal Component
+  const TransactionDetails = ({ transaction }: { transaction: Transaction }) => {
+    const getTransactionTitle = () => {
+      switch (transaction.type) {
+        case 'received':
+          return `Recebido de ${transaction.from}`;
+        case 'sent':
+          return `Enviado para ${transaction.to}`;
+        case 'payment':
+          return 'Pagamento efetuado';
+        case 'topup':
+          return 'Depósito efetuado';
+        case 'cashout':
+          return 'Levantamento efetuado';
+        default:
+          return 'Transação';
+      }
+    };
+
+    const getAmountColor = () => {
+      return transaction.amount > 0 ? 'text-green-600' : 'text-red-600';
+    };
+
+    const isPending = transaction.status === 'pending';
+
+    return (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+          {/* Header */}
+          <div className="bg-kitadi-navy px-6 py-4 rounded-t-lg">
+            <div className="flex items-center justify-between">
+              <h2 className="text-white text-lg font-semibold">Detalhes da Transação</h2>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => setSelectedTransaction(null)}
+                className="text-white hover:bg-white/20"
+              >
+                ×
+              </Button>
+            </div>
+          </div>
+
+          <div className="p-6">
+            {/* Transaction Summary */}
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4 relative">
+                {getTransactionIcon(transaction.type)}
+                {isPending && (
+                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-orange-100 rounded-full flex items-center justify-center">
+                    <Clock className="w-3 h-3 text-orange-500" />
+                  </div>
+                )}
+              </div>
+              
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <h3 className="text-lg font-semibold text-gray-900">{getTransactionTitle()}</h3>
+                {isPending && (
+                  <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
+                    Pendente
+                  </Badge>
+                )}
+              </div>
+              <div className={`text-3xl font-bold ${getAmountColor()}`}>
+                {transaction.amount > 0 ? '+' : ''}{transaction.amount.toLocaleString('pt-ST')} Db
+              </div>
+            </div>
+
+            {transaction.note && (
+              <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                <p className="text-sm text-gray-700">
+                  <span className="font-medium">Nota: </span>
+                  {transaction.note}
+                </p>
+              </div>
+            )}
+
+            {/* Transaction Details */}
+            <div className="space-y-3">
+              <h4 className="text-base font-semibold text-gray-900 mb-3">Informações da Transação</h4>
+              
+              {/* Source Account */}
+              {(transaction.from || transaction.fromAccount) && (
+                <div className="flex justify-between items-start">
+                  <span className="text-sm text-gray-500">De:</span>
+                  <div className="text-right">
+                    <div className="text-sm font-medium text-gray-900">{transaction.from}</div>
+                    {transaction.fromAccount && (
+                      <div className="text-xs text-gray-500">{transaction.fromAccount}</div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Destination Account */}
+              {(transaction.to || transaction.toAccount) && (
+                <div className="flex justify-between items-start">
+                  <span className="text-sm text-gray-500">Para:</span>
+                  <div className="text-right">
+                    <div className="text-sm font-medium text-gray-900">{transaction.to}</div>
+                    {transaction.toAccount && (
+                      <div className="text-xs text-gray-500">{transaction.toAccount}</div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Status */}
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-500">Estado:</span>
+                <span className={`text-sm font-medium ${isPending ? 'text-orange-600' : 'text-green-600'}`}>
+                  {isPending ? 'Pendente' : 'Concluída'}
+                </span>
+              </div>
+
+              {/* Date and Time */}
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-500">Data:</span>
+                <span className="text-sm font-medium text-gray-900">{transaction.date}</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-500">Hora:</span>
+                <span className="text-sm font-medium text-gray-900">{transaction.time}</span>
+              </div>
+
+              {/* Transaction ID */}
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-500">ID da Transação:</span>
+                <span className="text-sm font-medium text-gray-900 font-mono">{transaction.transactionId}</span>
+              </div>
+
+              {/* Balance After */}
+              <div className="flex justify-between">
+                <span className="text-sm text-gray-500">Saldo após transação:</span>
+                <span className="text-sm font-medium text-gray-900">{transaction.balanceAfter.toLocaleString('pt-ST')} Db</span>
+              </div>
+            </div>
+
+            {/* Action Button */}
+            <Button
+              variant="outline"
+              className="w-full mt-6"
+              onClick={() => {
+                console.log('Download receipt for transaction:', transaction.transactionId);
+              }}
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Baixar Comprovativo
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  if (selectedTransaction) {
+    return <TransactionDetails transaction={selectedTransaction} />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -177,13 +493,7 @@ const WebTransactionsScreen = ({ userType, onBack }: WebTransactionsScreenProps)
               alt="Kitadi Logo" 
               className="h-6 w-auto mr-2"
             />
-            <h1 className="text-xl font-bold text-kitadi-navy">
-              {userType === 'merchant' && 'Histórico de Vendas'}
-              {userType === 'business' && 'Histórico de Transações Comerciais'}
-              {userType === 'agent' && 'Histórico de Operações'}
-              {userType === 'business-associated' && 'Histórico do Balcão'}
-              {userType === 'personal' && 'Histórico de Transações'}
-            </h1>
+            <h1 className="text-xl font-bold text-kitadi-navy">Histórico de Transações</h1>
           </div>
         </div>
       </div>
@@ -192,84 +502,83 @@ const WebTransactionsScreen = ({ userType, onBack }: WebTransactionsScreenProps)
       <div className="max-w-4xl mx-auto px-6 py-8">
         <Card>
           <CardHeader>
-            <CardTitle>
-              {userType === 'merchant' && 'Últimas Vendas'}
-              {userType === 'business' && 'Últimas Transações Comerciais'}
-              {userType === 'agent' && 'Últimas Operações'}
-              {userType === 'business-associated' && 'Últimas Vendas do Balcão'}
-              {userType === 'personal' && 'Últimas Transações'}
+            <CardTitle className="text-2xl text-kitadi-navy flex items-center justify-between">
+              Histórico de Transações
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={handleRefresh}
+                  disabled={isRefreshing}
+                  className="gap-2"
+                >
+                  <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  {isRefreshing ? 'Atualizando...' : 'Atualizar'}
+                </Button>
+                <Button variant="outline" onClick={() => {
+                  // Generate CSV
+                  const csvContent = transactions.map(t => 
+                    `${t.date},${t.time},${t.type},${t.amount},${t.from || t.to || ''}`
+                  ).join('\n');
+                  const blob = new Blob([csvContent], { type: 'text/csv' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = 'transacoes.csv';
+                  a.click();
+                }}>
+                  <Download className="w-4 h-4 mr-2" />
+                  Exportar CSV
+                </Button>
+              </div>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {mockTransactions.map((transaction) => (
-                <div
-                  key={transaction.id}
-                  className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50"
-                >
-                  <div className="flex items-center gap-4">
-                    {getTransactionIcon(transaction.type)}
-                    <div>
-                      <p className="font-medium text-gray-900">
-                        {transaction.description}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        {transaction.date} às {transaction.time}
-                      </p>
-                      {userType === 'merchant' && transaction.customer && (
-                        <p className="text-xs text-gray-400">
-                          Cliente: {transaction.customer}
-                        </p>
-                      )}
-                      {userType === 'business' && transaction.customer && (
-                        <p className="text-xs text-gray-400">
-                          Cliente: {transaction.customer}
-                        </p>
-                      )}
-                      {userType === 'business' && transaction.recipient && (
-                        <p className="text-xs text-gray-400">
-                          Para: {transaction.recipient}
-                        </p>
-                      )}
-                      {userType === 'agent' && transaction.client && (
-                        <p className="text-xs text-gray-400">
-                          Cliente: {transaction.client}
-                        </p>
-                      )}
-                      {userType === 'business-associated' && transaction.item && (
-                        <p className="text-xs text-gray-400">
-                          Item: {transaction.item}
-                        </p>
-                      )}
-                      {userType === 'business-associated' && transaction.source && (
-                        <p className="text-xs text-gray-400">
-                          Origem: {transaction.source}
-                        </p>
-                      )}
-                      {userType === 'personal' && transaction.recipient && (
-                        <p className="text-xs text-gray-400">
-                          Para: {transaction.recipient}
-                        </p>
-                      )}
-                      {userType === 'personal' && transaction.sender && (
-                        <p className="text-xs text-gray-400">
-                          De: {transaction.sender}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  <div className={`text-lg font-semibold ${getTransactionColor(transaction.type)}`}>
-                    {transaction.type === 'sent' ? '-' : '+'}{transaction.amount}
+            <div className="space-y-6">
+              {Object.entries(groupedTransactions).map(([date, transactions]) => (
+                <div key={date}>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">{date}</h3>
+                  <div className="space-y-2">
+                    {transactions.map((transaction) => (
+                      <div 
+                        key={transaction.id} 
+                        className="flex items-center justify-between p-4 hover:bg-gray-50 rounded-lg border border-gray-100 cursor-pointer transition-colors"
+                        onClick={() => setSelectedTransaction(transaction)}
+                      >
+                        <div className="flex items-center space-x-3">
+                          <div className="relative">
+                            {getTransactionIcon(transaction.type)}
+                            {transaction.status === 'pending' && (
+                              <div className="absolute -top-1 -right-1 w-3 h-3 bg-orange-100 rounded-full flex items-center justify-center">
+                                <Clock className="w-2 h-2 text-orange-500" />
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <p className="font-medium text-gray-900">
+                                {getTransactionLabel(transaction.type, transaction)}
+                              </p>
+                              {transaction.status === 'pending' && (
+                                <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
+                                  Pendente
+                                </Badge>
+                              )}
+                            </div>
+                            <p className="text-sm text-gray-500">{transaction.time}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className={`font-semibold ${transaction.amount > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            {transaction.amount > 0 ? '+' : ''}{transaction.amount.toLocaleString('pt-ST')} Db
+                          </p>
+                          <p className="text-xs text-gray-500">{transaction.transactionId}</p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               ))}
             </div>
-
-            {mockTransactions.length === 0 && (
-              <div className="text-center py-8 text-gray-500">
-                Nenhuma transação encontrada
-              </div>
-            )}
           </CardContent>
         </Card>
       </div>
