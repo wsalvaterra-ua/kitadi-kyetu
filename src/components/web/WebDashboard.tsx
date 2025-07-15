@@ -151,23 +151,6 @@ const WebDashboard = ({ userType, onLogout, onViewTransactions, onDownloadExtrac
           {/* Agent-specific action cards */}
           {userType === 'agent' && (
             <>
-              <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onCreateAccount}>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <UserPlus className="w-5 h-5" />
-                    Gerir Perfis
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">
-                    Gestão de perfis pessoais e comerciais
-                  </p>
-                  <Button variant="outline" className="mt-4 w-full">
-                    Gerir
-                  </Button>
-                </CardContent>
-              </Card>
-
               <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onCreateMerchantProfile}>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -177,7 +160,7 @@ const WebDashboard = ({ userType, onLogout, onViewTransactions, onDownloadExtrac
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">
-                    Gestão de contas bancárias
+                    Pesquise clientes e gira perfis e contas bancárias
                   </p>
                   <Button variant="outline" className="mt-4 w-full">
                     Gerir

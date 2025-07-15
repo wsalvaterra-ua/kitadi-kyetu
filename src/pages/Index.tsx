@@ -29,13 +29,13 @@ import WebLoginScreen from '@/components/web/WebLoginScreen';
 import WebDashboard from '@/components/web/WebDashboard';
 import WebTransactionsScreen from '@/components/web/WebTransactionsScreen';
 import WebExtractScreen from '@/components/web/WebExtractScreen';
-import ProfileManagementScreen from '@/components/web/ProfileManagementScreen';
 import AccountManagementScreen from '@/components/web/AccountManagementScreen';
+import UserAccountManagementScreen from '@/components/web/UserAccountManagementScreen';
 import UserProfileScreen from '@/components/web/UserProfileScreen';
 import CreateUserProfileScreen from '@/components/web/CreateUserProfileScreen';
 import WebReconciliationScreen from '@/components/web/WebReconciliationScreen';
 
-type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation' | 'add-reconciliation' | 'account-creation' | 'web-login' | 'web-dashboard' | 'web-transactions' | 'web-extract' | 'web-profile-management' | 'web-account-management' | 'web-user-profile' | 'web-create-user' | 'web-reconciliation';
+type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation' | 'add-reconciliation' | 'account-creation' | 'web-login' | 'web-dashboard' | 'web-transactions' | 'web-extract' | 'web-account-management' | 'web-user-account-management' | 'web-create-user' | 'web-reconciliation';
 
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('onboarding');
@@ -169,10 +169,6 @@ const Index = () => {
 
   const handleWebExtract = () => {
     setCurrentScreen('web-extract');
-  };
-
-  const handleWebCreateAccount = () => {
-    setCurrentScreen('web-profile-management');
   };
 
   const handleWebCreateMerchantProfile = () => {
@@ -455,7 +451,6 @@ const Index = () => {
             onLogout={handleWebLogout}
             onViewTransactions={handleWebTransactions}
             onDownloadExtract={handleWebExtract}
-            onCreateAccount={handleWebCreateAccount}
             onCreateMerchantProfile={handleWebCreateMerchantProfile}
             onAddReconciliation={handleWebAddReconciliation}
           />
@@ -474,31 +469,13 @@ const Index = () => {
             onBack={handleWebBack}
           />
         );
-      case 'web-profile-management':
-        return (
-          <ProfileManagementScreen
-            onBack={handleWebBack}
-            onCreatePersonalProfile={(phone) => {
-              setUserManagementPhone(phone);
-              setCurrentScreen('web-create-user');
-            }}
-            onCreateBusinessProfile={(phone) => {
-              setUserManagementPhone(phone);
-              setCurrentScreen('web-create-user');
-            }}
-            onEditProfile={(phone, profileId, type) => {
-              setUserManagementPhone(phone);
-              setCurrentScreen('web-user-profile');
-            }}
-          />
-        );
       case 'web-account-management':
         return (
           <AccountManagementScreen
             onBack={handleWebBack}
             onUserFound={(phone) => {
               setUserManagementPhone(phone);
-              setCurrentScreen('web-user-profile');
+              setCurrentScreen('web-user-account-management');
             }}
             onCreateNewUser={(phone) => {
               setUserManagementPhone(phone);
@@ -506,9 +483,9 @@ const Index = () => {
             }}
           />
         );
-      case 'web-user-profile':
+      case 'web-user-account-management':
         return (
-          <UserProfileScreen
+          <UserAccountManagementScreen
             phoneNumber={userManagementPhone}
             onBack={handleWebBack}
           />
@@ -519,7 +496,7 @@ const Index = () => {
             phoneNumber={userManagementPhone}
             onBack={handleWebBack}
             onUserCreated={() => {
-              setCurrentScreen('web-user-profile');
+              setCurrentScreen('web-user-account-management');
             }}
           />
         );
