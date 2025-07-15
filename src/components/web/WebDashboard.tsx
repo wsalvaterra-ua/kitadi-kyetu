@@ -172,15 +172,15 @@ const WebDashboard = ({ userType, onLogout, onViewTransactions, onDownloadExtrac
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Building className="w-5 h-5" />
-                    Perfil Comercial
+                    Gerir Perfil Comercial
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">
-                    Criar perfil comercial e associações
+                    Criar e gerir perfis comerciais
                   </p>
                   <Button variant="outline" className="mt-4 w-full">
-                    Novo Perfil
+                    Gerir
                   </Button>
                 </CardContent>
               </Card>

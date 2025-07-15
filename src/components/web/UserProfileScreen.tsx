@@ -37,13 +37,16 @@ const UserProfileScreen = ({ phoneNumber, onBack }: UserProfileScreenProps) => {
   const [selectedAccount, setSelectedAccount] = useState<Account | null>(null);
   const [showAccountDetails, setShowAccountDetails] = useState(false);
   
-  // Mock user data
+  // Mock user data - exemplo de utilizador existente: Maria dos Santos Almeida
   const [userData, setUserData] = useState({
-    name: 'João Silva',
-    email: 'joao.silva@email.com',
-    birthDate: '1990-05-15',
-    idNumber: '123456789',
-    address: 'Rua das Flores, 123, São Tomé'
+    idNumber: '120845678',
+    nationality: 'STP',
+    dateOfBirth: '1990-05-15',
+    expiryDate: '2030-05-15',
+    firstName: 'Maria',
+    middleName: 'dos Santos',
+    lastName: 'Almeida',
+    civilStatus: 'casado'
   });
 
   const [accounts] = useState<Account[]>([
@@ -143,53 +146,96 @@ const UserProfileScreen = ({ phoneNumber, onBack }: UserProfileScreenProps) => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="name">Nome Completo</Label>
-                  <Input 
-                    id="name" 
-                    value={userData.name}
-                    onChange={(e) => setUserData({...userData, name: e.target.value})}
+                  <Label htmlFor="firstName">Primeiro Nome</Label>
+                  <Input
+                    id="firstName"
+                    value={userData.firstName}
+                    onChange={(e) => setUserData({...userData, firstName: e.target.value})}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="email">Email</Label>
-                  <Input 
-                    id="email" 
-                    type="email"
-                    value={userData.email}
-                    onChange={(e) => setUserData({...userData, email: e.target.value})}
+                  <Label htmlFor="middleName">Nome do Meio</Label>
+                  <Input
+                    id="middleName"
+                    value={userData.middleName}
+                    onChange={(e) => setUserData({...userData, middleName: e.target.value})}
                   />
                 </div>
               </div>
-              
-              <div className="grid grid-cols-2 gap-4">
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="birthDate">Data de Nascimento</Label>
-                  <Input 
-                    id="birthDate" 
-                    type="date"
-                    value={userData.birthDate}
-                    onChange={(e) => setUserData({...userData, birthDate: e.target.value})}
+                  <Label htmlFor="lastName">Último Nome</Label>
+                  <Input
+                    id="lastName"
+                    value={userData.lastName}
+                    onChange={(e) => setUserData({...userData, lastName: e.target.value})}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="idNumber">Número de Identificação</Label>
-                  <Input 
+                  <Label htmlFor="civilStatus">Estado Civil</Label>
+                  <select
+                    id="civilStatus"
+                    value={userData.civilStatus}
+                    onChange={(e) => setUserData({...userData, civilStatus: e.target.value})}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <option value="">Selecionar</option>
+                    <option value="solteiro">Solteiro</option>
+                    <option value="casado">Casado</option>
+                    <option value="divorciado">Divorciado</option>
+                    <option value="viuvo">Viúvo</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="idNumber">Número do Documento</Label>
+                  <Input
                     id="idNumber"
                     value={userData.idNumber}
                     onChange={(e) => setUserData({...userData, idNumber: e.target.value})}
                   />
                 </div>
+                <div>
+                  <Label htmlFor="nationality">Nacionalidade</Label>
+                  <select
+                    id="nationality"
+                    value={userData.nationality}
+                    onChange={(e) => setUserData({...userData, nationality: e.target.value})}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <option value="STP">São Tomé e Príncipe</option>
+                    <option value="AGO">Angola</option>
+                    <option value="PRT">Portugal</option>
+                    <option value="BRA">Brasil</option>
+                    <option value="other">Outro</option>
+                  </select>
+                </div>
               </div>
 
-              <div>
-                <Label htmlFor="address">Morada</Label>
-                <Textarea 
-                  id="address"
-                  value={userData.address}
-                  onChange={(e) => setUserData({...userData, address: e.target.value})}
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="dateOfBirth">Data de Nascimento</Label>
+                  <Input
+                    id="dateOfBirth"
+                    type="date"
+                    value={userData.dateOfBirth}
+                    onChange={(e) => setUserData({...userData, dateOfBirth: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="expiryDate">Data de Expiração do Documento</Label>
+                  <Input
+                    id="expiryDate"
+                    type="date"
+                    value={userData.expiryDate}
+                    onChange={(e) => setUserData({...userData, expiryDate: e.target.value})}
+                  />
+                </div>
               </div>
 
               <div>
