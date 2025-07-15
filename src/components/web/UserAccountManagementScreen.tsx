@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, User, Building, Wallet, Plus, Edit, Eye, EyeOff, Shield, Send } from 'lucide-react';
+import { ArrowLeft, User, Building, Wallet, Plus, Edit, Eye, EyeOff, Shield, Send, Upload, Smartphone, FileText, History } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface UserAccountManagementScreenProps {
@@ -59,9 +59,19 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
         balance: '45,678 STN',
         status: 'active',
         limits: {
-          daily: '50,000 STN',
-          monthly: '500,000 STN'
-        }
+          dailySend: '50,000 STN',
+          dailyReceive: '100,000 STN',
+          monthlySend: '500,000 STN',
+          monthlyReceive: '1,000,000 STN',
+          transactionSend: '10,000 STN',
+          transactionReceive: '20,000 STN',
+          maxBalance: '2,000,000 STN'
+        },
+        transactions: [
+          { id: '1', type: 'Recebido', amount: '+5,000 STN', date: '2024-01-15', description: 'Transferência de João Silva' },
+          { id: '2', type: 'Enviado', amount: '-2,500 STN', date: '2024-01-14', description: 'Pagamento Loja ABC' },
+          { id: '3', type: 'Recebido', amount: '+1,200 STN', date: '2024-01-13', description: 'Venda produto' }
+        ]
       },
       {
         id: '2',
@@ -70,9 +80,18 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
         balance: '123,456 STN',
         status: 'active',
         limits: {
-          daily: '200,000 STN',
-          monthly: '2,000,000 STN'
-        }
+          dailySend: '200,000 STN',
+          dailyReceive: '500,000 STN',
+          monthlySend: '2,000,000 STN',
+          monthlyReceive: '5,000,000 STN',
+          transactionSend: '50,000 STN',
+          transactionReceive: '100,000 STN',
+          maxBalance: '10,000,000 STN'
+        },
+        transactions: [
+          { id: '4', type: 'Recebido', amount: '+15,000 STN', date: '2024-01-15', description: 'Venda produtos' },
+          { id: '5', type: 'Enviado', amount: '-8,000 STN', date: '2024-01-14', description: 'Compra stock' }
+        ]
       }
     ]
   };
@@ -87,6 +106,9 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
   const [verificationCode, setVerificationCode] = useState('');
   const [isVerified, setIsVerified] = useState(false);
   const [showNewBusinessForm, setShowNewBusinessForm] = useState(false);
+  const [smsCode, setSmsCode] = useState('');
+  const [smsStep, setSmsStep] = useState<'send' | 'verify' | 'verified'>('send');
+  const [showAccountDetails, setShowAccountDetails] = useState<string | null>(null);
   const [newBusinessData, setNewBusinessData] = useState({
     businessName: '',
     businessType: '',
@@ -110,6 +132,30 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
       ...prev,
       [accountId]: !prev[accountId]
     }));
+  };
+
+  const sendSms = () => {
+    setSmsStep('verify');
+    toast({
+      title: "SMS enviado",
+      description: `Código de verificação enviado para ${phoneNumber}`,
+    });
+  };
+
+  const verifySms = () => {
+    if (smsCode === '123456') { // Mock SMS verification
+      setSmsStep('verified');
+      toast({
+        title: "SMS verificado",
+        description: "Código SMS correto. Pode agora aceder aos dados das carteiras.",
+      });
+    } else {
+      toast({
+        title: "Código incorreto",
+        description: "Código SMS inválido. Tente novamente.",
+        variant: "destructive"
+      });
+    }
   };
 
   const verifyAccess = () => {
@@ -365,22 +411,97 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
                       value={personalData.expiryDate}
                       disabled={!editingPersonal}
                       onChange={(e) => setPersonalData({...personalData, expiryDate: e.target.value})}
-                    />
-                  </div>
-                </div>
-                {editingPersonal && (
-                  <div className="flex gap-2 pt-4">
-                    <Button onClick={() => {
-                      // Save changes logic here
-                      setEditingPersonal(false);
-                    }}>
-                      Guardar Alterações
-                    </Button>
-                    <Button variant="outline" onClick={() => setEditingPersonal(false)}>
-                      Cancelar
-                    </Button>
-                  </div>
-                )}
+                     />
+                   </div>
+                 </div>
+
+                 {/* Documentos */}
+                 <div className="mt-6">
+                   <h3 className="text-md font-semibold mb-4">Documentos de Identificação</h3>
+                   <div className="grid md:grid-cols-2 gap-6">
+                     <div>
+                       <Label>Foto do Documento (Frente)</Label>
+                       <div className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                         <Upload className="mx-auto h-8 w-8 text-gray-400" />
+                         <p className="mt-2 text-sm text-gray-500">
+                           Clique para fazer upload da frente do documento
+                         </p>
+                         <input type="file" className="hidden" accept="image/*" />
+                       </div>
+                     </div>
+                     <div>
+                       <Label>Foto do Documento (Verso)</Label>
+                       <div className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                         <Upload className="mx-auto h-8 w-8 text-gray-400" />
+                         <p className="mt-2 text-sm text-gray-500">
+                           Clique para fazer upload do verso do documento
+                         </p>
+                         <input type="file" className="hidden" accept="image/*" />
+                       </div>
+                     </div>
+                   </div>
+                 </div>
+
+                 {/* Código de Verificação */}
+                 <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                   <h3 className="text-md font-semibold mb-4 flex items-center gap-2">
+                     <Smartphone className="w-5 h-5" />
+                     Verificação por SMS
+                   </h3>
+                   
+                   {smsStep === 'send' && (
+                     <div className="space-y-3">
+                       <p className="text-sm text-gray-600">
+                         Para verificar a identidade, será enviado um código SMS para {phoneNumber}
+                       </p>
+                       <Button onClick={sendSms} className="flex items-center gap-2">
+                         <Send className="w-4 h-4" />
+                         Enviar Código SMS
+                       </Button>
+                     </div>
+                   )}
+
+                   {smsStep === 'verify' && (
+                     <div className="space-y-3">
+                       <p className="text-sm text-gray-600">
+                         Código enviado para {phoneNumber}. Introduza o código recebido:
+                       </p>
+                       <div className="flex gap-2">
+                         <Input
+                           type="text"
+                           placeholder="Código SMS"
+                           value={smsCode}
+                           onChange={(e) => setSmsCode(e.target.value)}
+                           className="bg-white"
+                         />
+                         <Button onClick={verifySms}>
+                           Verificar
+                         </Button>
+                       </div>
+                     </div>
+                   )}
+
+                   {smsStep === 'verified' && (
+                     <div className="flex items-center gap-2 text-green-600">
+                       <Shield className="w-5 h-5" />
+                       <span className="text-sm font-medium">SMS verificado com sucesso</span>
+                     </div>
+                   )}
+                 </div>
+
+                 {editingPersonal && (
+                   <div className="flex gap-2 pt-4">
+                     <Button onClick={() => {
+                       // Save changes logic here
+                       setEditingPersonal(false);
+                     }}>
+                       Guardar Alterações
+                     </Button>
+                     <Button variant="outline" onClick={() => setEditingPersonal(false)}>
+                       Cancelar
+                     </Button>
+                   </div>
+                 )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -613,20 +734,38 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex gap-2">
-                    <Input
-                      type="password"
-                      placeholder="Código de segurança"
-                      value={verificationCode}
-                      onChange={(e) => setVerificationCode(e.target.value)}
-                      className="bg-white"
-                    />
-                    <Button onClick={verifyAccess}>
-                      Verificar
-                    </Button>
+                  <div className="space-y-4">
+                    <div>
+                      <Label className="text-sm font-medium">Enviar código SMS</Label>
+                      <div className="flex gap-2 mt-1">
+                        <Button 
+                          variant="outline" 
+                          onClick={sendSms}
+                          className="flex items-center gap-2"
+                        >
+                          <Smartphone className="w-4 h-4" />
+                          Enviar SMS para {phoneNumber}
+                        </Button>
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium">Código de segurança do agente</Label>
+                      <div className="flex gap-2 mt-1">
+                        <Input
+                          type="password"
+                          placeholder="Código de segurança"
+                          value={verificationCode}
+                          onChange={(e) => setVerificationCode(e.target.value)}
+                          className="bg-white"
+                        />
+                        <Button onClick={verifyAccess}>
+                          Verificar
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                   <p className="text-sm text-amber-700 mt-2">
-                    Introduza o código de verificação para aceder aos dados das carteiras
+                    É necessário enviar código SMS e código de segurança para aceder aos dados das carteiras
                   </p>
                 </CardContent>
               </Card>
@@ -640,116 +779,197 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
               </Button>
             </div>
 
-            <div className="grid gap-4">
-              {accounts.map((account) => (
-                <Card key={account.id}>
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="flex items-center gap-2">
-                        <Wallet className="w-5 h-5" />
-                        {account.accountType}
-                      </CardTitle>
-                      <div className="flex items-center gap-2">
-                        <span className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(account.status)}`}>
-                          {getStatusText(account.status)}
-                        </span>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => handleTransferOnBehalf(account.id)}
-                          disabled={!isVerified}
-                        >
-                          <Send className="w-4 h-4 mr-1" />
-                          Transferir
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => setEditingAccount(editingAccount === account.id ? null : account.id)}
-                          disabled={!isVerified}
-                        >
-                          <Edit className="w-4 h-4 mr-1" />
-                          {editingAccount === account.id ? 'Cancelar' : 'Editar'}
-                        </Button>
+            {/* Account Details View */}
+            {showAccountDetails && (
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <FileText className="w-5 h-5" />
+                      Detalhes da Carteira
+                    </CardTitle>
+                    <Button variant="outline" onClick={() => setShowAccountDetails(null)}>
+                      Voltar à Lista
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {(() => {
+                    const account = accounts.find(acc => acc.id === showAccountDetails);
+                    if (!account) return null;
+
+                    return (
+                      <div className="space-y-6">
+                        {/* Account Info */}
+                        <div className="grid md:grid-cols-3 gap-4">
+                          <div>
+                            <Label className="text-sm font-medium text-gray-600">Tipo de Conta</Label>
+                            <p className="text-sm font-bold">{account.accountType}</p>
+                          </div>
+                          <div>
+                            <Label className="text-sm font-medium text-gray-600">Número</Label>
+                            <p className="text-sm font-mono">{account.accountNumber}</p>
+                          </div>
+                          <div>
+                            <Label className="text-sm font-medium text-gray-600">Saldo</Label>
+                            <p className="text-sm font-bold text-green-600">{account.balance}</p>
+                          </div>
+                        </div>
+
+                        {/* Limits Grid */}
+                        <div>
+                          <h3 className="text-md font-semibold mb-3">Limites de Transação</h3>
+                          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div className="p-3 border rounded-lg">
+                              <Label className="text-xs text-gray-500">Envio Diário</Label>
+                              <p className="text-sm font-medium">{account.limits.dailySend}</p>
+                            </div>
+                            <div className="p-3 border rounded-lg">
+                              <Label className="text-xs text-gray-500">Recebimento Diário</Label>
+                              <p className="text-sm font-medium">{account.limits.dailyReceive}</p>
+                            </div>
+                            <div className="p-3 border rounded-lg">
+                              <Label className="text-xs text-gray-500">Envio Mensal</Label>
+                              <p className="text-sm font-medium">{account.limits.monthlySend}</p>
+                            </div>
+                            <div className="p-3 border rounded-lg">
+                              <Label className="text-xs text-gray-500">Recebimento Mensal</Label>
+                              <p className="text-sm font-medium">{account.limits.monthlyReceive}</p>
+                            </div>
+                            <div className="p-3 border rounded-lg">
+                              <Label className="text-xs text-gray-500">Transação Envio</Label>
+                              <p className="text-sm font-medium">{account.limits.transactionSend}</p>
+                            </div>
+                            <div className="p-3 border rounded-lg">
+                              <Label className="text-xs text-gray-500">Transação Recebimento</Label>
+                              <p className="text-sm font-medium">{account.limits.transactionReceive}</p>
+                            </div>
+                            <div className="p-3 border rounded-lg">
+                              <Label className="text-xs text-gray-500">Saldo Máximo</Label>
+                              <p className="text-sm font-medium">{account.limits.maxBalance}</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex gap-2">
+                          <Button 
+                            onClick={() => handleTransferOnBehalf(account.id)}
+                            className="flex items-center gap-2"
+                          >
+                            <Send className="w-4 h-4" />
+                            Fazer Transferência
+                          </Button>
+                          <Button variant="outline">
+                            <Edit className="w-4 h-4 mr-1" />
+                            Editar Limites
+                          </Button>
+                        </div>
+
+                        {/* Transactions */}
+                        <div>
+                          <h3 className="text-md font-semibold mb-3 flex items-center gap-2">
+                            <History className="w-5 h-5" />
+                            Últimas Transações
+                          </h3>
+                          <div className="space-y-2">
+                            {account.transactions.map((transaction) => (
+                              <div key={transaction.id} className="flex items-center justify-between p-3 border rounded-lg">
+                                <div>
+                                  <p className="text-sm font-medium">{transaction.description}</p>
+                                  <p className="text-xs text-gray-500">{transaction.date}</p>
+                                </div>
+                                <div className="text-right">
+                                  <p className={`text-sm font-bold ${
+                                    transaction.type === 'Recebido' ? 'text-green-600' : 'text-red-600'
+                                  }`}>
+                                    {transaction.amount}
+                                  </p>
+                                  <p className="text-xs text-gray-500">{transaction.type}</p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <Label className="text-sm font-medium text-gray-600">Número da Carteira</Label>
-                        <p className="text-sm font-mono">{isVerified ? account.accountNumber : '****'}</p>
-                      </div>
-                      <div>
-                        <Label className="text-sm font-medium text-gray-600">Saldo</Label>
+                    );
+                  })()}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Account List */}
+            {!showAccountDetails && (
+              <div className="grid gap-4">
+                {accounts.map((account) => (
+                  <Card key={account.id}>
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="flex items-center gap-2">
+                          <Wallet className="w-5 h-5" />
+                          {account.accountType}
+                        </CardTitle>
                         <div className="flex items-center gap-2">
-                          <p className="text-sm font-bold">
-                            {showBalance[account.id] && isVerified ? account.balance : '****'}
-                          </p>
-                          <Button
-                            variant="ghost"
+                          <span className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(account.status)}`}>
+                            {getStatusText(account.status)}
+                          </span>
+                          <Button 
+                            variant="outline" 
                             size="sm"
-                            onClick={() => toggleBalanceVisibility(account.id)}
+                            onClick={() => setShowAccountDetails(account.id)}
                             disabled={!isVerified}
                           >
-                            {showBalance[account.id] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            <FileText className="w-4 h-4 mr-1" />
+                            Ver Detalhes
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => handleTransferOnBehalf(account.id)}
+                            disabled={!isVerified}
+                          >
+                            <Send className="w-4 h-4 mr-1" />
+                            Transferir
                           </Button>
                         </div>
                       </div>
-                      <div>
-                        <Label className="text-sm font-medium text-gray-600">Limite Diário</Label>
-                        {editingAccount === account.id ? (
-                          <Input 
-                            value={account.limits.daily}
-                            onChange={(e) => {
-                              const updatedAccounts = accounts.map(acc => 
-                                acc.id === account.id 
-                                  ? {...acc, limits: {...acc.limits, daily: e.target.value}}
-                                  : acc
-                              );
-                              setAccounts(updatedAccounts);
-                            }}
-                          />
-                        ) : (
-                          <p className="text-sm">{account.limits.daily}</p>
-                        )}
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div>
+                          <Label className="text-sm font-medium text-gray-600">Número da Carteira</Label>
+                          <p className="text-sm font-mono">{isVerified ? account.accountNumber : '****'}</p>
+                        </div>
+                        <div>
+                          <Label className="text-sm font-medium text-gray-600">Saldo</Label>
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-bold">
+                              {showBalance[account.id] && isVerified ? account.balance : '****'}
+                            </p>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => toggleBalanceVisibility(account.id)}
+                              disabled={!isVerified}
+                            >
+                              {showBalance[account.id] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                            </Button>
+                          </div>
+                        </div>
+                        <div>
+                          <Label className="text-sm font-medium text-gray-600">Limite Envio Diário</Label>
+                          <p className="text-sm">{account.limits.dailySend}</p>
+                        </div>
+                        <div>
+                          <Label className="text-sm font-medium text-gray-600">Limite Envio Mensal</Label>
+                          <p className="text-sm">{account.limits.monthlySend}</p>
+                        </div>
                       </div>
-                      <div>
-                        <Label className="text-sm font-medium text-gray-600">Limite Mensal</Label>
-                        {editingAccount === account.id ? (
-                          <Input 
-                            value={account.limits.monthly}
-                            onChange={(e) => {
-                              const updatedAccounts = accounts.map(acc => 
-                                acc.id === account.id 
-                                  ? {...acc, limits: {...acc.limits, monthly: e.target.value}}
-                                  : acc
-                              );
-                              setAccounts(updatedAccounts);
-                            }}
-                          />
-                        ) : (
-                          <p className="text-sm">{account.limits.monthly}</p>
-                        )}
-                      </div>
-                    </div>
-                    {editingAccount === account.id && (
-                      <div className="flex gap-2 pt-4">
-                        <Button onClick={() => {
-                          // Save changes logic here
-                          setEditingAccount(null);
-                        }}>
-                          Guardar Alterações
-                        </Button>
-                        <Button variant="outline" onClick={() => setEditingAccount(null)}>
-                          Cancelar
-                        </Button>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </div>
