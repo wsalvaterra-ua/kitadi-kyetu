@@ -21,7 +21,7 @@ type AccountStatus = 'ACTIVE' | 'FROZEN' | 'CLOSED';
 
 const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagementScreenProps) => {
   const { toast } = useToast();
-  const [userAccessStep, setUserAccessStep] = useState<UserAccessStep>('verified'); // Skip verification for demo
+  const [userAccessStep, setUserAccessStep] = useState<UserAccessStep>('initial');
   const [dataAccessCode, setDataAccessCode] = useState('');
   const [operationCode, setOperationCode] = useState('');
   const [idVerificationChecked, setIdVerificationChecked] = useState(false);
@@ -122,6 +122,8 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
   const [smsCode, setSmsCode] = useState('');
   const [smsStep, setSmsStep] = useState<'send' | 'verify' | 'verified'>('send');
   const [showAccountDetails, setShowAccountDetails] = useState<string | null>(null);
+  const [accountSmsStep, setAccountSmsStep] = useState<{[key: string]: 'send' | 'verify' | 'verified'}>({});
+  const [accountSmsCode, setAccountSmsCode] = useState('');
   const [businessSmsStep, setBusinessSmsStep] = useState<{[key: string]: 'send' | 'verify' | 'verified'}>({});
   const [businessSmsCode, setBusinessSmsCode] = useState('');
   const [newBusinessData, setNewBusinessData] = useState({
@@ -181,7 +183,7 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
   };
 
   const verifyDataAccess = () => {
-    if (dataAccessCode === '123456' && idVerificationChecked) {
+    if (dataAccessCode && idVerificationChecked) {
       setUserAccessStep('verified');
       toast({
         title: "Acesso autorizado",
@@ -190,7 +192,7 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
     } else {
       toast({
         title: "Verificação falhada",
-        description: "Código incorreto ou verificação de ID não confirmada.",
+        description: "Código ou verificação de ID não confirmada.",
         variant: "destructive"
       });
     }
@@ -205,14 +207,14 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
   };
 
   const verifyOperationCode = () => {
-    if (operationCode === '123456') {
+    if (operationCode) {
       setShowOperationCode(false);
       setOperationCode('');
       return true;
     } else {
       toast({
-        title: "Código incorreto",
-        description: "Código de operação inválido.",
+        title: "Código vazio",
+        description: "Introduza um código de operação.",
         variant: "destructive"
       });
       return false;
@@ -228,7 +230,7 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
   };
 
   const verifySms = () => {
-    if (smsCode === '123456') { // Mock SMS verification
+    if (smsCode) {
       setSmsStep('verified');
       toast({
         title: "SMS verificado",
@@ -236,8 +238,8 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
       });
     } else {
       toast({
-        title: "Código incorreto",
-        description: "Código SMS inválido. Tente novamente.",
+        title: "Código vazio",
+        description: "Introduza um código SMS.",
         variant: "destructive"
       });
     }
@@ -252,7 +254,7 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
   };
 
   const verifyBusinessSms = (businessId: string) => {
-    if (businessSmsCode === '123456') {
+    if (businessSmsCode) {
       setBusinessSmsStep(prev => ({...prev, [businessId]: 'verified'}));
       toast({
         title: "SMS verificado",
@@ -260,8 +262,8 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
       });
     } else {
       toast({
-        title: "Código incorreto",
-        description: "Código SMS inválido. Tente novamente.",
+        title: "Código vazio",
+        description: "Introduza um código SMS.",
         variant: "destructive"
       });
     }
@@ -288,15 +290,43 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
     }, 1000);
   };
 
+  const sendAccountSms = (accountId: string) => {
+    setAccountSmsStep(prev => ({...prev, [accountId]: 'verify'}));
+    toast({
+      title: "SMS enviado",
+      description: `Código de verificação enviado para ${phoneNumber}`,
+    });
+  };
+
+  const verifyAccountSms = (accountId: string) => {
+    if (accountSmsCode) {
+      setAccountSmsStep(prev => ({...prev, [accountId]: 'verified'}));
+      toast({
+        title: "SMS verificado",
+        description: "Operações na conta autorizadas.",
+      });
+    } else {
+      toast({
+        title: "Código vazio",
+        description: "Introduza um código SMS.",
+        variant: "destructive"
+      });
+    }
+  };
+
   const handleTransferOnBehalf = (accountId: string) => {
-    requestOperationCode();
-    // Simulate operation code verification success for demo
-    setTimeout(() => {
+    if (accountSmsStep[accountId] === 'verified') {
       toast({
         title: "Transferência iniciada",
         description: "Funcionalidade de transferência será implementada",
       });
-    }, 1000);
+    } else {
+      toast({
+        title: "Verificação SMS necessária",
+        description: "Complete a verificação SMS antes de fazer transferências",
+        variant: "destructive"
+      });
+    }
   };
 
   const businessTypes = [
@@ -860,10 +890,20 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
                                 )}
                               </div>
                             )}
-                            {businessSmsStep[business.id] === 'verified' && (
+                           {businessSmsStep[business.id] === 'verified' && (
                               <div className="flex gap-2">
-                                <Button variant="outline" className="flex-1">Cancelar</Button>
-                                <Button className="flex-1">Guardar</Button>
+                                <Button variant="outline" className="flex-1" onClick={() => {
+                                  setBusinessSmsStep(prev => ({...prev, [business.id]: 'send'}));
+                                  setBusinessSmsCode('');
+                                }}>Cancelar</Button>
+                                <Button className="flex-1" onClick={() => {
+                                  toast({
+                                    title: "Perfil atualizado",
+                                    description: "Dados do perfil comercial atualizados com sucesso",
+                                  });
+                                  setBusinessSmsStep(prev => ({...prev, [business.id]: 'send'}));
+                                  setBusinessSmsCode('');
+                                }}>Guardar Alterações</Button>
                               </div>
                             )}
                           </div>
@@ -1003,88 +1043,137 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {accounts.map((account) => (
-                    <Card key={account.id} className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <h3 className="font-medium">{account.accountType}</h3>
-                            <span className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(account.status)}`}>
-                              {getStatusText(account.status)}
-                            </span>
-                          </div>
-                          <p className="text-sm text-gray-500">Conta: {account.accountNumber}</p>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-lg font-semibold">{account.balance}</span>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Button 
-                            size="sm" 
-                            variant="outline"
-                            onClick={() => setShowAccountDetails(showAccountDetails === account.id ? null : account.id)}
-                          >
-                            {showAccountDetails === account.id ? 'Ocultar' : 'Ver Detalhes'}
-                          </Button>
-                        </div>
-                      </div>
+                   {accounts.map((account) => (
+                     <Dialog key={account.id}>
+                       <DialogTrigger asChild>
+                         <Card className="p-4 cursor-pointer hover:bg-gray-50">
+                           <div className="flex items-center justify-between">
+                             <div className="flex-1">
+                               <div className="flex items-center gap-2">
+                                 <h3 className="font-medium">{account.accountType}</h3>
+                                 <span className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(account.status)}`}>
+                                   {getStatusText(account.status)}
+                                 </span>
+                               </div>
+                               <p className="text-sm text-gray-500">Conta: {account.accountNumber}</p>
+                               <div className="flex items-center gap-2 mt-1">
+                                 <span className="text-lg font-semibold">{account.balance}</span>
+                               </div>
+                             </div>
+                             <Eye className="w-4 h-4 text-gray-400" />
+                           </div>
+                         </Card>
+                       </DialogTrigger>
+                       <DialogContent className="max-w-2xl">
+                         <DialogHeader>
+                           <DialogTitle>Detalhes da Conta - {account.accountNumber}</DialogTitle>
+                         </DialogHeader>
+                         <div className="space-y-4">
+                           <div>
+                             <h4 className="font-medium mb-2">Informações da Conta</h4>
+                             <div className="grid grid-cols-2 gap-4 text-sm">
+                               <div>
+                                 <span className="font-medium">Tipo:</span>
+                                 <p>{account.accountType}</p>
+                               </div>
+                               <div>
+                                 <span className="font-medium">Saldo:</span>
+                                 <p className="text-lg font-semibold">{account.balance}</p>
+                               </div>
+                               <div>
+                                 <span className="font-medium">Estado:</span>
+                                 <span className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(account.status)}`}>
+                                   {getStatusText(account.status)}
+                                 </span>
+                               </div>
+                             </div>
+                           </div>
 
-                      {showAccountDetails === account.id && (
-                        <div className="mt-4 pt-4 border-t space-y-4">
-                          {/* Account limits */}
-                          <div>
-                            <h4 className="font-medium mb-2">Limites da Conta</h4>
-                            <div className="grid grid-cols-2 gap-2 text-sm">
-                              <div>Envio Diário: {account.limits.dailySend}</div>
-                              <div>Recepção Diária: {account.limits.dailyReceive}</div>
-                              <div>Envio Mensal: {account.limits.monthlySend}</div>
-                              <div>Recepção Mensal: {account.limits.monthlyReceive}</div>
-                              <div>Por Transação (Envio): {account.limits.transactionSend}</div>
-                              <div>Por Transação (Recepção): {account.limits.transactionReceive}</div>
-                              <div className="col-span-2">Saldo Máximo: {account.limits.maxBalance}</div>
-                            </div>
-                          </div>
+                           {/* Account limits */}
+                           <div>
+                             <h4 className="font-medium mb-2">Limites da Conta</h4>
+                             <div className="grid grid-cols-2 gap-2 text-sm">
+                               <div>Envio Diário: {account.limits.dailySend}</div>
+                               <div>Recepção Diária: {account.limits.dailyReceive}</div>
+                               <div>Envio Mensal: {account.limits.monthlySend}</div>
+                               <div>Recepção Mensal: {account.limits.monthlyReceive}</div>
+                               <div>Por Transação (Envio): {account.limits.transactionSend}</div>
+                               <div>Por Transação (Recepção): {account.limits.transactionReceive}</div>
+                               <div className="col-span-2">Saldo Máximo: {account.limits.maxBalance}</div>
+                             </div>
+                           </div>
 
-                          {/* Transaction history */}
-                          <div>
-                            <div className="flex items-center gap-2 mb-2">
-                              <History className="w-4 h-4" />
-                              <h4 className="font-medium">Histórico de Transações</h4>
-                            </div>
-                            <div className="space-y-2">
-                              {account.transactions.map((transaction) => (
-                                <div key={transaction.id} className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                                  <div>
-                                    <p className="text-sm font-medium">{transaction.description}</p>
-                                    <p className="text-xs text-gray-500">{transaction.date}</p>
-                                  </div>
-                                  <span className={`font-medium ${transaction.type === 'Recebido' ? 'text-green-600' : 'text-red-600'}`}>
-                                    {transaction.amount}
-                                  </span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
+                           {/* Transaction history */}
+                           <div>
+                             <div className="flex items-center gap-2 mb-2">
+                               <History className="w-4 h-4" />
+                               <h4 className="font-medium">Histórico de Transações</h4>
+                             </div>
+                             <div className="space-y-2 max-h-48 overflow-y-auto">
+                               {account.transactions.map((transaction) => (
+                                 <div key={transaction.id} className="flex justify-between items-center p-2 bg-gray-50 rounded">
+                                   <div>
+                                     <p className="text-sm font-medium">{transaction.description}</p>
+                                     <p className="text-xs text-gray-500">{transaction.date}</p>
+                                   </div>
+                                   <span className={`font-medium ${transaction.type === 'Recebido' ? 'text-green-600' : 'text-red-600'}`}>
+                                     {transaction.amount}
+                                   </span>
+                                 </div>
+                               ))}
+                             </div>
+                           </div>
 
-                          {/* Transfer button with SMS verification */}
-                          <div className="bg-yellow-50 p-3 rounded-lg">
-                            <div className="flex items-center gap-2 mb-2">
-                              <Shield className="w-4 h-4" />
-                              <span className="font-medium text-sm">Operações na Conta</span>
-                            </div>
-                            <Button 
-                              size="sm" 
-                              onClick={() => handleTransferOnBehalf(account.id)}
-                              className="w-full"
-                            >
-                              <Send className="w-4 h-4 mr-1" />
-                              Fazer Transferência
-                            </Button>
-                          </div>
-                        </div>
-                      )}
-                    </Card>
-                  ))}
+                           {/* Operations section with SMS verification */}
+                           <div className="bg-yellow-50 p-3 rounded-lg">
+                             <div className="flex items-center gap-2 mb-2">
+                               <Shield className="w-4 h-4" />
+                               <span className="font-medium text-sm">Operações na Conta</span>
+                             </div>
+                             
+                             {accountSmsStep[account.id] !== 'verified' && (
+                               <div className="space-y-2">
+                                 {accountSmsStep[account.id] !== 'verify' && (
+                                   <Button size="sm" onClick={() => sendAccountSms(account.id)} className="w-full">
+                                     <Smartphone className="w-4 h-4 mr-1" />
+                                     Enviar SMS para Operações
+                                   </Button>
+                                 )}
+                                 
+                                 {accountSmsStep[account.id] === 'verify' && (
+                                   <div className="space-y-2">
+                                     <Input
+                                       placeholder="Código SMS"
+                                       value={accountSmsCode}
+                                       onChange={(e) => setAccountSmsCode(e.target.value)}
+                                       maxLength={6}
+                                     />
+                                     <Button size="sm" onClick={() => verifyAccountSms(account.id)} className="w-full">
+                                       Verificar SMS
+                                     </Button>
+                                   </div>
+                                 )}
+                               </div>
+                             )}
+                             
+                             {accountSmsStep[account.id] === 'verified' && (
+                               <div className="space-y-2">
+                                 <p className="text-green-600 text-sm">✓ SMS verificado - Operações autorizadas</p>
+                                 <Button 
+                                   size="sm" 
+                                   onClick={() => handleTransferOnBehalf(account.id)}
+                                   className="w-full"
+                                 >
+                                   <Send className="w-4 h-4 mr-1" />
+                                   Fazer Transferência
+                                 </Button>
+                               </div>
+                             )}
+                           </div>
+                         </div>
+                       </DialogContent>
+                     </Dialog>
+                   ))}
 
                   {/* Add Account Button */}
                   <Dialog open={showCreateAccountModal} onOpenChange={setShowCreateAccountModal}>
