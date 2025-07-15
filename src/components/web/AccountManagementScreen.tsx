@@ -11,7 +11,7 @@ interface UserManagementScreenProps {
   onCreateNewUser: (phoneNumber: string) => void;
 }
 
-const UserManagementScreen = ({ onBack, onUserFound, onCreateNewUser }: UserManagementScreenProps) => {
+const AccountManagementScreen = ({ onBack, onUserFound, onCreateNewUser }: UserManagementScreenProps) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [isSearching, setIsSearching] = useState(false);
 
@@ -46,8 +46,8 @@ const UserManagementScreen = ({ onBack, onUserFound, onCreateNewUser }: UserMana
               <ArrowLeft className="w-4 h-4" />
             </Button>
             <div>
-              <h1 className="text-xl font-bold text-kitadi-navy">Gestão de Utilizadores</h1>
-              <p className="text-sm text-gray-500">Procurar e gerir utilizadores</p>
+              <h1 className="text-xl font-bold text-kitadi-navy">Gestão de Contas</h1>
+              <p className="text-sm text-gray-500">Procurar e gerir contas bancárias</p>
             </div>
           </div>
         </div>
@@ -103,10 +103,10 @@ const UserManagementScreen = ({ onBack, onUserFound, onCreateNewUser }: UserMana
               <div className="flex items-start gap-3">
                 <User className="w-5 h-5 text-blue-600 mt-0.5" />
                 <div>
-                  <h3 className="font-medium text-blue-900">Como funciona?</h3>
+                  <h3 className="font-medium text-blue-900">Gestão de Contas</h3>
                   <p className="text-sm text-blue-700 mt-1">
-                    Se o utilizador já existir, poderá gerir o seu perfil e contas.
-                    Se não existir, será direcionado para criar um novo perfil.
+                    Procure por número de telefone para gerir as contas bancárias do utilizador.
+                    Pode criar novas contas, alterar limites e gerir estados das contas.
                   </p>
                 </div>
               </div>
@@ -118,4 +118,4 @@ const UserManagementScreen = ({ onBack, onUserFound, onCreateNewUser }: UserMana
   );
 };
 
-export default UserManagementScreen;
+export default AccountManagementScreen;

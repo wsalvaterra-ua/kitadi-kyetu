@@ -155,12 +155,12 @@ const WebDashboard = ({ userType, onLogout, onViewTransactions, onDownloadExtrac
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <UserPlus className="w-5 h-5" />
-                    Gerir Utilizador
+                    Gerir Perfis
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">
-                    Gerir perfis e contas de utilizadores
+                    Gestão de perfis pessoais e comerciais
                   </p>
                   <Button variant="outline" className="mt-4 w-full">
                     Gerir
@@ -172,12 +172,12 @@ const WebDashboard = ({ userType, onLogout, onViewTransactions, onDownloadExtrac
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Building className="w-5 h-5" />
-                    Gerir Perfil Comercial
+                    Gerir Contas
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">
-                    Criar e gerir perfis comerciais
+                    Gestão de contas bancárias
                   </p>
                   <Button variant="outline" className="mt-4 w-full">
                     Gerir
