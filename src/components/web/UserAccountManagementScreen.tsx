@@ -6,7 +6,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, User, Building, Wallet, Plus, Edit, Eye, EyeOff, Shield, Send, Upload, Smartphone, FileText, History } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ArrowLeft, User, Building, Wallet, Plus, Edit, Eye, EyeOff, Shield, Send, Upload, Smartphone, FileText, History, MapPin } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface UserAccountManagementScreenProps {
@@ -14,8 +16,16 @@ interface UserAccountManagementScreenProps {
   phoneNumber: string;
 }
 
+type UserAccessStep = 'initial' | 'data-access' | 'verified';
+type AccountStatus = 'ACTIVE' | 'FROZEN' | 'CLOSED';
+
 const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagementScreenProps) => {
   const { toast } = useToast();
+  const [userAccessStep, setUserAccessStep] = useState<UserAccessStep>('verified'); // Skip verification for demo
+  const [dataAccessCode, setDataAccessCode] = useState('');
+  const [operationCode, setOperationCode] = useState('');
+  const [idVerificationChecked, setIdVerificationChecked] = useState(false);
+  const [showOperationCode, setShowOperationCode] = useState(false);
   const [activeTab, setActiveTab] = useState('personal');
 
   // Mock user data - in real app would come from API
@@ -57,10 +67,10 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
     accounts: [
       {
         id: '1',
-        accountNumber: 'ACC-001-' + phoneNumber.replace('+', ''),
+        accountNumber: '4' + phoneNumber.slice(-3).padStart(4, 'X'),
         accountType: 'Conta Pessoal',
         balance: '45,678 STN',
-        status: 'active',
+        status: 'ACTIVE' as AccountStatus,
         limits: {
           dailySend: '50,000 STN',
           dailyReceive: '100,000 STN',
@@ -78,10 +88,10 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
       },
       {
         id: '2',
-        accountNumber: 'ACC-002-' + phoneNumber.replace('+', ''),
+        accountNumber: '4' + (parseInt(phoneNumber.slice(-3)) + 1).toString().padStart(4, '0'),
         accountType: 'Conta Comercial - Loja da Maria',
         balance: '123,456 STN',
-        status: 'active',
+        status: 'FROZEN' as AccountStatus,
         limits: {
           dailySend: '200,000 STN',
           dailyReceive: '500,000 STN',
@@ -121,8 +131,11 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
     district: '',
     location: '',
     gpsCoordinates: '',
-    description: ''
+    description: '',
+    isOwnLocation: false
   });
+  const [showCreateAccountModal, setShowCreateAccountModal] = useState(false);
+  const [selectedBusinessProfile, setSelectedBusinessProfile] = useState('');
 
   const toggleBalanceVisibility = (accountId: string) => {
     setShowBalance(prev => ({
@@ -136,14 +149,14 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const coords = `${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(4)}`;
-          setNewBusinessData({...newBusinessData, gpsCoordinates: coords});
+          setNewBusinessData({...newBusinessData, gpsCoordinates: coords, isOwnLocation: true});
           toast({
             title: "Localização obtida",
             description: "Coordenadas GPS atualizadas automaticamente",
           });
         },
         () => {
-          setNewBusinessData({...newBusinessData, gpsCoordinates: '0.3440, 6.7310'}); // Default São Tomé coordinates
+          setNewBusinessData({...newBusinessData, gpsCoordinates: '0.3440, 6.7310', isOwnLocation: false}); // Default São Tomé coordinates
           toast({
             title: "Localização padrão",
             description: "Não foi possível obter a localização atual. Usando coordenadas de São Tomé.",
@@ -151,11 +164,58 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
         }
       );
     } else {
-      setNewBusinessData({...newBusinessData, gpsCoordinates: '0.3440, 6.7310'});
+      setNewBusinessData({...newBusinessData, gpsCoordinates: '0.3440, 6.7310', isOwnLocation: false});
       toast({
         title: "Localização padrão",
         description: "Geolocalização não disponível. Usando coordenadas de São Tomé.",
       });
+    }
+  };
+
+  const sendDataAccessSms = () => {
+    setUserAccessStep('data-access');
+    toast({
+      title: "SMS enviado",
+      description: `Código de acesso aos dados enviado para ${phoneNumber}`,
+    });
+  };
+
+  const verifyDataAccess = () => {
+    if (dataAccessCode === '123456' && idVerificationChecked) {
+      setUserAccessStep('verified');
+      toast({
+        title: "Acesso autorizado",
+        description: "Agora pode aceder aos dados do utilizador.",
+      });
+    } else {
+      toast({
+        title: "Verificação falhada",
+        description: "Código incorreto ou verificação de ID não confirmada.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const requestOperationCode = () => {
+    setShowOperationCode(true);
+    toast({
+      title: "SMS enviado",
+      description: `Código de operação enviado para ${phoneNumber}`,
+    });
+  };
+
+  const verifyOperationCode = () => {
+    if (operationCode === '123456') {
+      setShowOperationCode(false);
+      setOperationCode('');
+      return true;
+    } else {
+      toast({
+        title: "Código incorreto",
+        description: "Código de operação inválido.",
+        variant: "destructive"
+      });
+      return false;
     }
   };
 
@@ -217,26 +277,26 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
       return;
     }
 
-    setEditingPersonal(false);
-    toast({
-      title: "Perfil atualizado",
-      description: "Dados pessoais atualizados com sucesso",
-    });
+    requestOperationCode();
+    // Simulate operation code verification success for demo
+    setTimeout(() => {
+      setEditingPersonal(false);
+      toast({
+        title: "Perfil atualizado",
+        description: "Dados pessoais atualizados com sucesso",
+      });
+    }, 1000);
   };
 
   const handleTransferOnBehalf = (accountId: string) => {
-    if (verificationCode !== '123456') {
+    requestOperationCode();
+    // Simulate operation code verification success for demo
+    setTimeout(() => {
       toast({
-        title: "Código de verificação necessário",
-        description: "Introduza o código de verificação para transferências",
-        variant: "destructive"
+        title: "Transferência iniciada",
+        description: "Funcionalidade de transferência será implementada",
       });
-      return;
-    }
-    toast({
-      title: "Funcionalidade em desenvolvimento",
-      description: "Transferência em nome do titular será implementada em breve",
-    });
+    }, 1000);
   };
 
   const businessTypes = [
@@ -277,12 +337,52 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
       district: '',
       location: '',
       gpsCoordinates: '',
-      description: ''
+      description: '',
+      isOwnLocation: false
     });
 
     toast({
       title: "Perfil comercial criado",
       description: "Novo perfil criado com sucesso. Estado: Pendente",
+    });
+  };
+
+  const createNewAccount = () => {
+    if (!selectedBusinessProfile) {
+      toast({
+        title: "Perfil comercial necessário",
+        description: "Selecione um perfil comercial para associar à conta",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const businessProfile = businessProfiles.find(bp => bp.id === selectedBusinessProfile);
+    const newAccount = {
+      id: (accounts.length + 1).toString(),
+      accountNumber: '4' + Math.random().toString().slice(-3).padStart(4, 'X'),
+      accountType: `Conta Comercial - ${businessProfile?.businessName}`,
+      balance: '0 STN',
+      status: 'ACTIVE' as AccountStatus,
+      limits: {
+        dailySend: '200,000 STN',
+        dailyReceive: '500,000 STN',
+        monthlySend: '2,000,000 STN',
+        monthlyReceive: '5,000,000 STN',
+        transactionSend: '50,000 STN',
+        transactionReceive: '100,000 STN',
+        maxBalance: '10,000,000 STN'
+      },
+      transactions: []
+    };
+
+    setAccounts([...accounts, newAccount]);
+    setShowCreateAccountModal(false);
+    setSelectedBusinessProfile('');
+
+    toast({
+      title: "Conta criada",
+      description: "Nova conta comercial criada com sucesso",
     });
   };
 
@@ -297,6 +397,7 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
         return 'text-yellow-600 bg-yellow-50 border-yellow-200';
       case 'SUSPENDED':
       case 'suspended':
+      case 'FROZEN':
         return 'text-red-600 bg-red-50 border-red-200';
       case 'CLOSED':
         return 'text-gray-600 bg-gray-50 border-gray-200';
@@ -318,6 +419,8 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
       case 'SUSPENDED':
       case 'suspended':
         return 'Suspenso';
+      case 'FROZEN':
+        return 'Congelado';
       case 'CLOSED':
         return 'Fechado';
       default:
@@ -325,8 +428,120 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
     }
   };
 
+  // Initial access verification screen
+  if (userAccessStep === 'initial') {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle className="text-center">Verificação de Acesso</CardTitle>
+            <p className="text-center text-sm text-gray-600">
+              Para aceder aos dados do utilizador {phoneNumber}
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Button 
+              onClick={sendDataAccessSms}
+              className="w-full"
+            >
+              <Smartphone className="w-4 h-4 mr-2" />
+              Enviar SMS ao Proprietário
+            </Button>
+            <p className="text-xs text-gray-500 text-center">
+              Um código de verificação será enviado para {phoneNumber}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Data access verification
+  if (userAccessStep === 'data-access') {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle className="text-center">Código de Verificação</CardTitle>
+            <p className="text-center text-sm text-gray-600">
+              ID do titular: {personalData.idNumber}
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="dataAccessCode">Código SMS</Label>
+              <Input
+                id="dataAccessCode"
+                value={dataAccessCode}
+                onChange={(e) => setDataAccessCode(e.target.value)}
+                placeholder="Introduza o código de 6 dígitos"
+                maxLength={6}
+              />
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="idVerification" 
+                checked={idVerificationChecked}
+                onCheckedChange={(checked) => setIdVerificationChecked(checked === true)}
+              />
+              <Label htmlFor="idVerification" className="text-sm">
+                Confirmei a identidade do titular comparando com o documento de identificação
+              </Label>
+            </div>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                onClick={() => setUserAccessStep('initial')}
+                className="flex-1"
+              >
+                Voltar
+              </Button>
+              <Button 
+                onClick={verifyDataAccess}
+                disabled={!dataAccessCode || !idVerificationChecked}
+                className="flex-1"
+              >
+                Verificar
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Operation Code Modal */}
+      {showOperationCode && (
+        <Dialog open={showOperationCode} onOpenChange={setShowOperationCode}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Código de Operação</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <p className="text-sm text-gray-600">
+                Introduza o código de operação enviado para {phoneNumber}
+              </p>
+              <Input
+                value={operationCode}
+                onChange={(e) => setOperationCode(e.target.value)}
+                placeholder="Código de 6 dígitos"
+                maxLength={6}
+              />
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={() => setShowOperationCode(false)} className="flex-1">
+                  Cancelar
+                </Button>
+                <Button onClick={verifyOperationCode} className="flex-1">
+                  Verificar
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
@@ -337,7 +552,7 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
             <div>
               <h1 className="text-xl font-bold text-kitadi-navy">Gestão de Utilizador</h1>
               <p className="text-sm text-gray-500">
-                Telefone: {phoneNumber}
+                Telefone: {phoneNumber} | ID: {personalData.idNumber}
               </p>
             </div>
           </div>
@@ -465,724 +680,461 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
                       onChange={(e) => setPersonalData({...personalData, dateOfBirth: e.target.value})}
                     />
                   </div>
-                   <div>
-                     <Label htmlFor="expiryDate">Data de Expiração do Documento</Label>
-                     <Input
-                       id="expiryDate"
-                       type="date"
-                       value={personalData.expiryDate}
-                       disabled={!editingPersonal}
-                       onChange={(e) => setPersonalData({...personalData, expiryDate: e.target.value})}
-                      />
+                  <div>
+                    <Label htmlFor="expiryDate">Data de Validade do Documento</Label>
+                    <Input
+                      id="expiryDate"
+                      type="date"
+                      value={personalData.expiryDate}
+                      disabled={!editingPersonal}
+                      onChange={(e) => setPersonalData({...personalData, expiryDate: e.target.value})}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="nif">NIF (Opcional)</Label>
+                    <Input
+                      id="nif"
+                      value={personalData.nif || ''}
+                      disabled={!editingPersonal}
+                      onChange={(e) => setPersonalData({...personalData, nif: e.target.value})}
+                    />
+                  </div>
+                </div>
+
+                {editingPersonal && (
+                  <div className="space-y-4 pt-4 border-t">
+                    <div className="space-y-2">
+                      <Label>Foto do Documento (Frente)</Label>
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                        <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
+                        <p className="text-sm text-gray-500">Clique para carregar imagem</p>
+                      </div>
                     </div>
-                    <div>
-                      <Label htmlFor="nif">NIF (Opcional)</Label>
-                      <Input
-                        id="nif"
-                        value={personalData.nif || ''}
-                        disabled={!editingPersonal}
-                        onChange={(e) => setPersonalData({...personalData, nif: e.target.value})}
-                        placeholder="Número de Identificação Fiscal"
-                      />
+                    <div className="space-y-2">
+                      <Label>Foto do Documento (Verso)</Label>
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                        <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
+                        <p className="text-sm text-gray-500">Clique para carregar imagem</p>
+                      </div>
                     </div>
-                    <div>
-                      <Label htmlFor="status">Status</Label>
-                      <Select 
-                        value={personalData.status} 
-                        disabled={!editingPersonal || personalData.status === 'PENDING_KYC'} 
-                        onValueChange={(value) => setPersonalData({...personalData, status: value})}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="ACTIVE">Ativo</SelectItem>
-                          <SelectItem value="SUSPENDED">Suspenso</SelectItem>
-                          <SelectItem value="PENDING_KYC">Pendente KYC</SelectItem>
-                          <SelectItem value="CLOSED">Fechado</SelectItem>
-                        </SelectContent>
-                      </Select>
+                    <div className="space-y-2">
+                      <Label>Foto do Contrato</Label>
+                      <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                        <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
+                        <p className="text-sm text-gray-500">Clique para carregar contrato</p>
+                      </div>
+                    </div>
+
+                    {/* SMS Verification */}
+                    <div className="bg-yellow-50 p-3 rounded-lg">
+                      <p className="text-sm font-medium mb-2">Verificação SMS necessária para guardar alterações</p>
+                      {smsStep === 'send' && (
+                        <Button size="sm" onClick={sendSms}>
+                          <Smartphone className="w-4 h-4 mr-1" />
+                          Enviar SMS
+                        </Button>
+                      )}
+                      {smsStep === 'verify' && (
+                        <div className="space-y-2">
+                          <Input
+                            placeholder="Código SMS"
+                            value={smsCode}
+                            onChange={(e) => setSmsCode(e.target.value)}
+                            maxLength={6}
+                          />
+                          <Button size="sm" onClick={verifySms}>
+                            Verificar SMS
+                          </Button>
+                        </div>
+                      )}
+                      {smsStep === 'verified' && (
+                        <div className="space-y-2">
+                          <p className="text-green-600 text-sm">✓ SMS verificado</p>
+                          <Button onClick={savePersonalProfile}>
+                            Guardar Perfil
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   </div>
-
-                  {/* Documentos */}
-                  <div className="mt-6">
-                    <h3 className="text-md font-semibold mb-4">Documentos de Identificação</h3>
-                    <div className="grid md:grid-cols-3 gap-6">
-                      <div>
-                        <Label>Foto do Documento (Frente)</Label>
-                        <div className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                          <Upload className="mx-auto h-8 w-8 text-gray-400" />
-                          <p className="mt-2 text-sm text-gray-500">
-                            Clique para fazer upload da frente do documento
-                          </p>
-                          <input type="file" className="hidden" accept="image/*" />
-                        </div>
-                      </div>
-                      <div>
-                        <Label>Foto do Documento (Verso)</Label>
-                        <div className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                          <Upload className="mx-auto h-8 w-8 text-gray-400" />
-                          <p className="mt-2 text-sm text-gray-500">
-                            Clique para fazer upload do verso do documento
-                          </p>
-                          <input type="file" className="hidden" accept="image/*" />
-                        </div>
-                      </div>
-                      <div>
-                        <Label>Foto do Contrato</Label>
-                        <div className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                          <FileText className="mx-auto h-8 w-8 text-gray-400" />
-                          <p className="mt-2 text-sm text-gray-500">
-                            Clique para fazer upload do contrato
-                          </p>
-                          <input type="file" className="hidden" accept="image/*,application/pdf" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                 {/* Código de Verificação */}
-                 <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                   <h3 className="text-md font-semibold mb-4 flex items-center gap-2">
-                     <Smartphone className="w-5 h-5" />
-                     Verificação por SMS
-                   </h3>
-                   
-                   {smsStep === 'send' && (
-                     <div className="space-y-3">
-                       <p className="text-sm text-gray-600">
-                         Para verificar a identidade, será enviado um código SMS para {phoneNumber}
-                       </p>
-                       <Button onClick={sendSms} className="flex items-center gap-2">
-                         <Send className="w-4 h-4" />
-                         Enviar Código SMS
-                       </Button>
-                     </div>
-                   )}
-
-                   {smsStep === 'verify' && (
-                     <div className="space-y-3">
-                       <p className="text-sm text-gray-600">
-                         Código enviado para {phoneNumber}. Introduza o código recebido:
-                       </p>
-                       <div className="flex gap-2">
-                         <Input
-                           type="text"
-                           placeholder="Código SMS"
-                           value={smsCode}
-                           onChange={(e) => setSmsCode(e.target.value)}
-                           className="bg-white"
-                         />
-                         <Button onClick={verifySms}>
-                           Verificar
-                         </Button>
-                       </div>
-                     </div>
-                   )}
-
-                   {smsStep === 'verified' && (
-                     <div className="flex items-center gap-2 text-green-600">
-                       <Shield className="w-5 h-5" />
-                       <span className="text-sm font-medium">SMS verificado com sucesso</span>
-                     </div>
-                   )}
-                 </div>
-
-                 {editingPersonal && (
-                   <div className="flex gap-2 pt-4">
-                     <Button onClick={savePersonalProfile}>
-                       Guardar Alterações
-                     </Button>
-                     <Button variant="outline" onClick={() => setEditingPersonal(false)}>
-                       Cancelar
-                     </Button>
-                   </div>
-                 )}
+                )}
               </CardContent>
             </Card>
           </TabsContent>
 
           {/* Business Profiles Tab */}
           <TabsContent value="business" className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-lg font-semibold">Perfis Comerciais</h2>
-              <Button 
-                className="flex items-center gap-2"
-                onClick={() => setShowNewBusinessForm(true)}
-              >
-                <Plus className="w-4 h-4" />
-                Criar Perfil Comercial
-              </Button>
-            </div>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Building className="w-5 h-5" />
+                  Perfis Comerciais
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {businessProfiles.map((business) => (
+                    <Dialog key={business.id}>
+                      <DialogTrigger asChild>
+                        <Card className="p-4 cursor-pointer hover:bg-gray-50">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <h3 className="font-medium">{business.businessName}</h3>
+                              <p className="text-sm text-gray-500">{business.businessType}</p>
+                              <p className="text-sm text-gray-500">{business.address}</p>
+                              <div className="flex items-center gap-2 mt-1">
+                                <span className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(business.status)}`}>
+                                  {getStatusText(business.status)}
+                                </span>
+                              </div>
+                            </div>
+                            <Edit className="w-4 h-4 text-gray-400" />
+                          </div>
+                        </Card>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Editar Perfil Comercial</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div>
+                            <Label>Nome do Negócio</Label>
+                            <Input value={business.businessName} />
+                          </div>
+                          <div>
+                            <Label>Tipo de Negócio</Label>
+                            <Input value={business.businessType} />
+                          </div>
+                          <div>
+                            <Label>NIF</Label>
+                            <Input value={business.taxId} />
+                          </div>
+                          <div>
+                            <Label>Endereço</Label>
+                            <Input value={business.address} />
+                          </div>
+                          <div>
+                            <Label>Coordenadas GPS</Label>
+                            <div className="flex items-center gap-2">
+                              <Input value={business.gpsCoordinates} readOnly />
+                              <MapPin className="w-4 h-4 text-gray-400" />
+                            </div>
+                            <div className="flex items-center space-x-2 mt-2">
+                              <Checkbox 
+                                id={`location-${business.id}`}
+                                onCheckedChange={(checked) => console.log('Location checkbox:', checked)}
+                              />
+                              <Label htmlFor={`location-${business.id}`} className="text-sm">
+                                Esta é a localização real do negócio
+                              </Label>
+                            </div>
+                          </div>
+                          <div>
+                            <Label>Descrição</Label>
+                            <Textarea value={business.description} />
+                          </div>
+                          
+                          {/* SMS Verification for final operation */}
+                          <div className="bg-yellow-50 p-3 rounded-lg">
+                            <p className="text-sm font-medium mb-2">Verificação SMS necessária para guardar alterações</p>
+                            {businessSmsStep[business.id] !== 'verified' && (
+                              <div className="space-y-2">
+                                {businessSmsStep[business.id] === 'send' && (
+                                  <Button size="sm" onClick={() => sendBusinessSms(business.id)}>
+                                    <Smartphone className="w-4 h-4 mr-1" />
+                                    Enviar SMS
+                                  </Button>
+                                )}
+                                {businessSmsStep[business.id] === 'verify' && (
+                                  <div className="flex gap-2">
+                                    <Input
+                                      placeholder="Código SMS"
+                                      value={businessSmsCode}
+                                      onChange={(e) => setBusinessSmsCode(e.target.value)}
+                                      maxLength={6}
+                                    />
+                                    <Button size="sm" onClick={() => verifyBusinessSms(business.id)}>
+                                      Verificar
+                                    </Button>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                            {businessSmsStep[business.id] === 'verified' && (
+                              <div className="flex gap-2">
+                                <Button variant="outline" className="flex-1">Cancelar</Button>
+                                <Button className="flex-1">Guardar</Button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  ))}
 
-            {/* New Business Form */}
-            {showNewBusinessForm && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Novo Perfil Comercial</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="businessName">Nome do Negócio *</Label>
-                      <Input
-                        id="businessName"
-                        value={newBusinessData.businessName}
-                        onChange={(e) => setNewBusinessData({...newBusinessData, businessName: e.target.value})}
-                        placeholder="Ex: Loja da Maria"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="businessType">Tipo de Negócio *</Label>
-                      <Select value={newBusinessData.businessType} onValueChange={(value) => setNewBusinessData({...newBusinessData, businessType: value})}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecionar tipo" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {businessTypes.map((type) => (
-                            <SelectItem key={type} value={type}>{type}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    {newBusinessData.businessType === 'Outro' && (
-                      <div className="md:col-span-2">
-                        <Label htmlFor="otherBusinessType">Especificar Tipo</Label>
-                        <Input
-                          id="otherBusinessType"
-                          value={newBusinessData.otherBusinessType}
-                          onChange={(e) => setNewBusinessData({...newBusinessData, otherBusinessType: e.target.value})}
-                          placeholder="Especifique o tipo de negócio"
-                        />
-                      </div>
-                    )}
-                    <div>
-                      <Label htmlFor="district">Distrito *</Label>
-                      <Select value={newBusinessData.district} onValueChange={(value) => setNewBusinessData({...newBusinessData, district: value})}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecionar distrito" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {districts.map((district) => (
-                            <SelectItem key={district} value={district}>{district}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label htmlFor="location">Localização</Label>
-                      <Input
-                        id="location"
-                        value={newBusinessData.location}
-                        onChange={(e) => setNewBusinessData({...newBusinessData, location: e.target.value})}
-                        placeholder="Ex: Rua Principal, 123"
-                      />
-                    </div>
-                     <div>
-                       <Label htmlFor="gpsCoordinates">Coordenadas GPS</Label>
-                       <div className="flex gap-2">
-                         <Input
-                           id="gpsCoordinates"
-                           value={newBusinessData.gpsCoordinates}
-                           disabled
-                           placeholder="Ex: 0.3365° N, 6.7273° E"
-                         />
-                         <Button 
-                           type="button"
-                           variant="outline"
-                           onClick={getCurrentLocation}
-                         >
-                           Obter Localização
-                         </Button>
-                       </div>
-                     </div>
-                    <div className="md:col-span-2">
-                      <Label htmlFor="description">Descrição</Label>
-                      <Textarea
-                        id="description"
-                        value={newBusinessData.description}
-                        onChange={(e) => setNewBusinessData({...newBusinessData, description: e.target.value})}
-                        placeholder="Descreva o seu negócio..."
-                        rows={3}
-                      />
-                    </div>
-                  </div>
-                  <div className="flex gap-2 pt-4">
-                    <Button onClick={saveNewBusiness}>
-                      Criar Perfil
-                    </Button>
-                    <Button variant="outline" onClick={() => setShowNewBusinessForm(false)}>
-                      Cancelar
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            <div className="grid gap-4">
-              {businessProfiles.map((business) => (
-                <Card key={business.id}>
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="flex items-center gap-2">
-                        <Building className="w-5 h-5" />
-                        {business.businessName}
-                      </CardTitle>
-                      <div className="flex items-center gap-2">
-                        <span className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(business.status)}`}>
-                          {getStatusText(business.status)}
-                        </span>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => setEditingBusiness(editingBusiness === business.id ? null : business.id)}
-                        >
-                          <Edit className="w-4 h-4 mr-1" />
-                          {editingBusiness === business.id ? 'Cancelar' : 'Editar'}
-                        </Button>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <Label className="text-sm font-medium text-gray-600">Tipo de Negócio</Label>
-                        {editingBusiness === business.id ? (
-                          <Select value={business.businessType} onValueChange={(value) => {
-                            const updated = businessProfiles.map(b => 
-                              b.id === business.id ? {...b, businessType: value} : b
-                            );
-                            setBusinessProfiles(updated);
-                          }}>
+                  {/* Add Business Button */}
+                  <Dialog open={showNewBusinessForm} onOpenChange={setShowNewBusinessForm}>
+                    <DialogTrigger asChild>
+                      <Button 
+                        className="w-full border-dashed"
+                        variant="outline"
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Adicionar Perfil Comercial
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Novo Perfil Comercial</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div>
+                          <Label>Nome do Negócio</Label>
+                          <Input
+                            value={newBusinessData.businessName}
+                            onChange={(e) => setNewBusinessData({...newBusinessData, businessName: e.target.value})}
+                          />
+                        </div>
+                        <div>
+                          <Label>Tipo de Negócio</Label>
+                          <Select 
+                            value={newBusinessData.businessType} 
+                            onValueChange={(value) => setNewBusinessData({...newBusinessData, businessType: value})}
+                          >
                             <SelectTrigger>
-                              <SelectValue />
+                              <SelectValue placeholder="Selecione o tipo" />
                             </SelectTrigger>
                             <SelectContent>
-                              {businessTypes.map((type) => (
+                              {businessTypes.map(type => (
                                 <SelectItem key={type} value={type}>{type}</SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
-                        ) : (
-                          <p className="text-sm">{business.businessType}</p>
-                        )}
-                      </div>
-                      <div>
-                        <Label className="text-sm font-medium text-gray-600">NIF</Label>
-                        {editingBusiness === business.id ? (
-                          <Input
-                            value={business.taxId}
-                            onChange={(e) => {
-                              const updated = businessProfiles.map(b => 
-                                b.id === business.id ? {...b, taxId: e.target.value} : b
-                              );
-                              setBusinessProfiles(updated);
-                            }}
-                          />
-                        ) : (
-                          <p className="text-sm">{business.taxId}</p>
-                        )}
-                      </div>
-                      <div className="md:col-span-2">
-                        <Label className="text-sm font-medium text-gray-600">Endereço</Label>
-                        {editingBusiness === business.id ? (
-                          <Input 
-                            value={business.address}
-                            onChange={(e) => {
-                              const updated = businessProfiles.map(b => 
-                                b.id === business.id ? {...b, address: e.target.value} : b
-                              );
-                              setBusinessProfiles(updated);
-                            }}
-                          />
-                        ) : (
-                          <p className="text-sm">{business.address}</p>
-                        )}
-                      </div>
-                      <div>
-                        <Label className="text-sm font-medium text-gray-600">Coordenadas GPS</Label>
-                        <p className="text-sm font-mono">{business.gpsCoordinates}</p>
-                      </div>
-                      <div className="md:col-span-2">
-                        <Label className="text-sm font-medium text-gray-600">Descrição</Label>
-                        {editingBusiness === business.id ? (
-                          <Textarea 
-                            value={business.description}
-                            onChange={(e) => {
-                              const updated = businessProfiles.map(b => 
-                                b.id === business.id ? {...b, description: e.target.value} : b
-                              );
-                              setBusinessProfiles(updated);
-                            }}
-                            rows={3}
-                          />
-                        ) : (
-                          <p className="text-sm">{business.description}</p>
-                        )}
-                      </div>
-                    </div>
-                    
-                    {/* SMS Verification for Business Profile */}
-                    <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                      <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
-                        <Smartphone className="w-4 h-4" />
-                        Verificação SMS do Perfil Comercial
-                      </h4>
-                      
-                      {!businessSmsStep[business.id] && (
-                        <div className="space-y-3">
-                          <p className="text-xs text-gray-600">
-                            Para verificar este perfil comercial, será enviado um código SMS para {phoneNumber}
-                          </p>
-                          <Button 
-                            size="sm"
-                            onClick={() => sendBusinessSms(business.id)} 
-                            className="flex items-center gap-2"
-                          >
-                            <Send className="w-3 h-3" />
-                            Enviar Código SMS
-                          </Button>
                         </div>
-                      )}
-
-                      {businessSmsStep[business.id] === 'verify' && (
-                        <div className="space-y-3">
-                          <p className="text-xs text-gray-600">
-                            Código enviado para {phoneNumber}. Introduza o código recebido:
-                          </p>
+                        {newBusinessData.businessType === 'Outro' && (
+                          <div>
+                            <Label>Especificar Tipo</Label>
+                            <Input
+                              value={newBusinessData.otherBusinessType}
+                              onChange={(e) => setNewBusinessData({...newBusinessData, otherBusinessType: e.target.value})}
+                            />
+                          </div>
+                        )}
+                        <div>
+                          <Label>Distrito</Label>
+                          <Select 
+                            value={newBusinessData.district} 
+                            onValueChange={(value) => setNewBusinessData({...newBusinessData, district: value})}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecione o distrito" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {districts.map(district => (
+                                <SelectItem key={district} value={district}>{district}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label>Localização</Label>
+                          <Input
+                            value={newBusinessData.location}
+                            onChange={(e) => setNewBusinessData({...newBusinessData, location: e.target.value})}
+                            placeholder="Rua, número, bairro..."
+                          />
+                        </div>
+                        <div>
+                          <Label>Coordenadas GPS</Label>
                           <div className="flex gap-2">
                             <Input
-                              type="text"
-                              placeholder="Código SMS"
-                              value={businessSmsCode}
-                              onChange={(e) => setBusinessSmsCode(e.target.value)}
-                              className="bg-white"
+                              value={newBusinessData.gpsCoordinates}
+                              readOnly
+                              placeholder="Latitude, Longitude"
                             />
-                            <Button size="sm" onClick={() => verifyBusinessSms(business.id)}>
-                              Verificar
+                            <Button type="button" onClick={getCurrentLocation} size="sm">
+                              <MapPin className="w-4 h-4" />
                             </Button>
                           </div>
+                          <div className="flex items-center space-x-2 mt-2">
+                            <Checkbox 
+                              id="isOwnLocation" 
+                              checked={newBusinessData.isOwnLocation}
+                              onCheckedChange={(checked) => setNewBusinessData({...newBusinessData, isOwnLocation: checked === true})}
+                            />
+                            <Label htmlFor="isOwnLocation" className="text-sm">
+                              Esta é a localização real do negócio
+                            </Label>
+                          </div>
                         </div>
-                      )}
-
-                      {businessSmsStep[business.id] === 'verified' && (
-                        <div className="flex items-center gap-2 text-green-600">
-                          <Shield className="w-4 h-4" />
-                          <span className="text-xs font-medium">SMS verificado com sucesso</span>
+                        <div>
+                          <Label>Descrição</Label>
+                          <Textarea
+                            value={newBusinessData.description}
+                            onChange={(e) => setNewBusinessData({...newBusinessData, description: e.target.value})}
+                            placeholder="Descrição do negócio..."
+                          />
                         </div>
-                      )}
-                    </div>
-
-                    {editingBusiness === business.id && (
-                      <div className="flex gap-2 pt-4">
-                        <Button onClick={() => {
-                          if (businessSmsStep[business.id] !== 'verified') {
-                            toast({
-                              title: "Verificação SMS necessária",
-                              description: "Por favor, complete a verificação SMS antes de guardar",
-                              variant: "destructive"
-                            });
-                            return;
-                          }
-                          setEditingBusiness(null);
-                          toast({
-                            title: "Perfil atualizado",
-                            description: "Alterações guardadas com sucesso",
-                          });
-                        }}>
-                          Guardar Alterações
-                        </Button>
-                        <Button variant="outline" onClick={() => setEditingBusiness(null)}>
-                          Cancelar
-                        </Button>
+                        
+                        <div className="flex gap-2">
+                          <Button variant="outline" onClick={() => setShowNewBusinessForm(false)} className="flex-1">
+                            Cancelar
+                          </Button>
+                          <Button onClick={saveNewBusiness} className="flex-1">
+                            Criar Perfil
+                          </Button>
+                        </div>
                       </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
-            {/* Accounts Tab */}
-            <TabsContent value="accounts" className="space-y-6">
-              <div className="space-y-4">
-                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <h3 className="text-md font-semibold mb-4 flex items-center gap-2">
-                    <Smartphone className="w-5 h-5" />
-                    Código de Verificação para Transferências
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-3">
-                    Para fazer transferências, introduza o código de verificação:
-                  </p>
-                  <div className="flex gap-2">
-                    <Input
-                      type="password"
-                      placeholder="Código de verificação"
-                      value={verificationCode}
-                      onChange={(e) => setVerificationCode(e.target.value)}
-                      className="bg-white"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Hide verification section for accounts view */}
-              {false && (
-              <Card className="border-amber-200 bg-amber-50">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-amber-800">
-                    <Shield className="w-5 h-5" />
-                    Código de Verificação Necessário
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div>
-                      <Label className="text-sm font-medium">Enviar código SMS</Label>
-                      <div className="flex gap-2 mt-1">
-                        <Button 
-                          variant="outline" 
-                          onClick={sendSms}
-                          className="flex items-center gap-2"
-                        >
-                          <Smartphone className="w-4 h-4" />
-                          Enviar SMS para {phoneNumber}
-                        </Button>
-                      </div>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium">Código de segurança do agente</Label>
-                      <div className="flex gap-2 mt-1">
-                        <Input
-                          type="password"
-                          placeholder="Código de segurança"
-                          value={verificationCode}
-                          onChange={(e) => setVerificationCode(e.target.value)}
-                          className="bg-white"
-                        />
-                        <Button onClick={() => {
-                          if (verificationCode === '123456') {
-                            toast({
-                              title: "Código verificado",
-                              description: "Acesso às contas autorizado",
-                            });
-                          } else {
-                            toast({
-                              title: "Código incorreto",
-                              description: "Tente novamente",
-                              variant: "destructive"
-                            });
-                          }
-                        }}>
-                          Verificar
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-sm text-amber-700 mt-2">
-                    É necessário código de verificação para aceder aos dados das contas
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-
-            <div className="flex justify-between items-center">
-              <h2 className="text-lg font-semibold">Contas Digitais</h2>
-              <Button className="flex items-center gap-2">
-                <Plus className="w-4 h-4" />
-                Criar Nova Conta
-              </Button>
-            </div>
-
-            {/* Account Details View */}
-            {showAccountDetails && (
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center gap-2">
-                      <FileText className="w-5 h-5" />
-                      Detalhes da Conta
-                    </CardTitle>
-                    <Button variant="outline" onClick={() => setShowAccountDetails(null)}>
-                      Voltar à Lista
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  {(() => {
-                    const account = accounts.find(acc => acc.id === showAccountDetails);
-                    if (!account) return null;
-
-                    return (
-                      <div className="space-y-6">
-                        {/* Account Info */}
-                        <div className="grid md:grid-cols-3 gap-4">
-                          <div>
-                            <Label className="text-sm font-medium text-gray-600">Tipo de Conta</Label>
-                            <p className="text-sm font-bold">{account.accountType}</p>
-                          </div>
-                          <div>
-                            <Label className="text-sm font-medium text-gray-600">Número</Label>
-                            <p className="text-sm font-mono">{account.accountNumber}</p>
-                          </div>
-                          <div>
-                            <Label className="text-sm font-medium text-gray-600">Saldo</Label>
-                            <p className="text-sm font-bold text-green-600">{account.balance}</p>
-                          </div>
-                        </div>
-
-                        {/* Limits Grid */}
-                        <div>
-                          <h3 className="text-md font-semibold mb-3">Limites de Transação</h3>
-                          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <div className="p-3 border rounded-lg">
-                              <Label className="text-xs text-gray-500">Envio Diário</Label>
-                              <p className="text-sm font-medium">{account.limits.dailySend}</p>
-                            </div>
-                            <div className="p-3 border rounded-lg">
-                              <Label className="text-xs text-gray-500">Recebimento Diário</Label>
-                              <p className="text-sm font-medium">{account.limits.dailyReceive}</p>
-                            </div>
-                            <div className="p-3 border rounded-lg">
-                              <Label className="text-xs text-gray-500">Envio Mensal</Label>
-                              <p className="text-sm font-medium">{account.limits.monthlySend}</p>
-                            </div>
-                            <div className="p-3 border rounded-lg">
-                              <Label className="text-xs text-gray-500">Recebimento Mensal</Label>
-                              <p className="text-sm font-medium">{account.limits.monthlyReceive}</p>
-                            </div>
-                            <div className="p-3 border rounded-lg">
-                              <Label className="text-xs text-gray-500">Transação Envio</Label>
-                              <p className="text-sm font-medium">{account.limits.transactionSend}</p>
-                            </div>
-                            <div className="p-3 border rounded-lg">
-                              <Label className="text-xs text-gray-500">Transação Recebimento</Label>
-                              <p className="text-sm font-medium">{account.limits.transactionReceive}</p>
-                            </div>
-                            <div className="p-3 border rounded-lg">
-                              <Label className="text-xs text-gray-500">Saldo Máximo</Label>
-                              <p className="text-sm font-medium">{account.limits.maxBalance}</p>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Actions */}
-                        <div className="flex gap-2">
-                          <Button 
-                            onClick={() => handleTransferOnBehalf(account.id)}
-                            className="flex items-center gap-2"
-                          >
-                            <Send className="w-4 h-4" />
-                            Fazer Transferência
-                          </Button>
-                          <Button variant="outline">
-                            <Edit className="w-4 h-4 mr-1" />
-                            Editar Limites
-                          </Button>
-                        </div>
-
-                        {/* Transactions */}
-                        <div>
-                          <h3 className="text-md font-semibold mb-3 flex items-center gap-2">
-                            <History className="w-5 h-5" />
-                            Últimas Transações
-                          </h3>
-                          <div className="space-y-2">
-                            {account.transactions.map((transaction) => (
-                              <div key={transaction.id} className="flex items-center justify-between p-3 border rounded-lg">
-                                <div>
-                                  <p className="text-sm font-medium">{transaction.description}</p>
-                                  <p className="text-xs text-gray-500">{transaction.date}</p>
-                                </div>
-                                <div className="text-right">
-                                  <p className={`text-sm font-bold ${
-                                    transaction.type === 'Recebido' ? 'text-green-600' : 'text-red-600'
-                                  }`}>
-                                    {transaction.amount}
-                                  </p>
-                                  <p className="text-xs text-gray-500">{transaction.type}</p>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })()}
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Account List */}
-            {!showAccountDetails && (
-              <div className="grid gap-4">
-                {accounts.map((account) => (
-                  <Card key={account.id}>
-                    <CardHeader>
+          {/* Accounts Tab */}
+          <TabsContent value="accounts" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Wallet className="w-5 h-5" />
+                  Contas
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {accounts.map((account) => (
+                    <Card key={account.id} className="p-4">
                       <div className="flex items-center justify-between">
-                        <CardTitle className="flex items-center gap-2">
-                          <Wallet className="w-5 h-5" />
-                          {account.accountType}
-                        </CardTitle>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-medium">{account.accountType}</h3>
+                            <span className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(account.status)}`}>
+                              {getStatusText(account.status)}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-500">Conta: {account.accountNumber}</p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-lg font-semibold">{account.balance}</span>
+                          </div>
+                        </div>
                         <div className="flex items-center gap-2">
-                          <span className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(account.status)}`}>
-                            {getStatusText(account.status)}
-                          </span>
                           <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => setShowAccountDetails(account.id)}
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => setShowAccountDetails(showAccountDetails === account.id ? null : account.id)}
                           >
-                            <FileText className="w-4 h-4 mr-1" />
-                            Ver Detalhes
-                          </Button>
-                          <Button 
-                            variant="outline" 
-                            size="sm"
-                            onClick={() => handleTransferOnBehalf(account.id)}
-                          >
-                            <Send className="w-4 h-4 mr-1" />
-                            Transferir
+                            {showAccountDetails === account.id ? 'Ocultar' : 'Ver Detalhes'}
                           </Button>
                         </div>
                       </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <div>
-                          <Label className="text-sm font-medium text-gray-600">Número da Conta</Label>
-                          <p className="text-sm font-mono">{account.accountNumber}</p>
-                        </div>
-                        <div>
-                          <Label className="text-sm font-medium text-gray-600">Saldo</Label>
-                          <div className="flex items-center gap-2">
-                            <p className="text-sm font-bold">
-                              {showBalance[account.id] ? account.balance : '****'}
-                            </p>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => toggleBalanceVisibility(account.id)}
+
+                      {showAccountDetails === account.id && (
+                        <div className="mt-4 pt-4 border-t space-y-4">
+                          {/* Account limits */}
+                          <div>
+                            <h4 className="font-medium mb-2">Limites da Conta</h4>
+                            <div className="grid grid-cols-2 gap-2 text-sm">
+                              <div>Envio Diário: {account.limits.dailySend}</div>
+                              <div>Recepção Diária: {account.limits.dailyReceive}</div>
+                              <div>Envio Mensal: {account.limits.monthlySend}</div>
+                              <div>Recepção Mensal: {account.limits.monthlyReceive}</div>
+                              <div>Por Transação (Envio): {account.limits.transactionSend}</div>
+                              <div>Por Transação (Recepção): {account.limits.transactionReceive}</div>
+                              <div className="col-span-2">Saldo Máximo: {account.limits.maxBalance}</div>
+                            </div>
+                          </div>
+
+                          {/* Transaction history */}
+                          <div>
+                            <div className="flex items-center gap-2 mb-2">
+                              <History className="w-4 h-4" />
+                              <h4 className="font-medium">Histórico de Transações</h4>
+                            </div>
+                            <div className="space-y-2">
+                              {account.transactions.map((transaction) => (
+                                <div key={transaction.id} className="flex justify-between items-center p-2 bg-gray-50 rounded">
+                                  <div>
+                                    <p className="text-sm font-medium">{transaction.description}</p>
+                                    <p className="text-xs text-gray-500">{transaction.date}</p>
+                                  </div>
+                                  <span className={`font-medium ${transaction.type === 'Recebido' ? 'text-green-600' : 'text-red-600'}`}>
+                                    {transaction.amount}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Transfer button with SMS verification */}
+                          <div className="bg-yellow-50 p-3 rounded-lg">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Shield className="w-4 h-4" />
+                              <span className="font-medium text-sm">Operações na Conta</span>
+                            </div>
+                            <Button 
+                              size="sm" 
+                              onClick={() => handleTransferOnBehalf(account.id)}
+                              className="w-full"
                             >
-                              {showBalance[account.id] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                              <Send className="w-4 h-4 mr-1" />
+                              Fazer Transferência
                             </Button>
                           </div>
                         </div>
+                      )}
+                    </Card>
+                  ))}
+
+                  {/* Add Account Button */}
+                  <Dialog open={showCreateAccountModal} onOpenChange={setShowCreateAccountModal}>
+                    <DialogTrigger asChild>
+                      <Button 
+                        className="w-full border-dashed"
+                        variant="outline"
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Criar Nova Conta Comercial
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Nova Conta Comercial</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
                         <div>
-                          <Label className="text-sm font-medium text-gray-600">Limite Envio Diário</Label>
-                          <p className="text-sm">{account.limits.dailySend}</p>
+                          <Label>Perfil Comercial</Label>
+                          <Select 
+                            value={selectedBusinessProfile} 
+                            onValueChange={setSelectedBusinessProfile}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecione o perfil comercial" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {businessProfiles.map(profile => (
+                                <SelectItem key={profile.id} value={profile.id}>
+                                  {profile.businessName}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
-                        <div>
-                          <Label className="text-sm font-medium text-gray-600">Limite Envio Mensal</Label>
-                          <p className="text-sm">{account.limits.monthlySend}</p>
+                        
+                        <div className="flex gap-2">
+                          <Button variant="outline" onClick={() => setShowCreateAccountModal(false)} className="flex-1">
+                            Cancelar
+                          </Button>
+                          <Button onClick={createNewAccount} className="flex-1">
+                            Criar Conta
+                          </Button>
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
+                    </DialogContent>
+                  </Dialog>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
