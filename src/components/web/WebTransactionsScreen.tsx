@@ -18,6 +18,7 @@ interface Transaction {
   balanceAfter: number;
   fromAccount?: string;
   toAccount?: string;
+  fee?: number;
 }
 
 interface WebTransactionsScreenProps {
@@ -148,7 +149,8 @@ const WebTransactionsScreen = ({ userType, onBack }: WebTransactionsScreenProps)
           time: '12:30',
           transactionId: 'TXN201',
           balanceAfter: 87340.75,
-          toAccount: 'Conta Pessoal - 991 1111'
+          toAccount: 'Conta Pessoal - 991 1111',
+          fee: 50
         },
         { 
           id: '2', 
@@ -445,6 +447,14 @@ const WebTransactionsScreen = ({ userType, onBack }: WebTransactionsScreenProps)
                 <span className="text-sm text-gray-500">ID da Transação:</span>
                 <span className="text-sm font-medium text-gray-900 font-mono">{transaction.transactionId}</span>
               </div>
+
+              {/* Fee */}
+              {transaction.fee && (
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-500">Taxa:</span>
+                  <span className="text-sm font-medium text-red-600">-{transaction.fee.toLocaleString('pt-ST')} Db</span>
+                </div>
+              )}
 
               {/* Balance After */}
               <div className="flex justify-between">
