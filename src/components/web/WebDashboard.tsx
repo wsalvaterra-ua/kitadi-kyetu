@@ -113,7 +113,7 @@ const WebDashboard = ({ userType, onLogout, onViewTransactions, onDownloadExtrac
         </Card>
 
         {/* Action Cards */}
-        <div className={`grid gap-6 ${userType === 'agent' ? 'md:grid-cols-3 lg:grid-cols-5' : 'md:grid-cols-2'}`}>
+        <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
           <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onViewTransactions}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -155,15 +155,15 @@ const WebDashboard = ({ userType, onLogout, onViewTransactions, onDownloadExtrac
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <UserPlus className="w-5 h-5" />
-                    Criar Conta
+                    Gerir Utilizador
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">
-                    Criar nova conta pessoal para utilizador
+                    Gerir perfis e contas de utilizadores
                   </p>
                   <Button variant="outline" className="mt-4 w-full">
-                    Nova Conta
+                    Gerir
                   </Button>
                 </CardContent>
               </Card>

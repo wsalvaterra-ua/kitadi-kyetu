@@ -14,7 +14,7 @@ import MerchantDashboard from '@/components/merchant/MerchantDashboard';
 import QRPaymentScreen from '@/components/merchant/QRPaymentScreen';
 import TransactionDetailsScreen from '@/components/wallet/TransactionDetailsScreen';
 import CodeInputScreen from '@/components/wallet/CodeInputScreen';
-import UserManagementScreen from '@/components/wallet/UserManagementScreen';
+import WalletUserManagementScreen from '@/components/wallet/UserManagementScreen';
 import ExtractScreen from '@/components/wallet/ExtractScreen';
 import ForgotPinScreen from '@/components/wallet/ForgotPinScreen';
 import TermsScreen from '@/components/wallet/TermsScreen';
@@ -29,10 +29,12 @@ import WebLoginScreen from '@/components/web/WebLoginScreen';
 import WebDashboard from '@/components/web/WebDashboard';
 import WebTransactionsScreen from '@/components/web/WebTransactionsScreen';
 import WebExtractScreen from '@/components/web/WebExtractScreen';
-import WebAccountCreationScreen from '@/components/web/WebAccountCreationScreen';
+import UserManagementScreen from '@/components/web/UserManagementScreen';
+import UserProfileScreen from '@/components/web/UserProfileScreen';
+import CreateUserProfileScreen from '@/components/web/CreateUserProfileScreen';
 import WebReconciliationScreen from '@/components/web/WebReconciliationScreen';
 
-type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation' | 'add-reconciliation' | 'account-creation' | 'web-login' | 'web-dashboard' | 'web-transactions' | 'web-extract' | 'web-account-creation' | 'web-reconciliation';
+type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation' | 'add-reconciliation' | 'account-creation' | 'web-login' | 'web-dashboard' | 'web-transactions' | 'web-extract' | 'web-user-management' | 'web-user-profile' | 'web-create-user' | 'web-reconciliation';
 
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('onboarding');
@@ -54,6 +56,9 @@ const Index = () => {
   // Web version state
   const [isWebVersion, setIsWebVersion] = useState(false);
   const [webUserType, setWebUserType] = useState<'personal' | 'business' | 'agent' | 'business-associated' | 'merchant'>('personal');
+  
+  // User management state
+  const [userManagementPhone, setUserManagementPhone] = useState('');
 
   // Mock transaction data - in a real app, this would come from your backend
   const mockTransactions = {
@@ -166,11 +171,11 @@ const Index = () => {
   };
 
   const handleWebCreateAccount = () => {
-    setCurrentScreen('web-account-creation');
+    setCurrentScreen('web-user-management');
   };
 
   const handleWebCreateMerchantProfile = () => {
-    setCurrentScreen('web-account-creation');
+    setCurrentScreen('web-user-management');
   };
 
   const handleWebAddReconciliation = () => {
@@ -427,7 +432,7 @@ const Index = () => {
           setCurrentScreen('dashboard');
         }} />;
       case 'user-management':
-        return <UserManagementScreen onBack={handleBackToDashboard} />;
+        return <WalletUserManagementScreen onBack={handleBackToDashboard} />;
       case 'extract':
         return <ExtractScreen onBack={handleBackToDashboard} />;
       case 'account-creation':
@@ -468,10 +473,35 @@ const Index = () => {
             onBack={handleWebBack}
           />
         );
-      case 'web-account-creation':
+      case 'web-user-management':
         return (
-          <WebAccountCreationScreen
+          <UserManagementScreen
             onBack={handleWebBack}
+            onUserFound={(phone) => {
+              setUserManagementPhone(phone);
+              setCurrentScreen('web-user-profile');
+            }}
+            onCreateNewUser={(phone) => {
+              setUserManagementPhone(phone);
+              setCurrentScreen('web-create-user');
+            }}
+          />
+        );
+      case 'web-user-profile':
+        return (
+          <UserProfileScreen
+            phoneNumber={userManagementPhone}
+            onBack={handleWebBack}
+          />
+        );
+      case 'web-create-user':
+        return (
+          <CreateUserProfileScreen
+            phoneNumber={userManagementPhone}
+            onBack={handleWebBack}
+            onUserCreated={() => {
+              setCurrentScreen('web-user-profile');
+            }}
           />
         );
       case 'web-reconciliation':
