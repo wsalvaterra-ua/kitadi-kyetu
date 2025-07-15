@@ -73,7 +73,7 @@ const UserManagementScreen = ({ onBack, onUserFound, onCreateNewUser }: UserMana
                   <Input
                     id="phone"
                     type="tel"
-                    placeholder="+239 123 456 789"
+                    placeholder="+239 912 3456 (exemplo: usuário existente)"
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
                     className="pl-10"
@@ -91,6 +91,12 @@ const UserManagementScreen = ({ onBack, onUserFound, onCreateNewUser }: UserMana
               <p className="text-xs text-gray-500">
                 Introduza o número de telefone completo incluindo o código do país (+239)
               </p>
+              <div className="text-xs text-blue-600 bg-blue-50 border border-blue-200 rounded p-2 mt-2">
+                <p><strong>Exemplos que funcionam:</strong></p>
+                <p>• +2399123456 (Maria dos Santos - utilizadora existente)</p>
+                <p>• +2399654321 (João Silva - utilizador existente)</p>
+                <p>• +2399000000 (qualquer outro número criará novo utilizador)</p>
+              </div>
             </div>
 
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
