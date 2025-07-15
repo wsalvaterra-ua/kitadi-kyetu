@@ -1,15 +1,18 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LogOut, Download, Eye, CreditCard, Users } from 'lucide-react';
+import { LogOut, Download, Eye, CreditCard, Users, UserPlus, Building, Plus } from 'lucide-react';
 
 interface WebDashboardProps {
   userType: 'personal' | 'business' | 'agent' | 'business-associated' | 'merchant';
   onLogout: () => void;
   onViewTransactions: () => void;
   onDownloadExtract: () => void;
+  onCreateAccount?: () => void;
+  onCreateMerchantProfile?: () => void;
+  onAddReconciliation?: () => void;
 }
 
-const WebDashboard = ({ userType, onLogout, onViewTransactions, onDownloadExtract }: WebDashboardProps) => {
+const WebDashboard = ({ userType, onLogout, onViewTransactions, onDownloadExtract, onCreateAccount, onCreateMerchantProfile, onAddReconciliation }: WebDashboardProps) => {
   const getUserTypeInfo = () => {
     switch (userType) {
       case 'personal':
@@ -110,7 +113,7 @@ const WebDashboard = ({ userType, onLogout, onViewTransactions, onDownloadExtrac
         </Card>
 
         {/* Action Cards */}
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className={`grid gap-6 ${userType === 'agent' ? 'md:grid-cols-3 lg:grid-cols-5' : 'md:grid-cols-2'}`}>
           <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onViewTransactions}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -144,6 +147,62 @@ const WebDashboard = ({ userType, onLogout, onViewTransactions, onDownloadExtrac
               </Button>
             </CardContent>
           </Card>
+
+          {/* Agent-specific action cards */}
+          {userType === 'agent' && (
+            <>
+              <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onCreateAccount}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <UserPlus className="w-5 h-5" />
+                    Criar Conta
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600">
+                    Criar nova conta pessoal para utilizador
+                  </p>
+                  <Button variant="outline" className="mt-4 w-full">
+                    Nova Conta
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onCreateMerchantProfile}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Building className="w-5 h-5" />
+                    Perfil Comercial
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600">
+                    Criar perfil comercial e associações
+                  </p>
+                  <Button variant="outline" className="mt-4 w-full">
+                    Novo Perfil
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onAddReconciliation}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Plus className="w-5 h-5" />
+                    Reconciliação
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600">
+                    Adicionar transação manual para reconciliação
+                  </p>
+                  <Button variant="outline" className="mt-4 w-full">
+                    Adicionar
+                  </Button>
+                </CardContent>
+              </Card>
+            </>
+          )}
         </div>
 
         {/* Additional Info for Business/Agent/Merchant accounts */}

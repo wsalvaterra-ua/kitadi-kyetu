@@ -29,8 +29,10 @@ import WebLoginScreen from '@/components/web/WebLoginScreen';
 import WebDashboard from '@/components/web/WebDashboard';
 import WebTransactionsScreen from '@/components/web/WebTransactionsScreen';
 import WebExtractScreen from '@/components/web/WebExtractScreen';
+import WebAccountCreationScreen from '@/components/web/WebAccountCreationScreen';
+import WebReconciliationScreen from '@/components/web/WebReconciliationScreen';
 
-type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation' | 'add-reconciliation' | 'account-creation' | 'web-login' | 'web-dashboard' | 'web-transactions' | 'web-extract';
+type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation' | 'add-reconciliation' | 'account-creation' | 'web-login' | 'web-dashboard' | 'web-transactions' | 'web-extract' | 'web-account-creation' | 'web-reconciliation';
 
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('onboarding');
@@ -161,6 +163,18 @@ const Index = () => {
 
   const handleWebExtract = () => {
     setCurrentScreen('web-extract');
+  };
+
+  const handleWebCreateAccount = () => {
+    setCurrentScreen('web-account-creation');
+  };
+
+  const handleWebCreateMerchantProfile = () => {
+    setCurrentScreen('web-account-creation');
+  };
+
+  const handleWebAddReconciliation = () => {
+    setCurrentScreen('web-reconciliation');
   };
 
   const handleWebBack = () => {
@@ -430,11 +444,14 @@ const Index = () => {
         );
       case 'web-dashboard':
         return (
-          <WebDashboard 
+          <WebDashboard
             userType={webUserType}
             onLogout={handleWebLogout}
             onViewTransactions={handleWebTransactions}
             onDownloadExtract={handleWebExtract}
+            onCreateAccount={handleWebCreateAccount}
+            onCreateMerchantProfile={handleWebCreateMerchantProfile}
+            onAddReconciliation={handleWebAddReconciliation}
           />
         );
       case 'web-transactions':
@@ -448,6 +465,18 @@ const Index = () => {
         return (
           <WebExtractScreen 
             userType={webUserType}
+            onBack={handleWebBack}
+          />
+        );
+      case 'web-account-creation':
+        return (
+          <WebAccountCreationScreen
+            onBack={handleWebBack}
+          />
+        );
+      case 'web-reconciliation':
+        return (
+          <WebReconciliationScreen
             onBack={handleWebBack}
           />
         );
