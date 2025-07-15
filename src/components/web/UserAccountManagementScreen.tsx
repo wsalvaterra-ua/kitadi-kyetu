@@ -138,6 +138,12 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
   });
   const [showCreateAccountModal, setShowCreateAccountModal] = useState(false);
   const [selectedBusinessProfile, setSelectedBusinessProfile] = useState('');
+  const [newAccountName, setNewAccountName] = useState('');
+  const [showAccountHistory, setShowAccountHistory] = useState<string | null>(null);
+  const [showAccountManagement, setShowAccountManagement] = useState<string | null>(null);
+  const [accountManagementData, setAccountManagementData] = useState<any>({});
+  const [createAccountSmsStep, setCreateAccountSmsStep] = useState<'send' | 'verify' | 'verified'>('send');
+  const [createAccountSmsCode, setCreateAccountSmsCode] = useState('');
 
   const toggleBalanceVisibility = (accountId: string) => {
     setShowBalance(prev => ({
@@ -378,10 +384,19 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
   };
 
   const createNewAccount = () => {
-    if (!selectedBusinessProfile) {
+    if (!selectedBusinessProfile || !newAccountName) {
       toast({
-        title: "Perfil comercial necessário",
-        description: "Selecione um perfil comercial para associar à conta",
+        title: "Dados obrigatórios",
+        description: "Selecione um perfil comercial e nome da conta",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (createAccountSmsStep !== 'verified') {
+      toast({
+        title: "Verificação SMS necessária",
+        description: "Complete a verificação SMS antes de criar a conta",
         variant: "destructive"
       });
       return;
@@ -391,7 +406,7 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
     const newAccount = {
       id: (accounts.length + 1).toString(),
       accountNumber: '4' + Math.random().toString().slice(-3).padStart(4, 'X'),
-      accountType: `Conta Comercial - ${businessProfile?.businessName}`,
+      accountType: newAccountName,
       balance: '0 STN',
       status: 'ACTIVE' as AccountStatus,
       limits: {
@@ -409,11 +424,38 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
     setAccounts([...accounts, newAccount]);
     setShowCreateAccountModal(false);
     setSelectedBusinessProfile('');
+    setNewAccountName('');
+    setCreateAccountSmsStep('send');
+    setCreateAccountSmsCode('');
 
     toast({
       title: "Conta criada",
       description: "Nova conta comercial criada com sucesso",
     });
+  };
+
+  const sendCreateAccountSms = () => {
+    setCreateAccountSmsStep('verify');
+    toast({
+      title: "SMS enviado",
+      description: `Código de verificação enviado para ${phoneNumber}`,
+    });
+  };
+
+  const verifyCreateAccountSms = () => {
+    if (createAccountSmsCode) {
+      setCreateAccountSmsStep('verified');
+      toast({
+        title: "SMS verificado",
+        description: "Criação de conta autorizada.",
+      });
+    } else {
+      toast({
+        title: "Código vazio",
+        description: "Introduza um código SMS.",
+        variant: "destructive"
+      });
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -864,48 +906,51 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
                             <Textarea value={business.description} />
                           </div>
                           
-                          {/* SMS Verification for final operation */}
+                          {/* SMS Verification Section */}
                           <div className="bg-yellow-50 p-3 rounded-lg">
-                            <p className="text-sm font-medium mb-2">Verificação SMS necessária para guardar alterações</p>
-                            {businessSmsStep[business.id] !== 'verified' && (
+                            <p className="text-sm font-medium mb-2">Verificação SMS para guardar alterações</p>
+                            {businessSmsStep[business.id] !== 'verify' && businessSmsStep[business.id] !== 'verified' && (
+                              <Button size="sm" onClick={() => sendBusinessSms(business.id)}>
+                                <Smartphone className="w-4 h-4 mr-1" />
+                                Enviar SMS
+                              </Button>
+                            )}
+                            {businessSmsStep[business.id] === 'verify' && (
                               <div className="space-y-2">
-                                {businessSmsStep[business.id] === 'send' && (
-                                  <Button size="sm" onClick={() => sendBusinessSms(business.id)}>
-                                    <Smartphone className="w-4 h-4 mr-1" />
-                                    Enviar SMS
-                                  </Button>
-                                )}
-                                {businessSmsStep[business.id] === 'verify' && (
-                                  <div className="flex gap-2">
-                                    <Input
-                                      placeholder="Código SMS"
-                                      value={businessSmsCode}
-                                      onChange={(e) => setBusinessSmsCode(e.target.value)}
-                                      maxLength={6}
-                                    />
-                                    <Button size="sm" onClick={() => verifyBusinessSms(business.id)}>
-                                      Verificar
-                                    </Button>
-                                  </div>
-                                )}
+                                <Input
+                                  placeholder="Código SMS"
+                                  value={businessSmsCode}
+                                  onChange={(e) => setBusinessSmsCode(e.target.value)}
+                                  maxLength={6}
+                                />
+                                <Button size="sm" onClick={() => verifyBusinessSms(business.id)}>
+                                  Verificar SMS
+                                </Button>
                               </div>
                             )}
-                           {businessSmsStep[business.id] === 'verified' && (
-                              <div className="flex gap-2">
-                                <Button variant="outline" className="flex-1" onClick={() => {
-                                  setBusinessSmsStep(prev => ({...prev, [business.id]: 'send'}));
-                                  setBusinessSmsCode('');
-                                }}>Cancelar</Button>
-                                <Button className="flex-1" onClick={() => {
-                                  toast({
-                                    title: "Perfil atualizado",
-                                    description: "Dados do perfil comercial atualizados com sucesso",
-                                  });
-                                  setBusinessSmsStep(prev => ({...prev, [business.id]: 'send'}));
-                                  setBusinessSmsCode('');
-                                }}>Guardar Alterações</Button>
-                              </div>
+                            {businessSmsStep[business.id] === 'verified' && (
+                              <p className="text-green-600 text-sm">✓ SMS verificado</p>
                             )}
+                          </div>
+                          
+                          {/* Action Buttons */}
+                          <div className="flex gap-2">
+                            <Button variant="outline" className="flex-1" onClick={() => {
+                              setBusinessSmsStep(prev => ({...prev, [business.id]: 'send'}));
+                              setBusinessSmsCode('');
+                            }}>
+                              Cancelar
+                            </Button>
+                            <Button className="flex-1" onClick={() => {
+                              toast({
+                                title: "Perfil atualizado",
+                                description: "Dados do perfil comercial atualizados com sucesso",
+                              });
+                              setBusinessSmsStep(prev => ({...prev, [business.id]: 'send'}));
+                              setBusinessSmsCode('');
+                            }}>
+                              Guardar Alterações
+                            </Button>
                           </div>
                         </div>
                       </DialogContent>
@@ -1016,6 +1061,33 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
                           />
                         </div>
                         
+                        {/* SMS Verification Section */}
+                        <div className="bg-yellow-50 p-3 rounded-lg">
+                          <p className="text-sm font-medium mb-2">Verificação SMS para criar perfil</p>
+                          {smsStep !== 'verify' && smsStep !== 'verified' && (
+                            <Button size="sm" onClick={sendSms}>
+                              <Smartphone className="w-4 h-4 mr-1" />
+                              Enviar SMS
+                            </Button>
+                          )}
+                          {smsStep === 'verify' && (
+                            <div className="space-y-2">
+                              <Input
+                                placeholder="Código SMS"
+                                value={smsCode}
+                                onChange={(e) => setSmsCode(e.target.value)}
+                                maxLength={6}
+                              />
+                              <Button size="sm" onClick={verifySms}>
+                                Verificar SMS
+                              </Button>
+                            </div>
+                          )}
+                          {smsStep === 'verified' && (
+                            <p className="text-green-600 text-sm">✓ SMS verificado</p>
+                          )}
+                        </div>
+                        
                         <div className="flex gap-2">
                           <Button variant="outline" onClick={() => setShowNewBusinessForm(false)} className="flex-1">
                             Cancelar
@@ -1044,135 +1116,229 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
               <CardContent>
                 <div className="space-y-4">
                    {accounts.map((account) => (
-                     <Dialog key={account.id}>
-                       <DialogTrigger asChild>
-                         <Card className="p-4 cursor-pointer hover:bg-gray-50">
-                           <div className="flex items-center justify-between">
-                             <div className="flex-1">
-                               <div className="flex items-center gap-2">
-                                 <h3 className="font-medium">{account.accountType}</h3>
-                                 <span className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(account.status)}`}>
-                                   {getStatusText(account.status)}
-                                 </span>
-                               </div>
-                               <p className="text-sm text-gray-500">Conta: {account.accountNumber}</p>
-                               <div className="flex items-center gap-2 mt-1">
-                                 <span className="text-lg font-semibold">{account.balance}</span>
-                               </div>
-                             </div>
-                             <Eye className="w-4 h-4 text-gray-400" />
+                     <Card key={account.id} className="p-4">
+                       <div className="flex items-center justify-between">
+                         <div className="flex-1">
+                           <div className="flex items-center gap-2">
+                             <h3 className="font-medium">{account.accountType}</h3>
+                             <span className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(account.status)}`}>
+                               {getStatusText(account.status)}
+                             </span>
                            </div>
-                         </Card>
-                       </DialogTrigger>
-                       <DialogContent className="max-w-2xl">
-                         <DialogHeader>
-                           <DialogTitle>Detalhes da Conta - {account.accountNumber}</DialogTitle>
-                         </DialogHeader>
-                         <div className="space-y-4">
-                           <div>
-                             <h4 className="font-medium mb-2">Informações da Conta</h4>
-                             <div className="grid grid-cols-2 gap-4 text-sm">
-                               <div>
-                                 <span className="font-medium">Tipo:</span>
-                                 <p>{account.accountType}</p>
-                               </div>
-                               <div>
-                                 <span className="font-medium">Saldo:</span>
-                                 <p className="text-lg font-semibold">{account.balance}</p>
-                               </div>
-                               <div>
-                                 <span className="font-medium">Estado:</span>
-                                 <span className={`px-2 py-1 rounded-full text-xs border ${getStatusColor(account.status)}`}>
-                                   {getStatusText(account.status)}
-                                 </span>
-                               </div>
-                             </div>
+                           <p className="text-sm text-gray-500">Conta: {account.accountNumber}</p>
+                           <div className="flex items-center gap-2 mt-1">
+                             <span className="text-lg font-semibold">{account.balance}</span>
                            </div>
-
-                           {/* Account limits */}
-                           <div>
-                             <h4 className="font-medium mb-2">Limites da Conta</h4>
-                             <div className="grid grid-cols-2 gap-2 text-sm">
-                               <div>Envio Diário: {account.limits.dailySend}</div>
-                               <div>Recepção Diária: {account.limits.dailyReceive}</div>
-                               <div>Envio Mensal: {account.limits.monthlySend}</div>
-                               <div>Recepção Mensal: {account.limits.monthlyReceive}</div>
-                               <div>Por Transação (Envio): {account.limits.transactionSend}</div>
-                               <div>Por Transação (Recepção): {account.limits.transactionReceive}</div>
-                               <div className="col-span-2">Saldo Máximo: {account.limits.maxBalance}</div>
-                             </div>
-                           </div>
-
-                           {/* Transaction history */}
-                           <div>
-                             <div className="flex items-center gap-2 mb-2">
-                               <History className="w-4 h-4" />
-                               <h4 className="font-medium">Histórico de Transações</h4>
-                             </div>
-                             <div className="space-y-2 max-h-48 overflow-y-auto">
-                               {account.transactions.map((transaction) => (
-                                 <div key={transaction.id} className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                                   <div>
-                                     <p className="text-sm font-medium">{transaction.description}</p>
-                                     <p className="text-xs text-gray-500">{transaction.date}</p>
-                                   </div>
-                                   <span className={`font-medium ${transaction.type === 'Recebido' ? 'text-green-600' : 'text-red-600'}`}>
-                                     {transaction.amount}
-                                   </span>
-                                 </div>
-                               ))}
-                             </div>
-                           </div>
-
-                           {/* Operations section with SMS verification */}
-                           <div className="bg-yellow-50 p-3 rounded-lg">
-                             <div className="flex items-center gap-2 mb-2">
-                               <Shield className="w-4 h-4" />
-                               <span className="font-medium text-sm">Operações na Conta</span>
-                             </div>
-                             
-                             {accountSmsStep[account.id] !== 'verified' && (
-                               <div className="space-y-2">
-                                 {accountSmsStep[account.id] !== 'verify' && (
-                                   <Button size="sm" onClick={() => sendAccountSms(account.id)} className="w-full">
-                                     <Smartphone className="w-4 h-4 mr-1" />
-                                     Enviar SMS para Operações
-                                   </Button>
-                                 )}
-                                 
-                                 {accountSmsStep[account.id] === 'verify' && (
-                                   <div className="space-y-2">
-                                     <Input
-                                       placeholder="Código SMS"
-                                       value={accountSmsCode}
-                                       onChange={(e) => setAccountSmsCode(e.target.value)}
-                                       maxLength={6}
-                                     />
-                                     <Button size="sm" onClick={() => verifyAccountSms(account.id)} className="w-full">
-                                       Verificar SMS
-                                     </Button>
-                                   </div>
-                                 )}
-                               </div>
-                             )}
-                             
-                             {accountSmsStep[account.id] === 'verified' && (
-                               <div className="space-y-2">
-                                 <p className="text-green-600 text-sm">✓ SMS verificado - Operações autorizadas</p>
-                                 <Button 
-                                   size="sm" 
-                                   onClick={() => handleTransferOnBehalf(account.id)}
-                                   className="w-full"
-                                 >
-                                   <Send className="w-4 h-4 mr-1" />
-                                   Fazer Transferência
-                                 </Button>
-                               </div>
-                             )}
+                           <div className="mt-2 text-xs text-gray-500">
+                             <div>Limite Diário Envio: {account.limits.dailySend}</div>
+                             <div>Limite Diário Recepção: {account.limits.dailyReceive}</div>
                            </div>
                          </div>
-                       </DialogContent>
-                     </Dialog>
+                         <div className="flex gap-2">
+                           <Dialog>
+                             <DialogTrigger asChild>
+                               <Button variant="outline" size="sm">
+                                 <History className="w-4 h-4 mr-1" />
+                                 Ver Histórico
+                               </Button>
+                             </DialogTrigger>
+                             <DialogContent className="max-w-2xl">
+                               <DialogHeader>
+                                 <DialogTitle>Histórico de Transações - {account.accountNumber}</DialogTitle>
+                               </DialogHeader>
+                               <div className="space-y-4">
+                                 <div className="space-y-2 max-h-96 overflow-y-auto">
+                                   {account.transactions.map((transaction) => (
+                                     <div key={transaction.id} className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                                       <div>
+                                         <p className="text-sm font-medium">{transaction.description}</p>
+                                         <p className="text-xs text-gray-500">{transaction.date}</p>
+                                       </div>
+                                       <span className={`font-medium ${transaction.type === 'Recebido' ? 'text-green-600' : 'text-red-600'}`}>
+                                         {transaction.amount}
+                                       </span>
+                                     </div>
+                                   ))}
+                                 </div>
+                               </div>
+                             </DialogContent>
+                           </Dialog>
+                           
+                           <Dialog>
+                             <DialogTrigger asChild>
+                               <Button variant="outline" size="sm">
+                                 <Edit className="w-4 h-4 mr-1" />
+                                 Gerir Conta
+                               </Button>
+                             </DialogTrigger>
+                             <DialogContent className="max-w-2xl">
+                               <DialogHeader>
+                                 <DialogTitle>Gerir Conta - {account.accountNumber}</DialogTitle>
+                               </DialogHeader>
+                               <div className="space-y-4">
+                                 <div>
+                                   <h4 className="font-medium mb-2">Informações da Conta</h4>
+                                   <div className="grid grid-cols-2 gap-4">
+                                     <div>
+                                       <Label>Tipo de Conta</Label>
+                                       <Input value={account.accountType} readOnly />
+                                     </div>
+                                     <div>
+                                       <Label>Saldo Atual</Label>
+                                       <Input value={account.balance} readOnly />
+                                     </div>
+                                     <div>
+                                       <Label>Estado da Conta</Label>
+                                       <Select 
+                                         value={accountManagementData[account.id]?.status || account.status}
+                                         onValueChange={(value) => setAccountManagementData(prev => ({
+                                           ...prev,
+                                           [account.id]: { ...prev[account.id], status: value }
+                                         }))}
+                                       >
+                                         <SelectTrigger>
+                                           <SelectValue />
+                                         </SelectTrigger>
+                                         <SelectContent>
+                                           <SelectItem value="ACTIVE">Ativo</SelectItem>
+                                           <SelectItem value="FROZEN">Congelado</SelectItem>
+                                           <SelectItem value="CLOSED">Fechado</SelectItem>
+                                         </SelectContent>
+                                       </Select>
+                                     </div>
+                                   </div>
+                                 </div>
+
+                                 <div>
+                                   <h4 className="font-medium mb-2">Limites da Conta</h4>
+                                   <div className="grid grid-cols-2 gap-4">
+                                     <div>
+                                       <Label>Envio Diário</Label>
+                                       <Input 
+                                         value={accountManagementData[account.id]?.dailySend || account.limits.dailySend}
+                                         onChange={(e) => setAccountManagementData(prev => ({
+                                           ...prev,
+                                           [account.id]: { ...prev[account.id], dailySend: e.target.value }
+                                         }))}
+                                       />
+                                     </div>
+                                     <div>
+                                       <Label>Recepção Diária</Label>
+                                       <Input 
+                                         value={accountManagementData[account.id]?.dailyReceive || account.limits.dailyReceive}
+                                         onChange={(e) => setAccountManagementData(prev => ({
+                                           ...prev,
+                                           [account.id]: { ...prev[account.id], dailyReceive: e.target.value }
+                                         }))}
+                                       />
+                                     </div>
+                                     <div>
+                                       <Label>Envio Mensal</Label>
+                                       <Input 
+                                         value={accountManagementData[account.id]?.monthlySend || account.limits.monthlySend}
+                                         onChange={(e) => setAccountManagementData(prev => ({
+                                           ...prev,
+                                           [account.id]: { ...prev[account.id], monthlySend: e.target.value }
+                                         }))}
+                                       />
+                                     </div>
+                                     <div>
+                                       <Label>Recepção Mensal</Label>
+                                       <Input 
+                                         value={accountManagementData[account.id]?.monthlyReceive || account.limits.monthlyReceive}
+                                         onChange={(e) => setAccountManagementData(prev => ({
+                                           ...prev,
+                                           [account.id]: { ...prev[account.id], monthlyReceive: e.target.value }
+                                         }))}
+                                       />
+                                     </div>
+                                     <div>
+                                       <Label>Por Transação (Envio)</Label>
+                                       <Input 
+                                         value={accountManagementData[account.id]?.transactionSend || account.limits.transactionSend}
+                                         onChange={(e) => setAccountManagementData(prev => ({
+                                           ...prev,
+                                           [account.id]: { ...prev[account.id], transactionSend: e.target.value }
+                                         }))}
+                                       />
+                                     </div>
+                                     <div>
+                                       <Label>Por Transação (Recepção)</Label>
+                                       <Input 
+                                         value={accountManagementData[account.id]?.transactionReceive || account.limits.transactionReceive}
+                                         onChange={(e) => setAccountManagementData(prev => ({
+                                           ...prev,
+                                           [account.id]: { ...prev[account.id], transactionReceive: e.target.value }
+                                         }))}
+                                       />
+                                     </div>
+                                     <div className="col-span-2">
+                                       <Label>Saldo Máximo</Label>
+                                       <Input 
+                                         value={accountManagementData[account.id]?.maxBalance || account.limits.maxBalance}
+                                         onChange={(e) => setAccountManagementData(prev => ({
+                                           ...prev,
+                                           [account.id]: { ...prev[account.id], maxBalance: e.target.value }
+                                         }))}
+                                       />
+                                     </div>
+                                   </div>
+                                 </div>
+
+                                 {/* SMS Verification for account operations */}
+                                 <div className="bg-yellow-50 p-3 rounded-lg">
+                                   <p className="text-sm font-medium mb-2">Verificação SMS para guardar alterações</p>
+                                   {accountSmsStep[account.id] !== 'verify' && accountSmsStep[account.id] !== 'verified' && (
+                                     <Button size="sm" onClick={() => sendAccountSms(account.id)}>
+                                       <Smartphone className="w-4 h-4 mr-1" />
+                                       Enviar SMS
+                                     </Button>
+                                   )}
+                                   {accountSmsStep[account.id] === 'verify' && (
+                                     <div className="space-y-2">
+                                       <Input
+                                         placeholder="Código SMS"
+                                         value={accountSmsCode}
+                                         onChange={(e) => setAccountSmsCode(e.target.value)}
+                                         maxLength={6}
+                                       />
+                                       <Button size="sm" onClick={() => verifyAccountSms(account.id)}>
+                                         Verificar SMS
+                                       </Button>
+                                     </div>
+                                   )}
+                                   {accountSmsStep[account.id] === 'verified' && (
+                                     <p className="text-green-600 text-sm">✓ SMS verificado</p>
+                                   )}
+                                 </div>
+
+                                 {/* Action Buttons */}
+                                 <div className="flex gap-2">
+                                   <Button variant="outline" className="flex-1" onClick={() => {
+                                     setAccountSmsStep(prev => ({...prev, [account.id]: 'send'}));
+                                     setAccountSmsCode('');
+                                     setAccountManagementData(prev => ({...prev, [account.id]: {}}));
+                                   }}>
+                                     Cancelar
+                                   </Button>
+                                   <Button className="flex-1" onClick={() => {
+                                     toast({
+                                       title: "Conta atualizada",
+                                       description: "Dados da conta atualizados com sucesso",
+                                     });
+                                     setAccountSmsStep(prev => ({...prev, [account.id]: 'send'}));
+                                     setAccountSmsCode('');
+                                     setAccountManagementData(prev => ({...prev, [account.id]: {}}));
+                                   }}>
+                                     Guardar Alterações
+                                   </Button>
+                                 </div>
+                               </div>
+                             </DialogContent>
+                           </Dialog>
+                         </div>
+                       </div>
+                     </Card>
                    ))}
 
                   {/* Add Account Button */}
@@ -1192,6 +1358,14 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
                       </DialogHeader>
                       <div className="space-y-4">
                         <div>
+                          <Label>Nome da Conta Comercial</Label>
+                          <Input 
+                            value={newAccountName} 
+                            onChange={(e) => setNewAccountName(e.target.value)}
+                            placeholder="Ex: Conta Comercial - Loja ABC"
+                          />
+                        </div>
+                        <div>
                           <Label>Perfil Comercial</Label>
                           <Select 
                             value={selectedBusinessProfile} 
@@ -1210,8 +1384,41 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
                           </Select>
                         </div>
                         
+                        {/* SMS Verification Section */}
+                        <div className="bg-yellow-50 p-3 rounded-lg">
+                          <p className="text-sm font-medium mb-2">Verificação SMS para criar conta</p>
+                          {createAccountSmsStep !== 'verify' && createAccountSmsStep !== 'verified' && (
+                            <Button size="sm" onClick={sendCreateAccountSms}>
+                              <Smartphone className="w-4 h-4 mr-1" />
+                              Enviar SMS
+                            </Button>
+                          )}
+                          {createAccountSmsStep === 'verify' && (
+                            <div className="space-y-2">
+                              <Input
+                                placeholder="Código SMS"
+                                value={createAccountSmsCode}
+                                onChange={(e) => setCreateAccountSmsCode(e.target.value)}
+                                maxLength={6}
+                              />
+                              <Button size="sm" onClick={verifyCreateAccountSms}>
+                                Verificar SMS
+                              </Button>
+                            </div>
+                          )}
+                          {createAccountSmsStep === 'verified' && (
+                            <p className="text-green-600 text-sm">✓ SMS verificado</p>
+                          )}
+                        </div>
+                        
                         <div className="flex gap-2">
-                          <Button variant="outline" onClick={() => setShowCreateAccountModal(false)} className="flex-1">
+                          <Button variant="outline" onClick={() => {
+                            setShowCreateAccountModal(false);
+                            setCreateAccountSmsStep('send');
+                            setCreateAccountSmsCode('');
+                            setNewAccountName('');
+                            setSelectedBusinessProfile('');
+                          }} className="flex-1">
                             Cancelar
                           </Button>
                           <Button onClick={createNewAccount} className="flex-1">
