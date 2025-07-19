@@ -532,7 +532,7 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
           </CardHeader>
           <CardContent className="space-y-4">
             <Button 
-              onClick={() => setUserAccessStep('verified')}
+              onClick={sendDataAccessSms}
               className="w-full"
             >
               <User className="w-4 h-4 mr-2" />
