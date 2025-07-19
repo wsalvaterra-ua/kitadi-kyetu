@@ -36,6 +36,7 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
       lastName: 'Silva',
       idNumber: '1234567890',
       nif: 'NIF123456789',
+      alternativePhone: '+239987654321',
       nationality: 'STP',
       dateOfBirth: '1985-03-15',
       expiryDate: '2030-03-15',
@@ -47,6 +48,7 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
         id: '1',
         businessName: 'Loja da Maria',
         businessType: 'Comércio Varejista',
+        businessSize: 'Micro Empresa',
         taxId: 'NIF123456789',
         address: 'Avenida Comercial, 456, São Tomé',
         description: 'Loja de produtos alimentares e utensílios domésticos',
@@ -57,6 +59,7 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
         id: '2',
         businessName: 'Restaurante Sabores',
         businessType: 'Restauração',
+        businessSize: 'Pequena Empresa',
         taxId: 'NIF987654321',
         address: 'Rua dos Sabores, 789, São Tomé',
         description: 'Restaurante de comida tradicional são-tomense',
@@ -127,14 +130,15 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
   const [businessSmsStep, setBusinessSmsStep] = useState<{[key: string]: 'send' | 'verify' | 'verified'}>({});
   const [businessSmsCode, setBusinessSmsCode] = useState('');
   const [newBusinessData, setNewBusinessData] = useState({
-    businessName: '',
-    businessType: '',
-    otherBusinessType: '',
-    district: '',
-    location: '',
-    gpsCoordinates: '',
-    description: '',
-    isOwnLocation: false
+      businessName: '',
+      businessType: '',
+      businessSize: '',
+      otherBusinessType: '',
+      district: '',
+      location: '',
+      gpsCoordinates: '',
+      description: '',
+      isOwnLocation: false
   });
   const [showCreateAccountModal, setShowCreateAccountModal] = useState(false);
   const [selectedBusinessProfile, setSelectedBusinessProfile] = useState('');
@@ -144,6 +148,11 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
   const [accountManagementData, setAccountManagementData] = useState<any>({});
   const [createAccountSmsStep, setCreateAccountSmsStep] = useState<'send' | 'verify' | 'verified'>('send');
   const [createAccountSmsCode, setCreateAccountSmsCode] = useState('');
+  const [showUserAccessManagement, setShowUserAccessManagement] = useState(false);
+  const [userManagementData, setUserManagementData] = useState({
+    status: personalData.status,
+    pinResetRequested: false
+  });
 
   const toggleBalanceVisibility = (accountId: string) => {
     setShowBalance(prev => ({
@@ -339,6 +348,14 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
     'Comércio', 'Restauração', 'Serviços', 'Agricultura', 'Pesca', 'Turismo', 'Tecnologia', 'Outro'
   ];
 
+  const businessSizes = [
+    'Comerciante Individual',
+    'Micro Empresa',
+    'Pequena Empresa', 
+    'Média Empresa',
+    'Grande Empresa'
+  ];
+
   const districts = [
     'Água Grande', 'Mé-Zóchi', 'Cantagalo', 'Caué', 'Lemba', 'Lobata', 'Príncipe'
   ];
@@ -357,6 +374,7 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
       id: (businessProfiles.length + 1).toString(),
       businessName: newBusinessData.businessName,
       businessType: newBusinessData.businessType === 'Outro' ? newBusinessData.otherBusinessType : newBusinessData.businessType,
+      businessSize: newBusinessData.businessSize,
       taxId: `NIF${Date.now()}`,
       address: `${newBusinessData.location}, ${newBusinessData.district}`,
       description: newBusinessData.description,
@@ -369,6 +387,7 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
     setNewBusinessData({
       businessName: '',
       businessType: '',
+      businessSize: '',
       otherBusinessType: '',
       district: '',
       location: '',
@@ -633,6 +652,18 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
 
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-6 py-8">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-semibold">Detalhes do Utilizador</h2>
+          <Button 
+            variant="outline"
+            onClick={() => setShowUserAccessManagement(true)}
+            className="flex items-center gap-2"
+          >
+            <Shield className="w-4 h-4" />
+            Gerir Acesso
+          </Button>
+        </div>
+
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="personal" className="flex items-center gap-2">
@@ -762,15 +793,24 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
                       onChange={(e) => setPersonalData({...personalData, expiryDate: e.target.value})}
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="nif">NIF (Opcional)</Label>
-                    <Input
-                      id="nif"
-                      value={personalData.nif || ''}
-                      disabled={!editingPersonal}
-                      onChange={(e) => setPersonalData({...personalData, nif: e.target.value})}
-                    />
-                  </div>
+                   <div>
+                     <Label htmlFor="nif">NIF (Opcional)</Label>
+                     <Input
+                       id="nif"
+                       value={personalData.nif || ''}
+                       disabled={!editingPersonal}
+                       onChange={(e) => setPersonalData({...personalData, nif: e.target.value})}
+                     />
+                   </div>
+                   <div>
+                     <Label htmlFor="alternativePhone">Telefone Alternativo</Label>
+                     <Input
+                       id="alternativePhone"
+                       value={personalData.alternativePhone || ''}
+                       disabled={!editingPersonal}
+                       onChange={(e) => setPersonalData({...personalData, alternativePhone: e.target.value})}
+                     />
+                   </div>
                 </div>
 
                 {editingPersonal && (
@@ -873,10 +913,23 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
                             <Label>Nome do Negócio</Label>
                             <Input value={business.businessName} />
                           </div>
-                          <div>
-                            <Label>Tipo de Negócio</Label>
-                            <Input value={business.businessType} />
-                          </div>
+                           <div>
+                             <Label>Tipo de Negócio</Label>
+                             <Input value={business.businessType} />
+                           </div>
+                           <div>
+                             <Label>Tamanho do Negócio</Label>
+                             <Select value={business.businessSize || 'Micro Empresa'}>
+                               <SelectTrigger>
+                                 <SelectValue />
+                               </SelectTrigger>
+                               <SelectContent>
+                                 {businessSizes.map((size) => (
+                                   <SelectItem key={size} value={size}>{size}</SelectItem>
+                                 ))}
+                               </SelectContent>
+                             </Select>
+                           </div>
                           <div>
                             <Label>NIF</Label>
                             <Input value={business.taxId} />
@@ -996,15 +1049,31 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
                             </SelectContent>
                           </Select>
                         </div>
-                        {newBusinessData.businessType === 'Outro' && (
-                          <div>
-                            <Label>Especificar Tipo</Label>
-                            <Input
-                              value={newBusinessData.otherBusinessType}
-                              onChange={(e) => setNewBusinessData({...newBusinessData, otherBusinessType: e.target.value})}
-                            />
-                          </div>
-                        )}
+                         {newBusinessData.businessType === 'Outro' && (
+                           <div>
+                             <Label>Especificar Tipo</Label>
+                             <Input
+                               value={newBusinessData.otherBusinessType}
+                               onChange={(e) => setNewBusinessData({...newBusinessData, otherBusinessType: e.target.value})}
+                             />
+                           </div>
+                         )}
+                         <div>
+                           <Label>Tamanho do Negócio</Label>
+                           <Select 
+                             value={newBusinessData.businessSize} 
+                             onValueChange={(value) => setNewBusinessData({...newBusinessData, businessSize: value})}
+                           >
+                             <SelectTrigger>
+                               <SelectValue placeholder="Selecione o tamanho" />
+                             </SelectTrigger>
+                             <SelectContent>
+                               {businessSizes.map(size => (
+                                 <SelectItem key={size} value={size}>{size}</SelectItem>
+                               ))}
+                             </SelectContent>
+                           </Select>
+                         </div>
                         <div>
                           <Label>Distrito</Label>
                           <Select 
@@ -1433,6 +1502,128 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* User Access Management Modal */}
+        <Dialog open={showUserAccessManagement} onOpenChange={setShowUserAccessManagement}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Gestão de Acesso do Utilizador</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-6">
+              {/* User Status Management */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Estado da Conta</h3>
+                <div>
+                  <Label>Estado Atual</Label>
+                  <Select 
+                    value={userManagementData.status} 
+                    onValueChange={(value) => setUserManagementData({...userManagementData, status: value})}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ACTIVE">Ativo</SelectItem>
+                      <SelectItem value="FROZEN">Congelado</SelectItem>
+                      <SelectItem value="SUSPENDED">Suspenso</SelectItem>
+                      <SelectItem value="CLOSED">Fechado</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* PIN Reset */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Gestão de PIN</h3>
+                <div className="flex items-center gap-4">
+                  <Button 
+                    variant="outline"
+                    onClick={() => {
+                      setUserManagementData({...userManagementData, pinResetRequested: true});
+                      toast({
+                        title: "PIN resetado",
+                        description: "PIN do utilizador foi resetado com sucesso",
+                      });
+                    }}
+                  >
+                    Resetar PIN
+                  </Button>
+                  {userManagementData.pinResetRequested && (
+                    <span className="text-green-600 text-sm">✓ PIN resetado</span>
+                  )}
+                </div>
+              </div>
+
+              {/* Access History */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Histórico de Acessos</h3>
+                <div className="border rounded-lg overflow-hidden">
+                  <div className="space-y-2 p-4 max-h-64 overflow-y-auto">
+                    <div className="flex justify-between items-center py-2 border-b">
+                      <div>
+                        <p className="text-sm font-medium">Login via App Mobile</p>
+                        <p className="text-xs text-gray-500">19/01/2024 - 14:32</p>
+                      </div>
+                      <span className="text-green-600 text-xs">Sucesso</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b">
+                      <div>
+                        <p className="text-sm font-medium">Login via Web Portal</p>
+                        <p className="text-xs text-gray-500">18/01/2024 - 09:45</p>
+                      </div>
+                      <span className="text-green-600 text-xs">Sucesso</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b">
+                      <div>
+                        <p className="text-sm font-medium">Tentativa de login via App Mobile</p>
+                        <p className="text-xs text-gray-500">17/01/2024 - 22:15</p>
+                      </div>
+                      <span className="text-red-600 text-xs">Falhado</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b">
+                      <div>
+                        <p className="text-sm font-medium">Login via USSD</p>
+                        <p className="text-xs text-gray-500">17/01/2024 - 16:20</p>
+                      </div>
+                      <span className="text-green-600 text-xs">Sucesso</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2">
+                      <div>
+                        <p className="text-sm font-medium">Login via App Mobile</p>
+                        <p className="text-xs text-gray-500">16/01/2024 - 11:30</p>
+                      </div>
+                      <span className="text-green-600 text-xs">Sucesso</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowUserAccessManagement(false)}
+                  className="flex-1"
+                >
+                  Cancelar
+                </Button>
+                <Button 
+                  onClick={() => {
+                    setPersonalData({...personalData, status: userManagementData.status});
+                    toast({
+                      title: "Alterações guardadas",
+                      description: "Estado do utilizador atualizado com sucesso",
+                    });
+                    setShowUserAccessManagement(false);
+                  }}
+                  className="flex-1"
+                >
+                  Guardar Alterações
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
