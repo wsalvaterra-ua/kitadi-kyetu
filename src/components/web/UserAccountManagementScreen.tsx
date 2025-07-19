@@ -522,33 +522,157 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
   // Initial access verification screen
   if (userAccessStep === 'initial') {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle className="text-center">Utilizador Encontrado</CardTitle>
-            <p className="text-center text-sm text-gray-600">
-              {phoneNumber} - {personalData.firstName} {personalData.lastName}
-            </p>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Button 
-              onClick={sendDataAccessSms}
-              className="w-full"
-            >
-              <User className="w-4 h-4 mr-2" />
-              Gerir Perfil do Utilizador
-            </Button>
-            <Button 
-              onClick={() => setShowUserAccessManagement(true)}
-              className="w-full"
-              variant="outline"
-            >
-              <Shield className="w-4 h-4 mr-2" />
-              Gerir Acesso
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+      <>
+        {/* User Access Management Modal - Always available */}
+        <Dialog open={showUserAccessManagement} onOpenChange={setShowUserAccessManagement}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Gestão de Acesso do Utilizador</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-6">
+              {/* User Status Management */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Estado da Conta</h3>
+                <div>
+                  <Label>Estado Atual</Label>
+                  <Select 
+                    value={userManagementData.status} 
+                    onValueChange={(value) => setUserManagementData({...userManagementData, status: value})}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ACTIVE">Ativo</SelectItem>
+                      <SelectItem value="FROZEN">Congelado</SelectItem>
+                      <SelectItem value="SUSPENDED">Suspenso</SelectItem>
+                      <SelectItem value="CLOSED">Fechado</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* PIN Reset */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Gestão de PIN</h3>
+                <div className="flex items-center gap-4">
+                  <Button 
+                    variant="outline"
+                    onClick={() => {
+                      setUserManagementData({...userManagementData, pinResetRequested: true});
+                      toast({
+                        title: "PIN resetado",
+                        description: "PIN do utilizador foi resetado com sucesso",
+                      });
+                    }}
+                  >
+                    Resetar PIN
+                  </Button>
+                  {userManagementData.pinResetRequested && (
+                    <span className="text-green-600 text-sm">✓ PIN resetado</span>
+                  )}
+                </div>
+              </div>
+
+              {/* Access History */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Histórico de Acessos</h3>
+                <div className="border rounded-lg overflow-hidden">
+                  <div className="space-y-2 p-4 max-h-64 overflow-y-auto">
+                    <div className="flex justify-between items-center py-2 border-b">
+                      <div>
+                        <p className="text-sm font-medium">Login via App Mobile</p>
+                        <p className="text-xs text-gray-500">19/01/2024 - 14:32</p>
+                      </div>
+                      <span className="text-green-600 text-xs">Sucesso</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b">
+                      <div>
+                        <p className="text-sm font-medium">Login via Web Portal</p>
+                        <p className="text-xs text-gray-500">18/01/2024 - 09:45</p>
+                      </div>
+                      <span className="text-green-600 text-xs">Sucesso</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b">
+                      <div>
+                        <p className="text-sm font-medium">Tentativa de login via App Mobile</p>
+                        <p className="text-xs text-gray-500">17/01/2024 - 22:15</p>
+                      </div>
+                      <span className="text-red-600 text-xs">Falhado</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b">
+                      <div>
+                        <p className="text-sm font-medium">Login via USSD</p>
+                        <p className="text-xs text-gray-500">17/01/2024 - 16:20</p>
+                      </div>
+                      <span className="text-green-600 text-xs">Sucesso</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2">
+                      <div>
+                        <p className="text-sm font-medium">Login via App Mobile</p>
+                        <p className="text-xs text-gray-500">16/01/2024 - 11:30</p>
+                      </div>
+                      <span className="text-green-600 text-xs">Sucesso</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowUserAccessManagement(false)}
+                  className="flex-1"
+                >
+                  Cancelar
+                </Button>
+                <Button 
+                  onClick={() => {
+                    setPersonalData({...personalData, status: userManagementData.status});
+                    toast({
+                      title: "Alterações guardadas",
+                      description: "Estado do utilizador atualizado com sucesso",
+                    });
+                    setShowUserAccessManagement(false);
+                  }}
+                  className="flex-1"
+                >
+                  Guardar Alterações
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <CardTitle className="text-center">Utilizador Encontrado</CardTitle>
+              <p className="text-center text-sm text-gray-600">
+                {phoneNumber} - {personalData.firstName} {personalData.lastName}
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Button 
+                onClick={sendDataAccessSms}
+                className="w-full"
+              >
+                <User className="w-4 h-4 mr-2" />
+                Gerir Perfil do Utilizador
+              </Button>
+              <Button 
+                onClick={() => setShowUserAccessManagement(true)}
+                className="w-full"
+                variant="outline"
+              >
+                <Shield className="w-4 h-4 mr-2" />
+                Gerir Acesso
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </>
     );
   }
 
@@ -607,130 +731,7 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
   }
 
   return (
-    <>
-      {/* User Access Management Modal - Always available */}
-      <Dialog open={showUserAccessManagement} onOpenChange={setShowUserAccessManagement}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Gestão de Acesso do Utilizador</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-6">
-            {/* User Status Management */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Estado da Conta</h3>
-              <div>
-                <Label>Estado Atual</Label>
-                <Select 
-                  value={userManagementData.status} 
-                  onValueChange={(value) => setUserManagementData({...userManagementData, status: value})}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ACTIVE">Ativo</SelectItem>
-                    <SelectItem value="FROZEN">Congelado</SelectItem>
-                    <SelectItem value="SUSPENDED">Suspenso</SelectItem>
-                    <SelectItem value="CLOSED">Fechado</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {/* PIN Reset */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Gestão de PIN</h3>
-              <div className="flex items-center gap-4">
-                <Button 
-                  variant="outline"
-                  onClick={() => {
-                    setUserManagementData({...userManagementData, pinResetRequested: true});
-                    toast({
-                      title: "PIN resetado",
-                      description: "PIN do utilizador foi resetado com sucesso",
-                    });
-                  }}
-                >
-                  Resetar PIN
-                </Button>
-                {userManagementData.pinResetRequested && (
-                  <span className="text-green-600 text-sm">✓ PIN resetado</span>
-                )}
-              </div>
-            </div>
-
-            {/* Access History */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Histórico de Acessos</h3>
-              <div className="border rounded-lg overflow-hidden">
-                <div className="space-y-2 p-4 max-h-64 overflow-y-auto">
-                  <div className="flex justify-between items-center py-2 border-b">
-                    <div>
-                      <p className="text-sm font-medium">Login via App Mobile</p>
-                      <p className="text-xs text-gray-500">19/01/2024 - 14:32</p>
-                    </div>
-                    <span className="text-green-600 text-xs">Sucesso</span>
-                  </div>
-                  <div className="flex justify-between items-center py-2 border-b">
-                    <div>
-                      <p className="text-sm font-medium">Login via Web Portal</p>
-                      <p className="text-xs text-gray-500">18/01/2024 - 09:45</p>
-                    </div>
-                    <span className="text-green-600 text-xs">Sucesso</span>
-                  </div>
-                  <div className="flex justify-between items-center py-2 border-b">
-                    <div>
-                      <p className="text-sm font-medium">Tentativa de login via App Mobile</p>
-                      <p className="text-xs text-gray-500">17/01/2024 - 22:15</p>
-                    </div>
-                    <span className="text-red-600 text-xs">Falhado</span>
-                  </div>
-                  <div className="flex justify-between items-center py-2 border-b">
-                    <div>
-                      <p className="text-sm font-medium">Login via USSD</p>
-                      <p className="text-xs text-gray-500">17/01/2024 - 16:20</p>
-                    </div>
-                    <span className="text-green-600 text-xs">Sucesso</span>
-                  </div>
-                  <div className="flex justify-between items-center py-2">
-                    <div>
-                      <p className="text-sm font-medium">Login via App Mobile</p>
-                      <p className="text-xs text-gray-500">16/01/2024 - 11:30</p>
-                    </div>
-                    <span className="text-green-600 text-xs">Sucesso</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex gap-2">
-              <Button 
-                variant="outline" 
-                onClick={() => setShowUserAccessManagement(false)}
-                className="flex-1"
-              >
-                Cancelar
-              </Button>
-              <Button 
-                onClick={() => {
-                  setPersonalData({...personalData, status: userManagementData.status});
-                  toast({
-                    title: "Alterações guardadas",
-                    description: "Estado do utilizador atualizado com sucesso",
-                  });
-                  setShowUserAccessManagement(false);
-                }}
-                className="flex-1"
-              >
-                Guardar Alterações
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
         {/* Operation Code Modal */}
         {showOperationCode && (
           <Dialog open={showOperationCode} onOpenChange={setShowOperationCode}>
@@ -1650,7 +1651,6 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
         </Tabs>
       </div>
     </div>
-    </>
   );
 };
 
