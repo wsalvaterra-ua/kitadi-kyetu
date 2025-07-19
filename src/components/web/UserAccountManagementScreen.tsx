@@ -525,22 +525,27 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle className="text-center">Verificação de Acesso</CardTitle>
+            <CardTitle className="text-center">Utilizador Encontrado</CardTitle>
             <p className="text-center text-sm text-gray-600">
-              Para aceder aos dados do utilizador {phoneNumber}
+              {phoneNumber} - {personalData.firstName} {personalData.lastName}
             </p>
           </CardHeader>
           <CardContent className="space-y-4">
             <Button 
-              onClick={sendDataAccessSms}
+              onClick={() => setUserAccessStep('verified')}
               className="w-full"
             >
-              <Smartphone className="w-4 h-4 mr-2" />
-              Enviar SMS ao Proprietário
+              <User className="w-4 h-4 mr-2" />
+              Gerir Perfil do Utilizador
             </Button>
-            <p className="text-xs text-gray-500 text-center">
-              Um código de verificação será enviado para {phoneNumber}
-            </p>
+            <Button 
+              onClick={() => setShowUserAccessManagement(true)}
+              className="w-full"
+              variant="outline"
+            >
+              <Shield className="w-4 h-4 mr-2" />
+              Gerir Acesso
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -915,7 +920,24 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
                           </div>
                            <div>
                              <Label>Tipo de Negócio</Label>
-                             <Input value={business.businessType} />
+                             <div className="flex gap-2">
+                               <Select value={business.businessType} onValueChange={() => {}}>
+                                 <SelectTrigger className="flex-1">
+                                   <SelectValue />
+                                 </SelectTrigger>
+                                 <SelectContent>
+                                   {businessTypes.map(type => (
+                                     <SelectItem key={type} value={type}>{type}</SelectItem>
+                                   ))}
+                                 </SelectContent>
+                               </Select>
+                               {business.businessType === 'Outro' && (
+                                 <Input 
+                                   placeholder="Especificar tipo"
+                                   className="flex-1"
+                                 />
+                               )}
+                             </div>
                            </div>
                            <div>
                              <Label>Tamanho do Negócio</Label>
@@ -1033,31 +1055,32 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
                             onChange={(e) => setNewBusinessData({...newBusinessData, businessName: e.target.value})}
                           />
                         </div>
-                        <div>
-                          <Label>Tipo de Negócio</Label>
-                          <Select 
-                            value={newBusinessData.businessType} 
-                            onValueChange={(value) => setNewBusinessData({...newBusinessData, businessType: value})}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione o tipo" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {businessTypes.map(type => (
-                                <SelectItem key={type} value={type}>{type}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                         {newBusinessData.businessType === 'Outro' && (
-                           <div>
-                             <Label>Especificar Tipo</Label>
-                             <Input
-                               value={newBusinessData.otherBusinessType}
-                               onChange={(e) => setNewBusinessData({...newBusinessData, otherBusinessType: e.target.value})}
-                             />
+                         <div>
+                           <Label>Tipo de Negócio</Label>
+                           <div className="flex gap-2">
+                             <Select 
+                               value={newBusinessData.businessType} 
+                               onValueChange={(value) => setNewBusinessData({...newBusinessData, businessType: value})}
+                             >
+                               <SelectTrigger className="flex-1">
+                                 <SelectValue placeholder="Selecione o tipo" />
+                               </SelectTrigger>
+                               <SelectContent>
+                                 {businessTypes.map(type => (
+                                   <SelectItem key={type} value={type}>{type}</SelectItem>
+                                 ))}
+                               </SelectContent>
+                             </Select>
+                             {newBusinessData.businessType === 'Outro' && (
+                               <Input
+                                 value={newBusinessData.otherBusinessType}
+                                 onChange={(e) => setNewBusinessData({...newBusinessData, otherBusinessType: e.target.value})}
+                                 placeholder="Especificar tipo"
+                                 className="flex-1"
+                               />
+                             )}
                            </div>
-                         )}
+                         </div>
                          <div>
                            <Label>Tamanho do Negócio</Label>
                            <Select 
