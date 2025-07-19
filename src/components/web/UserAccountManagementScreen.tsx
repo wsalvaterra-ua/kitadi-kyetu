@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowLeft, User, Building, Wallet, Plus, Edit, Eye, EyeOff, Shield, Send, Upload, Smartphone, FileText, History, MapPin } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/hooks/use-toast';
 
 interface UserAccountManagementScreenProps {
@@ -74,15 +75,27 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
         accountType: 'Conta Pessoal',
         balance: '45,678 STN',
         status: 'ACTIVE' as AccountStatus,
-        limits: {
-          dailySend: '50,000 STN',
-          dailyReceive: '100,000 STN',
-          monthlySend: '500,000 STN',
-          monthlyReceive: '1,000,000 STN',
-          transactionSend: '10,000 STN',
-          transactionReceive: '20,000 STN',
-          maxBalance: '2,000,000 STN'
-        },
+      limits: {
+        dailySend: '50,000 STN',
+        dailyReceive: '100,000 STN',
+        monthlySend: '500,000 STN',
+        monthlyReceive: '1,000,000 STN',
+        transactionSend: '10,000 STN',
+        transactionReceive: '20,000 STN',
+        maxBalance: '2,000,000 STN',
+        dailySendCount: '10',
+        dailyReceiveCount: '20',
+        monthlySendCount: '100',
+        monthlyReceiveCount: '200',
+        dailyWithdrawal: '25,000 STN',
+        monthlyWithdrawal: '250,000 STN',
+        dailyWithdrawalCount: '5',
+        monthlyWithdrawalCount: '50',
+        dailyDeposit: '75,000 STN',
+        monthlyDeposit: '750,000 STN',
+        dailyDepositCount: '15',
+        monthlyDepositCount: '150'
+      },
         transactions: [
           { id: '1', type: 'Recebido', amount: '+5,000 STN', date: '2024-01-15', description: 'Transferência de João Silva' },
           { id: '2', type: 'Enviado', amount: '-2,500 STN', date: '2024-01-14', description: 'Pagamento Loja ABC' },
@@ -102,7 +115,19 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
           monthlyReceive: '5,000,000 STN',
           transactionSend: '50,000 STN',
           transactionReceive: '100,000 STN',
-          maxBalance: '10,000,000 STN'
+          maxBalance: '10,000,000 STN',
+          dailySendCount: '20',
+          dailyReceiveCount: '50',
+          monthlySendCount: '200',
+          monthlyReceiveCount: '500',
+          dailyWithdrawal: '100,000 STN',
+          monthlyWithdrawal: '1,000,000 STN',
+          dailyWithdrawalCount: '10',
+          monthlyWithdrawalCount: '100',
+          dailyDeposit: '300,000 STN',
+          monthlyDeposit: '3,000,000 STN',
+          dailyDepositCount: '30',
+          monthlyDepositCount: '300'
         },
         transactions: [
           { id: '4', type: 'Recebido', amount: '+15,000 STN', date: '2024-01-15', description: 'Venda produtos' },
@@ -428,15 +453,27 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
       accountType: newAccountName,
       balance: '0 STN',
       status: 'ACTIVE' as AccountStatus,
-      limits: {
-        dailySend: '200,000 STN',
-        dailyReceive: '500,000 STN',
-        monthlySend: '2,000,000 STN',
-        monthlyReceive: '5,000,000 STN',
-        transactionSend: '50,000 STN',
-        transactionReceive: '100,000 STN',
-        maxBalance: '10,000,000 STN'
-      },
+        limits: {
+          dailySend: '200,000 STN',
+          dailyReceive: '500,000 STN',
+          monthlySend: '2,000,000 STN',
+          monthlyReceive: '5,000,000 STN',
+          transactionSend: '50,000 STN',
+          transactionReceive: '100,000 STN',
+          maxBalance: '10,000,000 STN',
+          dailySendCount: '20',
+          dailyReceiveCount: '50',
+          monthlySendCount: '200',
+          monthlyReceiveCount: '500',
+          dailyWithdrawal: '100,000 STN',
+          monthlyWithdrawal: '1,000,000 STN',
+          dailyWithdrawalCount: '10',
+          monthlyWithdrawalCount: '100',
+          dailyDeposit: '300,000 STN',
+          monthlyDeposit: '3,000,000 STN',
+          dailyDepositCount: '30',
+          monthlyDepositCount: '300'
+        },
       transactions: []
     };
 
@@ -1501,157 +1538,158 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
                                    </div>
                                  </div>
 
-                                 {/* SMS Verification for account operations */}
-                                 <div className="bg-yellow-50 p-3 rounded-lg">
-                                   <p className="text-sm font-medium mb-2">Verificação SMS para guardar alterações</p>
-                                   {accountSmsStep[account.id] !== 'verify' && accountSmsStep[account.id] !== 'verified' && (
-                                     <Button size="sm" onClick={() => sendAccountSms(account.id)}>
-                                       <Smartphone className="w-4 h-4 mr-1" />
-                                       Enviar SMS
-                                     </Button>
-                                   )}
-                                   {accountSmsStep[account.id] === 'verify' && (
-                                     <div className="space-y-2">
-                                       <Input
-                                         placeholder="Código SMS"
-                                         value={accountSmsCode}
-                                         onChange={(e) => setAccountSmsCode(e.target.value)}
-                                         maxLength={6}
-                                       />
-                                       <Button size="sm" onClick={() => verifyAccountSms(account.id)}>
-                                         Verificar SMS
-                                       </Button>
-                                     </div>
-                                   )}
-                                   {accountSmsStep[account.id] === 'verified' && (
-                                     <p className="text-green-600 text-sm">✓ SMS verificado</p>
-                                   )}
-                                 </div>
+                                    {/* SMS Verification for account operations */}
+                                    <div className="bg-yellow-50 p-3 rounded-lg">
+                                      <p className="text-sm font-medium mb-2">Verificação SMS para guardar alterações</p>
+                                      {accountSmsStep[account.id] !== 'verify' && accountSmsStep[account.id] !== 'verified' && (
+                                        <Button size="sm" onClick={() => sendAccountSms(account.id)}>
+                                          <Smartphone className="w-4 h-4 mr-1" />
+                                          Enviar SMS
+                                        </Button>
+                                      )}
+                                      {accountSmsStep[account.id] === 'verify' && (
+                                        <div className="space-y-2">
+                                          <Input
+                                            placeholder="Código SMS"
+                                            value={accountSmsCode}
+                                            onChange={(e) => setAccountSmsCode(e.target.value)}
+                                            maxLength={6}
+                                          />
+                                          <Button size="sm" onClick={() => verifyAccountSms(account.id)}>
+                                            Verificar SMS
+                                          </Button>
+                                        </div>
+                                      )}
+                                      {accountSmsStep[account.id] === 'verified' && (
+                                        <p className="text-green-600 text-sm">✓ SMS verificado</p>
+                                      )}
+                                    </div>
 
-                                 {/* Action Buttons */}
-                                 <div className="flex gap-2">
-                                   <Button variant="outline" className="flex-1" onClick={() => {
-                                     setAccountSmsStep(prev => ({...prev, [account.id]: 'send'}));
-                                     setAccountSmsCode('');
-                                     setAccountManagementData(prev => ({...prev, [account.id]: {}}));
-                                   }}>
-                                     Cancelar
-                                   </Button>
-                                   <Button className="flex-1" onClick={() => {
-                                     toast({
-                                       title: "Conta atualizada",
-                                       description: "Dados da conta atualizados com sucesso",
-                                     });
-                                     setAccountSmsStep(prev => ({...prev, [account.id]: 'send'}));
-                                     setAccountSmsCode('');
-                                     setAccountManagementData(prev => ({...prev, [account.id]: {}}));
-                                   }}>
-                                     Guardar Alterações
-                                   </Button>
-                                 </div>
-                               </div>
-                             </DialogContent>
-                           </Dialog>
-                         </div>
-                       </div>
-                     </Card>
-                   ))}
+                                    {/* Action Buttons */}
+                                    <div className="flex gap-2">
+                                      <Button variant="outline" className="flex-1" onClick={() => {
+                                        setAccountSmsStep(prev => ({...prev, [account.id]: 'send'}));
+                                        setAccountSmsCode('');
+                                        setAccountManagementData(prev => ({...prev, [account.id]: {}}));
+                                      }}>
+                                        Cancelar
+                                      </Button>
+                                      <Button className="flex-1" onClick={() => {
+                                        toast({
+                                          title: "Conta atualizada",
+                                          description: "Dados da conta atualizados com sucesso",
+                                        });
+                                        setAccountSmsStep(prev => ({...prev, [account.id]: 'send'}));
+                                        setAccountSmsCode('');
+                                        setAccountManagementData(prev => ({...prev, [account.id]: {}}));
+                                      }}>
+                                        Guardar Alterações
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </ScrollArea>
+                              </DialogContent>
+                            </Dialog>
+                          </div>
+                        </div>
+                      </Card>
+                    ))}
 
-                  {/* Add Account Button */}
-                  <Dialog open={showCreateAccountModal} onOpenChange={setShowCreateAccountModal}>
-                    <DialogTrigger asChild>
-                      <Button 
-                        className="w-full border-dashed"
-                        variant="outline"
-                      >
-                        <Plus className="w-4 h-4 mr-2" />
-                        Criar Nova Conta Comercial
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Nova Conta Comercial</DialogTitle>
-                      </DialogHeader>
-                      <div className="space-y-4">
-                        <div>
-                          <Label>Nome da Conta Comercial</Label>
-                          <Input 
-                            value={newAccountName} 
-                            onChange={(e) => setNewAccountName(e.target.value)}
-                            placeholder="Ex: Conta Comercial - Loja ABC"
-                          />
-                        </div>
-                        <div>
-                          <Label>Perfil Comercial</Label>
-                          <Select 
-                            value={selectedBusinessProfile} 
-                            onValueChange={setSelectedBusinessProfile}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione o perfil comercial" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {businessProfiles.map(profile => (
-                                <SelectItem key={profile.id} value={profile.id}>
-                                  {profile.businessName}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        
-                        {/* SMS Verification Section */}
-                        <div className="bg-yellow-50 p-3 rounded-lg">
-                          <p className="text-sm font-medium mb-2">Verificação SMS para criar conta</p>
-                          {createAccountSmsStep !== 'verify' && createAccountSmsStep !== 'verified' && (
-                            <Button size="sm" onClick={sendCreateAccountSms}>
-                              <Smartphone className="w-4 h-4 mr-1" />
-                              Enviar SMS
-                            </Button>
-                          )}
-                          {createAccountSmsStep === 'verify' && (
-                            <div className="space-y-2">
-                              <Input
-                                placeholder="Código SMS"
-                                value={createAccountSmsCode}
-                                onChange={(e) => setCreateAccountSmsCode(e.target.value)}
-                                maxLength={6}
-                              />
-                              <Button size="sm" onClick={verifyCreateAccountSms}>
-                                Verificar SMS
+                    {/* Add Account Button */}
+                    <Dialog open={showCreateAccountModal} onOpenChange={setShowCreateAccountModal}>
+                      <DialogTrigger asChild>
+                        <Button 
+                          className="w-full border-dashed"
+                          variant="outline"
+                        >
+                          <Plus className="w-4 h-4 mr-2" />
+                          Criar Nova Conta Comercial
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Nova Conta Comercial</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div>
+                            <Label>Nome da Conta Comercial</Label>
+                            <Input 
+                              value={newAccountName} 
+                              onChange={(e) => setNewAccountName(e.target.value)}
+                              placeholder="Ex: Conta Comercial - Loja ABC"
+                            />
+                          </div>
+                          <div>
+                            <Label>Perfil Comercial</Label>
+                            <Select 
+                              value={selectedBusinessProfile} 
+                              onValueChange={setSelectedBusinessProfile}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Selecione o perfil comercial" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {businessProfiles.map(profile => (
+                                  <SelectItem key={profile.id} value={profile.id}>
+                                    {profile.businessName}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          
+                          {/* SMS Verification Section */}
+                          <div className="bg-yellow-50 p-3 rounded-lg">
+                            <p className="text-sm font-medium mb-2">Verificação SMS para criar conta</p>
+                            {createAccountSmsStep !== 'verify' && createAccountSmsStep !== 'verified' && (
+                              <Button size="sm" onClick={sendCreateAccountSms}>
+                                <Smartphone className="w-4 h-4 mr-1" />
+                                Enviar SMS
                               </Button>
-                            </div>
-                          )}
-                          {createAccountSmsStep === 'verified' && (
-                            <p className="text-green-600 text-sm">✓ SMS verificado</p>
-                          )}
+                            )}
+                            {createAccountSmsStep === 'verify' && (
+                              <div className="space-y-2">
+                                <Input
+                                  placeholder="Código SMS"
+                                  value={createAccountSmsCode}
+                                  onChange={(e) => setCreateAccountSmsCode(e.target.value)}
+                                  maxLength={6}
+                                />
+                                <Button size="sm" onClick={verifyCreateAccountSms}>
+                                  Verificar SMS
+                                </Button>
+                              </div>
+                            )}
+                            {createAccountSmsStep === 'verified' && (
+                              <p className="text-green-600 text-sm">✓ SMS verificado</p>
+                            )}
+                          </div>
+                          
+                          <div className="flex gap-2">
+                            <Button variant="outline" onClick={() => {
+                              setShowCreateAccountModal(false);
+                              setCreateAccountSmsStep('send');
+                              setCreateAccountSmsCode('');
+                              setNewAccountName('');
+                              setSelectedBusinessProfile('');
+                            }} className="flex-1">
+                              Cancelar
+                            </Button>
+                            <Button onClick={createNewAccount} className="flex-1">
+                              Criar Conta
+                            </Button>
+                          </div>
                         </div>
-                        
-                        <div className="flex gap-2">
-                          <Button variant="outline" onClick={() => {
-                            setShowCreateAccountModal(false);
-                            setCreateAccountSmsStep('send');
-                            setCreateAccountSmsCode('');
-                            setNewAccountName('');
-                            setSelectedBusinessProfile('');
-                          }} className="flex-1">
-                            Cancelar
-                          </Button>
-                          <Button onClick={createNewAccount} className="flex-1">
-                            Criar Conta
-                          </Button>
-                        </div>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
 
 export default UserAccountManagementScreen;
