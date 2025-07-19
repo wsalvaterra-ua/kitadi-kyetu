@@ -1652,5 +1652,6 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
     </div>
     </>
   );
+};
 
 export default UserAccountManagementScreen;
