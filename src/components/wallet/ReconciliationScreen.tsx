@@ -1,10 +1,13 @@
 
 import { useState } from 'react';
+import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Check, AlertCircle, Plus, CreditCard, Banknote } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { ArrowLeft, Check, AlertCircle, Plus, CreditCard, Banknote, Calendar as CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface ReconciliationScreenProps {
   onBack: () => void;
@@ -12,11 +15,12 @@ interface ReconciliationScreenProps {
 }
 
 const ReconciliationScreen = ({ onBack, onAddRecord }: ReconciliationScreenProps) => {
-  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   
   const [reconciliationData] = useState({
     expectedCash: 1850000,
-    reconciledCash: 1650000
+    reconciledCash: 1650000,
+    pendingCash: 200000
   });
 
   const [transactions] = useState([
@@ -52,20 +56,16 @@ const ReconciliationScreen = ({ onBack, onAddRecord }: ReconciliationScreenProps
     }
   ]);
 
-  // Generate date options (last 30 days)
-  const dateOptions = Array.from({ length: 30 }, (_, i) => {
-    const date = new Date();
-    date.setDate(date.getDate() - i);
-    return {
-      value: date.toISOString().split('T')[0],
-      label: date.toLocaleDateString('pt-BR', { 
-        weekday: 'short', 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric' 
-      })
-    };
-  });
+  // Navigation functions for date
+  const navigateDate = (direction: 'prev' | 'next') => {
+    const newDate = new Date(selectedDate);
+    if (direction === 'prev') {
+      newDate.setDate(newDate.getDate() - 1);
+    } else {
+      newDate.setDate(newDate.getDate() + 1);
+    }
+    setSelectedDate(newDate);
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -108,26 +108,57 @@ const ReconciliationScreen = ({ onBack, onAddRecord }: ReconciliationScreenProps
       </div>
 
       <div className="px-6 py-6 space-y-6">
-        {/* Date Selection */}
+        {/* Date Navigation */}
         <Card className="border-0 shadow-lg">
           <CardContent className="p-4">
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Data da Reconciliação
-                </label>
-                <Select value={selectedDate} onValueChange={setSelectedDate}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Selecionar data" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {dateOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Data da Reconciliação
+              </label>
+              
+              {/* Date Navigation Controls */}
+              <div className="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => navigateDate('prev')}
+                  className="h-8 w-8"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "justify-center text-left font-normal",
+                        !selectedDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {selectedDate ? format(selectedDate, "dd/MM/yyyy") : <span>Selecionar data</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={selectedDate}
+                      onSelect={(date) => date && setSelectedDate(date)}
+                      initialFocus
+                      className="p-3 pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
+                
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => navigateDate('next')}
+                  className="h-8 w-8"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
               </div>
               
               {/* Add Button */}
@@ -145,32 +176,55 @@ const ReconciliationScreen = ({ onBack, onAddRecord }: ReconciliationScreenProps
         {/* Cash Summary */}
         <Card className="border-0 shadow-lg">
           <CardContent className="p-4">
-            <h3 className="font-semibold text-kitadi-navy mb-3">Resumo de Caixa</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-center">
-                <div className="text-lg font-bold text-blue-600">
-                  {formatCurrency(reconciliationData.expectedCash)}
+            <h3 className="font-semibold text-kitadi-navy mb-4">Resumo de Reconciliação</h3>
+            <div className="grid grid-cols-1 gap-4">
+              {/* Expected Cash */}
+              <div className="bg-blue-50 rounded-lg p-3">
+                <div className="text-center">
+                  <div className="text-lg font-bold text-blue-600">
+                    {formatCurrency(reconciliationData.expectedCash)}
+                  </div>
+                  <div className="text-sm text-blue-700 font-medium">Dinheiro Esperado</div>
+                  <div className="text-xs text-blue-600 mt-1">Total que deveria estar em caixa</div>
                 </div>
-                <div className="text-sm text-gray-600">Caixa Esperado</div>
               </div>
-              <div className="text-center">
-                <div className="text-lg font-bold text-green-600">
-                  {formatCurrency(reconciliationData.reconciledCash)}
+              
+              {/* Reconciled Cash */}
+              <div className="bg-green-50 rounded-lg p-3">
+                <div className="text-center">
+                  <div className="text-lg font-bold text-green-600">
+                    {formatCurrency(reconciliationData.reconciledCash)}
+                  </div>
+                  <div className="text-sm text-green-700 font-medium">Dinheiro Reconciliado</div>
+                  <div className="text-xs text-green-600 mt-1">Total confirmado e reconciliado</div>
                 </div>
-                <div className="text-sm text-gray-600">Caixa Reconciliado</div>
+              </div>
+              
+              {/* Pending Cash */}
+              <div className="bg-yellow-50 rounded-lg p-3">
+                <div className="text-center">
+                  <div className="text-lg font-bold text-yellow-600">
+                    {formatCurrency(reconciliationData.pendingCash)}
+                  </div>
+                  <div className="text-sm text-yellow-700 font-medium">Dinheiro Pendente</div>
+                  <div className="text-xs text-yellow-600 mt-1">Aguardando confirmação</div>
+                </div>
               </div>
             </div>
-            <div className="mt-3 pt-3 border-t border-gray-200">
+            
+            {/* Difference Summary */}
+            <div className="mt-4 pt-4 border-t border-gray-200">
               <div className="text-center">
-                <div className={`text-lg font-bold ${
+                <div className={`text-xl font-bold ${
                   cashDifference === 0 ? 'text-green-600' : 
-                  cashDifference > 0 ? 'text-red-600' : 'text-blue-600'
+                  cashDifference > 0 ? 'text-red-600' : 'text-orange-600'
                 }`}>
                   {cashDifference === 0 ? '0 Db' : 
                    `${cashDifference > 0 ? '+' : ''}${formatCurrency(Math.abs(cashDifference))}`}
                 </div>
-                <div className="text-sm text-gray-600">
-                  {cashDifference === 0 ? 'Reconciliado' : 'Diferença'}
+                <div className="text-sm text-gray-600 font-medium">
+                  {cashDifference === 0 ? 'Totalmente Reconciliado' : 
+                   cashDifference > 0 ? 'Excesso em Caixa' : 'Falta em Caixa'}
                 </div>
               </div>
             </div>
