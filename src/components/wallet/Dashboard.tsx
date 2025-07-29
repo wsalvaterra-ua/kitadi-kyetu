@@ -121,33 +121,33 @@ const Dashboard = ({
 
   // Base quick actions for personal accounts
   const baseQuickActions = [
-    { icon: Send, label: 'Enviar', color: 'bg-blue-500', onClick: onSend },
-    { icon: Smartphone, label: 'Comprar\nRecarga', color: 'bg-green-500', onClick: onPay },
-    { icon: Plus, label: 'Depósito', color: 'bg-kitadi-orange', onClick: onTopUp },
-    { icon: ArrowDownToLine, label: 'Levantar', color: 'bg-red-500', onClick: onWithdraw },
+    { icon: Send, label: 'Enviar', color: 'bg-primary', onClick: onSend },
+    { icon: Smartphone, label: 'Comprar\nRecarga', color: 'bg-secondary', onClick: onPay },
+    { icon: Plus, label: 'Depósito', color: 'bg-accent', onClick: onTopUp },
+    { icon: ArrowDownToLine, label: 'Levantar', color: 'bg-muted-foreground', onClick: onWithdraw },
   ];
 
   // Additional business actions
   const businessActions = [
-    { icon: Smartphone, label: 'Receber\nPagamento', color: 'bg-purple-500', onClick: onCodeInput },
-    { icon: Users, label: 'Gerir\nUtilizadores', color: 'bg-indigo-500', onClick: onUserManagement },
-    { icon: FileText, label: 'Extrato\nCSV', color: 'bg-teal-500', onClick: onExtract },
-    { icon: Bell, label: 'Receber\nNotificações', color: 'bg-orange-500', onClick: handleNotificationSettings },
+    { icon: Smartphone, label: 'Receber\nPagamento', color: 'bg-primary', onClick: onCodeInput },
+    { icon: Users, label: 'Gerir\nUtilizadores', color: 'bg-secondary', onClick: onUserManagement },
+    { icon: FileText, label: 'Extrato\nCSV', color: 'bg-accent', onClick: onExtract },
+    { icon: Bell, label: 'Receber\nNotificações', color: 'bg-muted-foreground', onClick: handleNotificationSettings },
   ];
 
   // Agent specific actions
   const agentActions = [
-    { icon: Send, label: 'Enviar\nDinheiro', color: 'bg-blue-500', onClick: onSend },
-    { icon: Smartphone, label: 'Receber\nPagamento', color: 'bg-purple-500', onClick: onCodeInput },
-    { icon: Receipt, label: 'Reconciliação', color: 'bg-amber-500', onClick: onReconciliation },
-    { icon: Users, label: 'Criar\nContas', color: 'bg-green-500', onClick: onAccountCreation },
-    { icon: FileText, label: 'Extrato\nCSV', color: 'bg-teal-500', onClick: onExtract },
-    { icon: Bell, label: 'Receber\nNotificações', color: 'bg-orange-500', onClick: handleNotificationSettings },
+    { icon: Send, label: 'Enviar\nDinheiro', color: 'bg-primary', onClick: onSend },
+    { icon: Smartphone, label: 'Receber\nPagamento', color: 'bg-secondary', onClick: onCodeInput },
+    { icon: Receipt, label: 'Reconciliação', color: 'bg-accent', onClick: onReconciliation },
+    { icon: Users, label: 'Criar\nContas', color: 'bg-muted-foreground', onClick: onAccountCreation },
+    { icon: FileText, label: 'Extrato\nCSV', color: 'bg-primary', onClick: onExtract },
+    { icon: Bell, label: 'Receber\nNotificações', color: 'bg-secondary', onClick: handleNotificationSettings },
   ];
 
   // Unverified account actions
   const unverifiedActions = [
-    { icon: Shield, label: 'Verificar\nConta', color: 'bg-kitadi-orange', onClick: onVerifyAccount },
+    { icon: Shield, label: 'Verificar\nConta', color: 'bg-primary', onClick: onVerifyAccount },
   ];
 
   // Determine which actions to show based on account type
@@ -161,9 +161,9 @@ const Dashboard = ({
     } else if (activeAccount.accountType === 'business-associated') {
       // Only show extract, notifications and dissociate for associated business accounts
       return [
-        { icon: FileText, label: 'Extrato\nCSV', color: 'bg-teal-500', onClick: onExtract },
-        { icon: Bell, label: 'Receber\nNotificações', color: 'bg-orange-500', onClick: handleNotificationSettings },
-        { icon: Unlink, label: 'Dissociar', color: 'bg-red-500', onClick: () => handleDissociate(activeAccount.id) }
+        { icon: FileText, label: 'Extrato\nCSV', color: 'bg-primary', onClick: onExtract },
+        { icon: Bell, label: 'Receber\nNotificações', color: 'bg-secondary', onClick: handleNotificationSettings },
+        { icon: Unlink, label: 'Dissociar', color: 'bg-muted-foreground', onClick: () => handleDissociate(activeAccount.id) }
       ];
     }
     return baseQuickActions;
