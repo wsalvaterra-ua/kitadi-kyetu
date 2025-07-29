@@ -121,33 +121,33 @@ const Dashboard = ({
 
   // Base quick actions for personal accounts
   const baseQuickActions = [
-    { icon: Send, label: 'Enviar', color: 'bg-primary', onClick: onSend },
-    { icon: Smartphone, label: 'Comprar\nRecarga', color: 'bg-secondary', onClick: onPay },
-    { icon: Plus, label: 'Depósito', color: 'bg-accent', onClick: onTopUp },
-    { icon: ArrowDownToLine, label: 'Levantar', color: 'bg-muted-foreground', onClick: onWithdraw },
+    { icon: Send, label: 'Enviar', color: 'bg-kitadi-navy-overlay', onClick: onSend },
+    { icon: Smartphone, label: 'Comprar\nRecarga', color: 'bg-kitadi-navy-overlay', onClick: onPay },
+    { icon: Plus, label: 'Depósito', color: 'bg-kitadi-navy-overlay', onClick: onTopUp },
+    { icon: ArrowDownToLine, label: 'Levantar', color: 'bg-kitadi-navy-overlay', onClick: onWithdraw },
   ];
 
   // Additional business actions
   const businessActions = [
-    { icon: Smartphone, label: 'Receber\nPagamento', color: 'bg-primary', onClick: onCodeInput },
-    { icon: Users, label: 'Gerir\nUtilizadores', color: 'bg-secondary', onClick: onUserManagement },
-    { icon: FileText, label: 'Extrato\nCSV', color: 'bg-accent', onClick: onExtract },
-    { icon: Bell, label: 'Receber\nNotificações', color: 'bg-muted-foreground', onClick: handleNotificationSettings },
+    { icon: Smartphone, label: 'Receber\nPagamento', color: 'bg-kitadi-navy-overlay', onClick: onCodeInput },
+    { icon: Users, label: 'Gerir\nUtilizadores', color: 'bg-kitadi-navy-overlay', onClick: onUserManagement },
+    { icon: FileText, label: 'Extrato\nCSV', color: 'bg-kitadi-navy-overlay', onClick: onExtract },
+    { icon: Bell, label: 'Receber\nNotificações', color: 'bg-kitadi-navy-overlay', onClick: handleNotificationSettings },
   ];
 
   // Agent specific actions
   const agentActions = [
-    { icon: Send, label: 'Enviar\nDinheiro', color: 'bg-primary', onClick: onSend },
-    { icon: Smartphone, label: 'Receber\nPagamento', color: 'bg-secondary', onClick: onCodeInput },
-    { icon: Receipt, label: 'Reconciliação', color: 'bg-accent', onClick: onReconciliation },
-    { icon: Users, label: 'Criar\nContas', color: 'bg-muted-foreground', onClick: onAccountCreation },
-    { icon: FileText, label: 'Extrato\nCSV', color: 'bg-primary', onClick: onExtract },
-    { icon: Bell, label: 'Receber\nNotificações', color: 'bg-secondary', onClick: handleNotificationSettings },
+    { icon: Send, label: 'Enviar\nDinheiro', color: 'bg-kitadi-navy-overlay', onClick: onSend },
+    { icon: Smartphone, label: 'Receber\nPagamento', color: 'bg-kitadi-navy-overlay', onClick: onCodeInput },
+    { icon: Receipt, label: 'Reconciliação', color: 'bg-kitadi-navy-overlay', onClick: onReconciliation },
+    { icon: Users, label: 'Criar\nContas', color: 'bg-kitadi-navy-overlay', onClick: onAccountCreation },
+    { icon: FileText, label: 'Extrato\nCSV', color: 'bg-kitadi-navy-overlay', onClick: onExtract },
+    { icon: Bell, label: 'Receber\nNotificações', color: 'bg-kitadi-navy-overlay', onClick: handleNotificationSettings },
   ];
 
   // Unverified account actions
   const unverifiedActions = [
-    { icon: Shield, label: 'Verificar\nConta', color: 'bg-primary', onClick: onVerifyAccount },
+    { icon: Shield, label: 'Verificar\nConta', color: 'bg-kitadi-navy-overlay', onClick: onVerifyAccount },
   ];
 
   // Determine which actions to show based on account type
@@ -161,9 +161,9 @@ const Dashboard = ({
     } else if (activeAccount.accountType === 'business-associated') {
       // Only show extract, notifications and dissociate for associated business accounts
       return [
-        { icon: FileText, label: 'Extrato\nCSV', color: 'bg-primary', onClick: onExtract },
-        { icon: Bell, label: 'Receber\nNotificações', color: 'bg-secondary', onClick: handleNotificationSettings },
-        { icon: Unlink, label: 'Dissociar', color: 'bg-muted-foreground', onClick: () => handleDissociate(activeAccount.id) }
+        { icon: FileText, label: 'Extrato\nCSV', color: 'bg-kitadi-navy-overlay', onClick: onExtract },
+        { icon: Bell, label: 'Receber\nNotificações', color: 'bg-kitadi-navy-overlay', onClick: handleNotificationSettings },
+        { icon: Unlink, label: 'Dissociar', color: 'bg-kitadi-navy-overlay', onClick: () => handleDissociate(activeAccount.id) }
       ];
     }
     return baseQuickActions;
@@ -514,7 +514,7 @@ const Dashboard = ({
                 <CardContent className="p-0">
                   <Button
                     variant="ghost"
-                    className={`w-full h-full ${action.color} hover:opacity-90 flex flex-col items-center justify-center space-y-2 py-6 px-2 rounded-none`}
+                    className={`w-full h-full ${action.color} hover:opacity-90 flex flex-col items-center justify-center space-y-2 py-6 px-2 rounded-none border-2 border-white shadow-sm`}
                     onClick={action.onClick}
                   >
                     <action.icon className="w-6 h-6 text-white" />
