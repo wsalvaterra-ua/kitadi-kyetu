@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LogOut, Download, Eye, CreditCard, Users, UserPlus, Building, Plus } from 'lucide-react';
+import { LogOut, Download, Eye, CreditCard, Users, UserPlus, Building, Plus, Search, UserCheck, DollarSign, CheckCircle, Wallet, FileText, Settings } from 'lucide-react';
 
 interface WebDashboardProps {
   userType: 'personal' | 'business' | 'agent' | 'business-associated' | 'merchant';
@@ -10,9 +10,31 @@ interface WebDashboardProps {
   onCreateAccount?: () => void;
   onCreateMerchantProfile?: () => void;
   onAddReconciliation?: () => void;
+  onTransactionManagement?: () => void;
+  onAccountOwnership?: () => void;
+  onBankTransactionApproval?: () => void;
+  onCashVerification?: () => void;
+  onCashReserve?: () => void;
+  onExternalBankTransfer?: () => void;
+  onOperatorManagement?: () => void;
 }
 
-const WebDashboard = ({ userType, onLogout, onViewTransactions, onDownloadExtract, onCreateAccount, onCreateMerchantProfile, onAddReconciliation }: WebDashboardProps) => {
+const WebDashboard = ({ 
+  userType, 
+  onLogout, 
+  onViewTransactions, 
+  onDownloadExtract, 
+  onCreateAccount, 
+  onCreateMerchantProfile, 
+  onAddReconciliation,
+  onTransactionManagement,
+  onAccountOwnership,
+  onBankTransactionApproval,
+  onCashVerification,
+  onCashReserve,
+  onExternalBankTransfer,
+  onOperatorManagement
+}: WebDashboardProps) => {
   const getUserTypeInfo = () => {
     switch (userType) {
       case 'personal':
@@ -168,6 +190,40 @@ const WebDashboard = ({ userType, onLogout, onViewTransactions, onDownloadExtrac
                 </CardContent>
               </Card>
 
+              <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onTransactionManagement}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Search className="w-5 h-5" />
+                    Gestão de Transações
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600">
+                    Pesquisar e gerir transações por ID
+                  </p>
+                  <Button variant="outline" className="mt-4 w-full">
+                    Pesquisar
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onAccountOwnership}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <UserCheck className="w-5 h-5" />
+                    Gestão de Proprietários
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600">
+                    Gerir proprietários de contas bancárias
+                  </p>
+                  <Button variant="outline" className="mt-4 w-full">
+                    Gerir
+                  </Button>
+                </CardContent>
+              </Card>
+
               <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onAddReconciliation}>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -177,10 +233,95 @@ const WebDashboard = ({ userType, onLogout, onViewTransactions, onDownloadExtrac
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">
-                    Adicionar transação manual para reconciliação
+                    Gerir reconciliação e histórico
                   </p>
                   <Button variant="outline" className="mt-4 w-full">
-                    Adicionar
+                    Abrir
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onBankTransactionApproval}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5" />
+                    Aprovação Bancária
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600">
+                    Aprovar depósitos e saques bancários
+                  </p>
+                  <Button variant="outline" className="mt-4 w-full">
+                    Aprovar
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onCashVerification}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <DollarSign className="w-5 h-5" />
+                    Verificação de Dinheiro
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600">
+                    Verificar reconciliações pendentes
+                  </p>
+                  <Button variant="outline" className="mt-4 w-full">
+                    Verificar
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onCashReserve}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Wallet className="w-5 h-5" />
+                    Reserva de Dinheiro
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600">
+                    Gerir reserva de dinheiro do cofre
+                  </p>
+                  <Button variant="outline" className="mt-4 w-full">
+                    Gerir
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onExternalBankTransfer}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="w-5 h-5" />
+                    Transferências Externas
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600">
+                    Verificar transferências bancárias externas
+                  </p>
+                  <Button variant="outline" className="mt-4 w-full">
+                    Verificar
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onOperatorManagement}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Settings className="w-5 h-5" />
+                    Gestão de Operadores
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600">
+                    Gerir horários e status dos operadores
+                  </p>
+                  <Button variant="outline" className="mt-4 w-full">
+                    Gerir
                   </Button>
                 </CardContent>
               </Card>
