@@ -33,9 +33,16 @@ import AccountManagementScreen from '@/components/web/AccountManagementScreen';
 import UserAccountManagementScreen from '@/components/web/UserAccountManagementScreen';
 import UserProfileScreen from '@/components/web/UserProfileScreen';
 import CreateUserProfileScreen from '@/components/web/CreateUserProfileScreen';
-import WebReconciliationScreen from '@/components/web/WebReconciliationScreen';
+import EnhancedReconciliationScreen from '@/components/web/EnhancedReconciliationScreen';
+import TransactionManagementScreen from '@/components/web/TransactionManagementScreen';
+import AccountOwnershipScreen from '@/components/web/AccountOwnershipScreen';
+import BankTransactionApprovalScreen from '@/components/web/BankTransactionApprovalScreen';
+import CashVerificationScreen from '@/components/web/CashVerificationScreen';
+import CashReserveScreen from '@/components/web/CashReserveScreen';
+import ExternalBankTransferScreen from '@/components/web/ExternalBankTransferScreen';
+import OperatorManagementScreen from '@/components/web/OperatorManagementScreen';
 
-type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation' | 'add-reconciliation' | 'account-creation' | 'web-login' | 'web-dashboard' | 'web-transactions' | 'web-extract' | 'web-account-management' | 'web-user-account-management' | 'web-create-user' | 'web-reconciliation';
+type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation' | 'add-reconciliation' | 'account-creation' | 'web-login' | 'web-dashboard' | 'web-transactions' | 'web-extract' | 'web-account-management' | 'web-user-account-management' | 'web-create-user' | 'web-reconciliation' | 'web-transaction-management' | 'web-account-ownership' | 'web-bank-approval' | 'web-cash-verification' | 'web-cash-reserve' | 'web-external-bank-transfer' | 'web-operator-management';
 
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('onboarding');
@@ -175,9 +182,17 @@ const Index = () => {
     setCurrentScreen('web-account-management');
   };
 
-  const handleWebAddReconciliation = () => {
+const handleWebAddReconciliation = () => {
     setCurrentScreen('web-reconciliation');
   };
+
+  const handleWebTransactionManagement = () => setCurrentScreen('web-transaction-management');
+  const handleWebAccountOwnership = () => setCurrentScreen('web-account-ownership');
+  const handleWebBankTransactionApproval = () => setCurrentScreen('web-bank-approval');
+  const handleWebCashVerification = () => setCurrentScreen('web-cash-verification');
+  const handleWebCashReserve = () => setCurrentScreen('web-cash-reserve');
+  const handleWebExternalBankTransfer = () => setCurrentScreen('web-external-bank-transfer');
+  const handleWebOperatorManagement = () => setCurrentScreen('web-operator-management');
 
   const handleWebBack = () => {
     setCurrentScreen('web-dashboard');
@@ -453,6 +468,13 @@ const Index = () => {
             onDownloadExtract={handleWebExtract}
             onCreateMerchantProfile={handleWebCreateMerchantProfile}
             onAddReconciliation={handleWebAddReconciliation}
+            onTransactionManagement={handleWebTransactionManagement}
+            onAccountOwnership={handleWebAccountOwnership}
+            onBankTransactionApproval={handleWebBankTransactionApproval}
+            onCashVerification={handleWebCashVerification}
+            onCashReserve={handleWebCashReserve}
+            onExternalBankTransfer={handleWebExternalBankTransfer}
+            onOperatorManagement={handleWebOperatorManagement}
           />
         );
       case 'web-transactions':
@@ -502,9 +524,37 @@ const Index = () => {
         );
       case 'web-reconciliation':
         return (
-          <WebReconciliationScreen
+          <EnhancedReconciliationScreen
             onBack={handleWebBack}
           />
+        );
+      case 'web-transaction-management':
+        return (
+          <TransactionManagementScreen onBack={handleWebBack} />
+        );
+      case 'web-account-ownership':
+        return (
+          <AccountOwnershipScreen onBack={handleWebBack} />
+        );
+      case 'web-bank-approval':
+        return (
+          <BankTransactionApprovalScreen onBack={handleWebBack} />
+        );
+      case 'web-cash-verification':
+        return (
+          <CashVerificationScreen onBack={handleWebBack} />
+        );
+      case 'web-cash-reserve':
+        return (
+          <CashReserveScreen onBack={handleWebBack} />
+        );
+      case 'web-external-bank-transfer':
+        return (
+          <ExternalBankTransferScreen onBack={handleWebBack} />
+        );
+      case 'web-operator-management':
+        return (
+          <OperatorManagementScreen onBack={handleWebBack} />
         );
       default:
         return <OnboardingScreen onComplete={handleOnboardingComplete} onWebVersion={handleWebVersion} />;
