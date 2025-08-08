@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Plus, Calendar, DollarSign, Clock, CheckCircle, AlertCircle, TrendingUp } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 interface ReconciliationReport {
   id: string;
@@ -122,35 +122,9 @@ const EnhancedReconciliationScreen = ({ onBack }: EnhancedReconciliationScreenPr
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-6 py-8">
-        {/* Date Selector */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="w-5 h-5" />
-              Selecionar Data
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-4 items-end">
-              <div className="flex-1">
-                <Label htmlFor="date">Data da Reconciliação</Label>
-                <Input
-                  id="date"
-                  type="date"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                />
-              </div>
-              <Button variant="outline">
-                <Calendar className="w-4 h-4 mr-2" />
-                Consultar
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center gap-2 mb-2">
@@ -186,133 +160,135 @@ const EnhancedReconciliationScreen = ({ onBack }: EnhancedReconciliationScreenPr
               </p>
             </CardContent>
           </Card>
-          
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <TrendingUp className="w-4 h-4 text-purple-600" />
-                <span className="text-sm font-medium">Depósitos</span>
-              </div>
-              <p className="text-2xl font-bold text-purple-600">
-                {mockSummary.depositsAmount.toLocaleString()} STN
-              </p>
-            </CardContent>
-          </Card>
         </div>
 
-        {/* Tabs for Add New and History */}
-        <Tabs defaultValue="history" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="history">Histórico</TabsTrigger>
-            <TabsTrigger value="add">Adicionar Novo</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="history" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5" />
-                  Histórico de Reconciliação - {new Date(selectedDate).toLocaleDateString()}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>ID Relatório</TableHead>
-                      <TableHead>ID Transação</TableHead>
-                      <TableHead>Operador</TableHead>
-                      <TableHead>Valor</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Data/Hora</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {mockReports.map((report) => (
-                      <TableRow key={report.id}>
-                        <TableCell className="font-mono">{report.id}</TableCell>
-                        <TableCell className="font-mono">{report.transactionId}</TableCell>
-                        <TableCell>{report.operatorName}</TableCell>
-                        <TableCell className="font-bold">
-                          {report.amount.toLocaleString()} STN
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            {getStatusIcon(report.status)}
-                            {getStatusBadge(report.status)}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          {new Date(report.createdAt).toLocaleString()}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-                
-                {mockReports.length === 0 && (
-                  <div className="text-center py-8">
-                    <CheckCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum relatório encontrado</h3>
-                    <p className="text-gray-500">Não há relatórios de reconciliação para esta data</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="add" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Plus className="w-5 h-5" />
-                  Adicionar Nova Reconciliação
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="amount">Valor (STN)</Label>
-                    <Input
-                      id="amount"
-                      type="number"
-                      placeholder="50000"
-                      value={newAmount}
-                      onChange={(e) => setNewAmount(e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="description">Descrição</Label>
-                    <Input
-                      id="description"
-                      placeholder="Descrição da transação"
-                      value={newDescription}
-                      onChange={(e) => setNewDescription(e.target.value)}
-                    />
-                  </div>
+        {/* Date Selector - moved after summary */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="w-5 h-5" />
+              Selecionar Data
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-4 items-end">
+              <div className="flex-1">
+                <Label htmlFor="date">Data da Reconciliação</Label>
+                <Input
+                  id="date"
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                />
+              </div>
+              <Button variant="outline">
+                <Calendar className="w-4 h-4 mr-2" />
+                Consultar
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Actions */}
+        <div className="flex justify-end mb-4">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="bg-kitadi-orange hover:bg-kitadi-orange/90">
+                <Plus className="w-4 h-4 mr-2" />
+                Adicionar Reconciliação
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Adicionar Nova Reconciliação</DialogTitle>
+              </DialogHeader>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="amount">Valor (STN)</Label>
+                  <Input
+                    id="amount"
+                    type="number"
+                    placeholder="50000"
+                    value={newAmount}
+                    onChange={(e) => setNewAmount(e.target.value)}
+                  />
                 </div>
-                
-                <div className="flex gap-2">
-                  <Button 
-                    onClick={handleAddReport}
-                    disabled={!newAmount || !newDescription}
-                    className="bg-kitadi-orange hover:bg-kitadi-orange/90"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Adicionar Relatório
-                  </Button>
+                <div>
+                  <Label htmlFor="description">Descrição</Label>
+                  <Input
+                    id="description"
+                    placeholder="Descrição da transação"
+                    value={newDescription}
+                    onChange={(e) => setNewDescription(e.target.value)}
+                  />
                 </div>
-                
-                <div className="p-3 bg-blue-50 border border-blue-200 rounded">
-                  <p className="text-blue-700 text-sm">
-                    <strong>Nota:</strong> Adicione relatórios de reconciliação manual para transações 
-                    que precisam de verificação adicional ou documentação específica.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+              </div>
+              <div className="flex gap-2 mt-4">
+                <Button onClick={handleAddReport} disabled={!newAmount || !newDescription} className="bg-kitadi-orange hover:bg-kitadi-orange/90">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Guardar
+                </Button>
+              </div>
+              <div className="p-3 bg-blue-50 border border-blue-200 rounded mt-4">
+                <p className="text-blue-700 text-sm">
+                  Confirme apenas valores físicos recebidos/entregues para este dia de reconciliação.
+                </p>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        {/* History */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CheckCircle className="w-5 h-5" />
+              Histórico de Reconciliação - {new Date(selectedDate).toLocaleDateString()}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>ID Relatório</TableHead>
+                  <TableHead>ID Transação</TableHead>
+                  <TableHead>Operador</TableHead>
+                  <TableHead>Valor</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Data/Hora</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {mockReports.map((report) => (
+                  <TableRow key={report.id}>
+                    <TableCell className="font-mono">{report.id}</TableCell>
+                    <TableCell className="font-mono">{report.transactionId}</TableCell>
+                    <TableCell>{report.operatorName}</TableCell>
+                    <TableCell className="font-bold">
+                      {report.amount.toLocaleString()} STN
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        {getStatusIcon(report.status)}
+                        {getStatusBadge(report.status)}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {new Date(report.createdAt).toLocaleString()}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            {mockReports.length === 0 && (
+              <div className="text-center py-8">
+                <CheckCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum relatório encontrado</h3>
+                <p className="text-gray-500">Não há relatórios de reconciliação para esta data</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

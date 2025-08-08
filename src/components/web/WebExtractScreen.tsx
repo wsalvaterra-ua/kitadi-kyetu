@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Download, Calendar, FileText } from 'lucide-react';
 
@@ -13,6 +14,9 @@ const WebExtractScreen = ({ userType, onBack }: WebExtractScreenProps) => {
   const [selectedMonth, setSelectedMonth] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [accountId, setAccountId] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
+  const [codeRequested, setCodeRequested] = useState(false);
 
   const months = [
     { value: '01', label: 'Janeiro' },
@@ -32,7 +36,7 @@ const WebExtractScreen = ({ userType, onBack }: WebExtractScreenProps) => {
   const years = ['2024', '2023', '2022'];
 
   const handleDownload = async () => {
-    if (!selectedMonth || !selectedYear) return;
+    if (!selectedMonth || !selectedYear || !accountId || !verificationCode) return;
 
     setIsGenerating(true);
     
@@ -106,6 +110,24 @@ const WebExtractScreen = ({ userType, onBack }: WebExtractScreenProps) => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">ID da Conta</label>
+                <Input placeholder="Ex: KT-123456789" value={accountId} onChange={(e) => setAccountId(e.target.value)} />
+              </div>
+              <div className="flex items-end">
+                <Button type="button" onClick={() => setCodeRequested(true)} disabled={!accountId} className="w-full">
+                  Solicitar Código
+                </Button>
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Código de Verificação</label>
+              <Input placeholder="Código enviado ao utilizador" value={verificationCode} onChange={(e) => setVerificationCode(e.target.value)} />
+              {codeRequested && (
+                <p className="text-xs text-gray-500 mt-2">Um código foi enviado ao utilizador desta conta. Insira-o para prosseguir.</p>
+              )}
+            </div>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -163,7 +185,7 @@ const WebExtractScreen = ({ userType, onBack }: WebExtractScreenProps) => {
 
             <Button
               onClick={handleDownload}
-              disabled={!selectedMonth || !selectedYear || isGenerating}
+              disabled={!selectedMonth || !selectedYear || !accountId || !verificationCode || isGenerating}
               className="w-full bg-kitadi-orange hover:bg-kitadi-orange/90 text-white py-3 text-lg font-semibold"
             >
               {isGenerating ? (

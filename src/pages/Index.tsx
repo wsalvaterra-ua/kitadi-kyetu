@@ -41,8 +41,9 @@ import CashVerificationScreen from '@/components/web/CashVerificationScreen';
 import CashReserveScreen from '@/components/web/CashReserveScreen';
 import ExternalBankTransferScreen from '@/components/web/ExternalBankTransferScreen';
 import OperatorManagementScreen from '@/components/web/OperatorManagementScreen';
+import WithdrawalReportScreen from '@/components/web/WithdrawalReportScreen';
 
-type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation' | 'add-reconciliation' | 'account-creation' | 'web-login' | 'web-dashboard' | 'web-transactions' | 'web-extract' | 'web-account-management' | 'web-user-account-management' | 'web-create-user' | 'web-reconciliation' | 'web-transaction-management' | 'web-account-ownership' | 'web-bank-approval' | 'web-cash-verification' | 'web-cash-reserve' | 'web-external-bank-transfer' | 'web-operator-management';
+type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation' | 'add-reconciliation' | 'account-creation' | 'web-login' | 'web-dashboard' | 'web-transactions' | 'web-extract' | 'web-account-management' | 'web-user-account-management' | 'web-create-user' | 'web-reconciliation' | 'web-transaction-management' | 'web-account-ownership' | 'web-bank-approval' | 'web-cash-verification' | 'web-cash-reserve' | 'web-external-bank-transfer' | 'web-operator-management' | 'web-withdrawal-report';
 
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('onboarding');
@@ -193,6 +194,7 @@ const handleWebAddReconciliation = () => {
   const handleWebCashReserve = () => setCurrentScreen('web-cash-reserve');
   const handleWebExternalBankTransfer = () => setCurrentScreen('web-external-bank-transfer');
   const handleWebOperatorManagement = () => setCurrentScreen('web-operator-management');
+  const handleWebWithdrawalReport = () => setCurrentScreen('web-withdrawal-report');
 
   const handleWebBack = () => {
     setCurrentScreen('web-dashboard');
@@ -475,6 +477,7 @@ const handleWebAddReconciliation = () => {
             onCashReserve={handleWebCashReserve}
             onExternalBankTransfer={handleWebExternalBankTransfer}
             onOperatorManagement={handleWebOperatorManagement}
+            onWithdrawalReport={handleWebWithdrawalReport}
           />
         );
       case 'web-transactions':
@@ -555,6 +558,10 @@ const handleWebAddReconciliation = () => {
       case 'web-operator-management':
         return (
           <OperatorManagementScreen onBack={handleWebBack} />
+        );
+      case 'web-withdrawal-report':
+        return (
+          <WithdrawalReportScreen onBack={handleWebBack} />
         );
       default:
         return <OnboardingScreen onComplete={handleOnboardingComplete} onWebVersion={handleWebVersion} />;

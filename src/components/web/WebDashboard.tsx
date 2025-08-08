@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LogOut, Download, Eye, CreditCard, Users, UserPlus, Building, Plus, Search, UserCheck, DollarSign, CheckCircle, Wallet, FileText, Settings } from 'lucide-react';
+import { LogOut, Download, Eye, CreditCard, Users, UserPlus, Building, Plus, Search, UserCheck, DollarSign, CheckCircle, Wallet, FileText, Settings, ArrowDownCircle } from 'lucide-react';
 
 interface WebDashboardProps {
   userType: 'personal' | 'business' | 'agent' | 'business-associated' | 'merchant';
@@ -17,6 +17,7 @@ interface WebDashboardProps {
   onCashReserve?: () => void;
   onExternalBankTransfer?: () => void;
   onOperatorManagement?: () => void;
+  onWithdrawalReport?: () => void;
 }
 
 const WebDashboard = ({ 
@@ -33,7 +34,8 @@ const WebDashboard = ({
   onCashVerification,
   onCashReserve,
   onExternalBankTransfer,
-  onOperatorManagement
+  onOperatorManagement,
+  onWithdrawalReport
 }: WebDashboardProps) => {
   const getUserTypeInfo = () => {
     switch (userType) {
@@ -309,6 +311,23 @@ const WebDashboard = ({
                 </CardContent>
               </Card>
 
+              <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onWithdrawalReport}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <ArrowDownCircle className="w-5 h-5" />
+                    Reportar Saque Bancário
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600">
+                    Reporte um saque informando banco, ID da operação, valor e data
+                  </p>
+                  <Button variant="outline" className="mt-4 w-full">
+                    Reportar
+                  </Button>
+                </CardContent>
+              </Card>
+
               <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onOperatorManagement}>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -378,16 +397,16 @@ const WebDashboard = ({
                 {userType === 'agent' && (
                   <>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-kitadi-orange">234</div>
-                      <p className="text-sm text-gray-600">Clientes Atendidos</p>
+                      <div className="text-2xl font-bold text-kitadi-orange">12</div>
+                      <p className="text-sm text-gray-600">Novos clientes hoje</p>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-kitadi-orange">3,456</div>
-                      <p className="text-sm text-gray-600">Operações este Mês</p>
+                      <div className="text-2xl font-bold text-kitadi-orange">85</div>
+                      <p className="text-sm text-gray-600">Novos clientes este mês</p>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-kitadi-orange">99%</div>
-                      <p className="text-sm text-gray-600">Taxa de Aprovação</p>
+                      <div className="text-2xl font-bold text-kitadi-orange">37</div>
+                      <p className="text-sm text-gray-600">Clientes com 1ª transação no mês</p>
                     </div>
                   </>
                 )}

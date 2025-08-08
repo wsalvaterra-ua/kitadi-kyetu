@@ -33,48 +33,101 @@ const TransactionManagementScreen = ({ onBack }: TransactionManagementScreenProp
   const [isSearching, setIsSearching] = useState(false);
   const [selectedChild, setSelectedChild] = useState<Transaction | null>(null);
 
-  const mockTransaction: Transaction = {
-    id: 'TA4R45',
-    type: 'TRANSFER',
-    from_account_id: 12345,
-    to_account_id: 67890,
-    amount: 50000,
-    currency: 'STN',
-    description: 'Transferência para João Silva',
-    status: 'COMPLETED',
-    created_at: '2024-01-15T10:30:00Z',
-    processed_at: '2024-01-15T10:31:15Z',
-    failure_reason: null,
-    children: [
-      {
-        id: 'TA4R45-FEE',
-        type: 'FEE',
-        from_account_id: 12345,
-        to_account_id: null,
-        amount: 250,
-        currency: 'STN',
-        description: 'Taxa de transferência',
-        status: 'COMPLETED',
-        created_at: '2024-01-15T10:30:00Z',
-        processed_at: '2024-01-15T10:31:15Z',
-        failure_reason: null
-      }
-    ]
+  const mockTransactions: Record<string, Transaction> = {
+    TA4R45: {
+      id: 'TA4R45',
+      type: 'TRANSFER',
+      from_account_id: 12345,
+      to_account_id: 67890,
+      amount: 50000,
+      currency: 'STN',
+      description: 'Transferência para João Silva',
+      status: 'COMPLETED',
+      created_at: '2024-01-15T10:30:00Z',
+      processed_at: '2024-01-15T10:31:15Z',
+      failure_reason: null,
+      children: [
+        {
+          id: 'TA4R45-FEE',
+          type: 'FEE',
+          from_account_id: 12345,
+          to_account_id: null,
+          amount: 250,
+          currency: 'STN',
+          description: 'Taxa de transferência',
+          status: 'COMPLETED',
+          created_at: '2024-01-15T10:30:00Z',
+          processed_at: '2024-01-15T10:31:15Z',
+          failure_reason: null
+        }
+      ]
+    },
+    TA4R46: {
+      id: 'TA4R46',
+      type: 'PAYMENT',
+      from_account_id: 33333,
+      to_account_id: 44444,
+      amount: 25000,
+      currency: 'STN',
+      description: 'Pagamento em espera',
+      status: 'PENDING',
+      created_at: '2024-01-16T09:00:00Z',
+      processed_at: null,
+      failure_reason: null
+    },
+    TA4R47: {
+      id: 'TA4R47',
+      type: 'PAYMENT',
+      from_account_id: 22222,
+      to_account_id: 99999,
+      amount: 12000,
+      currency: 'STN',
+      description: 'Pagamento falhou por saldo insuficiente',
+      status: 'FAILED',
+      created_at: '2024-01-16T10:15:00Z',
+      processed_at: null,
+      failure_reason: 'Saldo insuficiente'
+    },
+    TA4R48: {
+      id: 'TA4R48',
+      type: 'REFUND',
+      from_account_id: 99999,
+      to_account_id: 22222,
+      amount: 12000,
+      currency: 'STN',
+      description: 'Reembolso efetuado',
+      status: 'REVERSED',
+      created_at: '2024-01-17T12:00:00Z',
+      processed_at: '2024-01-17T12:02:00Z',
+      failure_reason: null
+    },
+    TA4R49: {
+      id: 'TA4R49',
+      type: 'CASH_OUT',
+      from_account_id: 88888,
+      to_account_id: null,
+      amount: 5000,
+      currency: 'STN',
+      description: 'Saque cancelado pelo operador',
+      status: 'CANCELLED',
+      created_at: '2024-01-18T08:30:00Z',
+      processed_at: null,
+      failure_reason: null
+    }
   };
 
   const handleSearch = async () => {
     if (!searchId.trim()) return;
-    
     setIsSearching(true);
-    // Simulate API call
     setTimeout(() => {
-      if (searchId.toUpperCase() === 'TA4R45') {
-        setTransaction(mockTransaction);
+      const id = searchId.toUpperCase();
+      if (mockTransactions[id]) {
+        setTransaction(mockTransactions[id]);
       } else {
         setTransaction(null);
       }
       setIsSearching(false);
-    }, 1000);
+    }, 800);
   };
 
   const handleActionTransaction = (action: 'reverse' | 'cancel') => {
@@ -164,7 +217,7 @@ const TransactionManagementScreen = ({ onBack }: TransactionManagementScreenProp
               </div>
             </div>
             <p className="text-xs text-gray-500">
-              Exemplo de ID que funciona: TA4R45
+              Exemplos de IDs: TA4R45 (COMPLETED), TA4R46 (PENDING), TA4R47 (FAILED), TA4R48 (REVERSED), TA4R49 (CANCELLED)
             </p>
           </CardContent>
         </Card>

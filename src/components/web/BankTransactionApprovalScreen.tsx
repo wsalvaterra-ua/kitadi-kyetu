@@ -32,6 +32,7 @@ const BankTransactionApprovalScreen = ({ onBack }: BankTransactionApprovalScreen
   const [selectedTransaction, setSelectedTransaction] = useState<BankTransaction | null>(null);
   const [bankId, setBankId] = useState('');
   const [operationId, setOperationId] = useState('');
+  const [approvedAmount, setApprovedAmount] = useState('');
   const [rejectionReason, setRejectionReason] = useState('');
   const [showApproval, setShowApproval] = useState(false);
   const [showRejection, setShowRejection] = useState(false);
@@ -86,22 +87,21 @@ const BankTransactionApprovalScreen = ({ onBack }: BankTransactionApprovalScreen
 
   const handleApprove = () => {
     if (!selectedTransaction) return;
-    
-    if (selectedTransaction.type === 'BANK_CASH_OUT' && (!bankId || !operationId)) {
-      alert('Por favor, preencha o ID do banco e ID da operação para saques');
+    if (!bankId || !operationId || !approvedAmount) {
+      alert('Preencha o ID do banco, ID da operação e o valor confirmado.');
       return;
     }
-    
     console.log('Approving transaction:', {
       transactionId: selectedTransaction.id,
       bankId,
-      operationId
+      operationId,
+      approvedAmount
     });
-    
     setShowApproval(false);
     setSelectedTransaction(null);
     setBankId('');
     setOperationId('');
+    setApprovedAmount('');
   };
 
   const handleReject = () => {
@@ -161,6 +161,9 @@ const BankTransactionApprovalScreen = ({ onBack }: BankTransactionApprovalScreen
                 </CardTitle>
               </CardHeader>
               <CardContent>
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded mb-4">
+                  <p className="text-blue-800 text-sm">Ao aprovar um depósito, está a confirmar que o operador <strong>depositou</strong> o valor indicado na conta bancária do Kitadi. Registe o <strong>ID do banco</strong>, <strong>ID da operação</strong> e o <strong>valor depositado</strong>.</p>
+                </div>
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -226,6 +229,9 @@ const BankTransactionApprovalScreen = ({ onBack }: BankTransactionApprovalScreen
                 </CardTitle>
               </CardHeader>
               <CardContent>
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded mb-4">
+                  <p className="text-blue-800 text-sm">Ao aprovar um saque, está a confirmar que o operador <strong>levantou</strong> a quantia indicada. Registe o <strong>ID do banco</strong>, <strong>ID da operação</strong> e o <strong>valor levantado</strong>.</p>
+                </div>
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -306,28 +312,34 @@ const BankTransactionApprovalScreen = ({ onBack }: BankTransactionApprovalScreen
                   )}
                 </div>
                 
-                {selectedTransaction.type === 'BANK_CASH_OUT' && (
-                  <>
-                    <div>
-                      <Label htmlFor="bankId">ID do Banco Externo</Label>
-                      <Input
-                        id="bankId"
-                        placeholder="Ex: BANK001"
-                        value={bankId}
-                        onChange={(e) => setBankId(e.target.value)}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="operationId">ID da Operação Bancária</Label>
-                      <Input
-                        id="operationId"
-                        placeholder="Ex: OP123456789"
-                        value={operationId}
-                        onChange={(e) => setOperationId(e.target.value)}
-                      />
-                    </div>
-                  </>
-                )}
+                <div>
+                  <Label htmlFor="bankId">ID do Banco Externo</Label>
+                  <Input
+                    id="bankId"
+                    placeholder="Ex: BANK001"
+                    value={bankId}
+                    onChange={(e) => setBankId(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="operationId">ID da Operação Bancária</Label>
+                  <Input
+                    id="operationId"
+                    placeholder="Ex: OP123456789"
+                    value={operationId}
+                    onChange={(e) => setOperationId(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="approvedAmount">Valor Confirmado (STN)</Label>
+                  <Input
+                    id="approvedAmount"
+                    type="number"
+                    placeholder="Ex: 100000"
+                    value={approvedAmount}
+                    onChange={(e) => setApprovedAmount(e.target.value)}
+                  />
+                </div>
                 
                 <div className="flex gap-2">
                   <Button 

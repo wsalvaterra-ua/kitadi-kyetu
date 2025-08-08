@@ -28,12 +28,14 @@ const ExternalBankTransferScreen = ({ onBack }: ExternalBankTransferScreenProps)
   const [originAccount, setOriginAccount] = useState('');
   const [externalTxId, setExternalTxId] = useState('');
   const [verifyAmount, setVerifyAmount] = useState('');
+  const [bankId, setBankId] = useState('');
   
   // New cash-in form
   const [newCashInAmount, setNewCashInAmount] = useState('');
   const [newTargetAccount, setNewTargetAccount] = useState('');
   const [newOriginAccount, setNewOriginAccount] = useState('');
   const [newExternalTxId, setNewExternalTxId] = useState('');
+  const [newBankId, setNewBankId] = useState('');
 
   const mockTransfers: ExternalTransfer[] = [
     {
@@ -59,13 +61,14 @@ const ExternalBankTransferScreen = ({ onBack }: ExternalBankTransferScreenProps)
   ];
 
   const handleVerifyTransfer = () => {
-    if (!selectedTransfer || !originAccount || !externalTxId || !verifyAmount) return;
+    if (!selectedTransfer || !originAccount || !externalTxId || !verifyAmount || !bankId) return;
     
     console.log('Verifying external transfer:', {
       transferId: selectedTransfer.id,
       originAccount,
       externalTxId,
-      amount: verifyAmount
+      amount: verifyAmount,
+      bankId
     });
     
     alert('Transferência externa verificada com sucesso!');
@@ -73,16 +76,18 @@ const ExternalBankTransferScreen = ({ onBack }: ExternalBankTransferScreenProps)
     setOriginAccount('');
     setExternalTxId('');
     setVerifyAmount('');
+    setBankId('');
   };
 
   const handleAddCashIn = () => {
-    if (!newCashInAmount || !newTargetAccount || !newOriginAccount || !newExternalTxId) return;
+    if (!newCashInAmount || !newTargetAccount || !newOriginAccount || !newExternalTxId || !newBankId) return;
     
     console.log('Adding new cash-in entry:', {
       amount: newCashInAmount,
       targetAccount: newTargetAccount,
       originAccount: newOriginAccount,
-      externalTxId: newExternalTxId
+      externalTxId: newExternalTxId,
+      bankId: newBankId
     });
     
     alert('Entrada de dinheiro adicionada com sucesso!');
@@ -90,6 +95,7 @@ const ExternalBankTransferScreen = ({ onBack }: ExternalBankTransferScreenProps)
     setNewTargetAccount('');
     setNewOriginAccount('');
     setNewExternalTxId('');
+    setNewBankId('');
   };
 
   const getStatusBadge = (status: string) => {
@@ -123,7 +129,7 @@ const ExternalBankTransferScreen = ({ onBack }: ExternalBankTransferScreenProps)
       <div className="max-w-4xl mx-auto px-6 py-8">
         <Tabs defaultValue="pending" className="space-y-6">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="pending">Pendentes ({mockTransfers.filter(t => t.status === 'PENDING').length})</TabsTrigger>
+            <TabsTrigger value="pending">Pendentes para Verificar ({mockTransfers.filter(t => t.status === 'PENDING').length})</TabsTrigger>
             <TabsTrigger value="add-new">Adicionar Nova</TabsTrigger>
           </TabsList>
           
@@ -136,6 +142,12 @@ const ExternalBankTransferScreen = ({ onBack }: ExternalBankTransferScreenProps)
                 </CardTitle>
               </CardHeader>
               <CardContent>
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded mb-4">
+                  <p className="text-blue-800 text-sm">
+                    Esta secção é para o operador <strong>verificar</strong> que o utilizador efetuou uma transferência
+                    para o sistema Kitadi. Confirme os dados com o comprovativo antes de aprovar.
+                  </p>
+                </div>
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -205,15 +217,18 @@ const ExternalBankTransferScreen = ({ onBack }: ExternalBankTransferScreenProps)
                       <Label className="text-sm font-medium">Conta Destino</Label>
                       <p className="font-mono text-lg">{selectedTransfer.targetAccount}</p>
                     </div>
-                    <div>
-                      <Label className="text-sm font-medium">Valor Esperado</Label>
-                      <p className="text-lg font-bold text-green-600">
-                        {selectedTransfer.amount.toLocaleString()} {selectedTransfer.currency}
-                      </p>
-                    </div>
                   </div>
 
-                  <div className="grid md:grid-cols-3 gap-4">
+                  <div className="grid md:grid-cols-4 gap-4">
+                    <div>
+                      <Label htmlFor="bankId">ID do Banco</Label>
+                      <Input
+                        id="bankId"
+                        placeholder="Ex: BANK001"
+                        value={bankId}
+                        onChange={(e) => setBankId(e.target.value)}
+                      />
+                    </div>
                     <div>
                       <Label htmlFor="originAccount">Conta Bancária de Origem</Label>
                       <Input
@@ -301,6 +316,15 @@ const ExternalBankTransferScreen = ({ onBack }: ExternalBankTransferScreenProps)
                     />
                   </div>
                   <div>
+                    <Label htmlFor="newBankId">ID do Banco</Label>
+                    <Input
+                      id="newBankId"
+                      placeholder="Ex: BANK001"
+                      value={newBankId}
+                      onChange={(e) => setNewBankId(e.target.value)}
+                    />
+                  </div>
+                  <div>
                     <Label htmlFor="newOriginAccount">Conta Bancária de Origem</Label>
                     <Input
                       id="newOriginAccount"
@@ -322,7 +346,7 @@ const ExternalBankTransferScreen = ({ onBack }: ExternalBankTransferScreenProps)
 
                 <Button 
                   onClick={handleAddCashIn}
-                  disabled={!newCashInAmount || !newTargetAccount || !newOriginAccount || !newExternalTxId}
+                  disabled={!newCashInAmount || !newTargetAccount || !newOriginAccount || !newExternalTxId || !newBankId}
                   className="bg-kitadi-orange hover:bg-kitadi-orange/90"
                 >
                   <Plus className="w-4 h-4 mr-2" />
