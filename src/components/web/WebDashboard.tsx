@@ -406,7 +406,7 @@ const WebDashboard = ({
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-kitadi-orange">37</div>
-                      <p className="text-sm text-gray-600">1º transação transação feita por clientes criado por si</p>
+                      <p className="text-sm text-gray-600">Clientes com 1ª transação no mês</p>
                     </div>
                   </>
                 )}
