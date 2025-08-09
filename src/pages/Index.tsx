@@ -68,6 +68,8 @@ const Index = () => {
   
   // User management state
   const [userManagementPhone, setUserManagementPhone] = useState('');
+  // Preselected transaction for Web Transaction Management
+  const [webSelectedTransactionId, setWebSelectedTransactionId] = useState<string | null>(null);
 
   // Mock transaction data - in a real app, this would come from your backend
   const mockTransactions = {
@@ -513,6 +515,10 @@ const handleWebAddReconciliation = () => {
           <UserAccountManagementScreen
             phoneNumber={userManagementPhone}
             onBack={handleWebBack}
+            onOpenTransactionManagement={(id: string) => {
+              setWebSelectedTransactionId(id);
+              setCurrentScreen('web-transaction-management');
+            }}
           />
         );
       case 'web-create-user':
@@ -533,7 +539,7 @@ const handleWebAddReconciliation = () => {
         );
       case 'web-transaction-management':
         return (
-          <TransactionManagementScreen onBack={handleWebBack} />
+          <TransactionManagementScreen onBack={handleWebBack} initialTransactionId={webSelectedTransactionId || undefined} />
         );
       case 'web-account-ownership':
         return (

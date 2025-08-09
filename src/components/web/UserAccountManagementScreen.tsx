@@ -8,18 +8,19 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowLeft, User, Building, Wallet, Plus, Edit, Eye, EyeOff, Shield, Send, Upload, Smartphone, FileText, History, MapPin } from 'lucide-react';
+import { ArrowLeft, User, Building, Wallet, Plus, Edit, Eye, EyeOff, Shield, Send, Upload, Smartphone, FileText, History, MapPin, Settings } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface UserAccountManagementScreenProps {
   onBack: () => void;
   phoneNumber: string;
+  onOpenTransactionManagement?: (transactionId: string) => void;
 }
 
 type UserAccessStep = 'initial' | 'data-access' | 'verified';
 type AccountStatus = 'ACTIVE' | 'FROZEN' | 'CLOSED';
 
-const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagementScreenProps) => {
+const UserAccountManagementScreen = ({ onBack, phoneNumber, onOpenTransactionManagement }: UserAccountManagementScreenProps) => {
   const { toast } = useToast();
   const [userAccessStep, setUserAccessStep] = useState<UserAccessStep>('initial');
   const [dataAccessCode, setDataAccessCode] = useState('');
@@ -84,9 +85,9 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
           maxBalance: '2,000,000 STN'
         },
         transactions: [
-          { id: '1', type: 'Recebido', amount: '+5,000 STN', date: '2024-01-15', description: 'Transferência de João Silva' },
-          { id: '2', type: 'Enviado', amount: '-2,500 STN', date: '2024-01-14', description: 'Pagamento Loja ABC' },
-          { id: '3', type: 'Recebido', amount: '+1,200 STN', date: '2024-01-13', description: 'Venda produto' }
+          { id: 'TA4R45', type: 'Recebido', amount: '+5,000 STN', date: '2024-01-15', description: 'Transferência de João Silva', status: 'COMPLETED' },
+          { id: 'TA4R46', type: 'Enviado', amount: '-2,500 STN', date: '2024-01-14', description: 'Pagamento Loja ABC', status: 'PENDING' },
+          { id: 'TA4R47', type: 'Recebido', amount: '+1,200 STN', date: '2024-01-13', description: 'Venda produto', status: 'FAILED' }
         ]
       },
       {
@@ -105,8 +106,8 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
           maxBalance: '10,000,000 STN'
         },
         transactions: [
-          { id: '4', type: 'Recebido', amount: '+15,000 STN', date: '2024-01-15', description: 'Venda produtos' },
-          { id: '5', type: 'Enviado', amount: '-8,000 STN', date: '2024-01-14', description: 'Compra stock' }
+          { id: 'TA4R48', type: 'Recebido', amount: '+15,000 STN', date: '2024-01-15', description: 'Venda produtos', status: 'REVERSED' },
+          { id: 'TA4R49', type: 'Enviado', amount: '-8,000 STN', date: '2024-01-14', description: 'Compra stock', status: 'CANCELLED' }
         ]
       }
     ]
@@ -153,6 +154,10 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
     status: personalData.status,
     pinResetRequested: false
   });
+  const [showUserConfig, setShowUserConfig] = useState(false);
+  const [userConfig, setUserConfig] = useState({ phone: phoneNumber, allowSmsTransactions: true });
+  const [associationsData, setAssociationsData] = useState<{[key:string]: {businessId?: string; event?: string}}>({});
+  const [cashoutState, setCashoutState] = useState<{[key:string]: { amount: string; smsStep: 'send'|'verify'|'verified'; code?: string }}>({});
 
   const toggleBalanceVisibility = (accountId: string) => {
     setShowBalance(prev => ({
@@ -359,6 +364,8 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
   const districts = [
     'Água Grande', 'Mé-Zóchi', 'Cantagalo', 'Caué', 'Lemba', 'Lobata', 'Príncipe'
   ];
+
+  const eventOptions = ['Nenhum', 'Feira Comercial', 'Campanha Go-to-Market', 'Promoção Feira'];
 
   const saveNewBusiness = () => {
     if (!newBusinessData.businessName || !newBusinessData.businessType || !newBusinessData.district) {
@@ -1363,33 +1370,43 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber }: UserAccountManagem
                                  <DialogTitle>Histórico de Transações - {account.accountNumber}</DialogTitle>
                                </DialogHeader>
                                <div className="space-y-4">
-                                 <div className="space-y-2 max-h-96 overflow-y-auto">
-                                   {account.transactions.map((transaction) => (
-                                     <div key={transaction.id} className="flex justify-between items-center p-3 bg-gray-50 rounded">
-                                       <div>
-                                         <p className="text-sm font-medium">{transaction.description}</p>
-                                         <p className="text-xs text-gray-500">{transaction.date}</p>
-                                       </div>
-                                       <span className={`font-medium ${transaction.type === 'Recebido' ? 'text-green-600' : 'text-red-600'}`}>
-                                         {transaction.amount}
-                                       </span>
-                                     </div>
-                                   ))}
-                                 </div>
+                                  <div className="space-y-2 max-h-96 overflow-y-auto">
+                                    {account.transactions.map((transaction) => (
+                                      <div key={transaction.id} className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                                        <div>
+                                          <button
+                                            className="text-sm font-medium text-blue-600 hover:underline"
+                                            onClick={() => onOpenTransactionManagement && onOpenTransactionManagement(transaction.id)}
+                                          >
+                                            {transaction.description}
+                                          </button>
+                                          <p className="text-xs text-gray-500">{transaction.date}</p>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                          <span className={`text-xs px-2 py-1 rounded-full border ${getStatusColor(transaction.status)}`}>
+                                            {transaction.status}
+                                          </span>
+                                          <span className={`font-medium ${transaction.type === 'Recebido' ? 'text-green-600' : 'text-red-600'}`}>
+                                            {transaction.amount}
+                                          </span>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
                                </div>
                              </DialogContent>
                            </Dialog>
                            
                            <Dialog>
                              <DialogTrigger asChild>
-                               <Button variant="outline" size="sm">
-                                 <Edit className="w-4 h-4 mr-1" />
-                                 Gerir Conta
-                               </Button>
-                             </DialogTrigger>
-                             <DialogContent className="max-w-2xl">
-                               <DialogHeader>
-                                 <DialogTitle>Gerir Conta - {account.accountNumber}</DialogTitle>
+                                <Button variant="outline" size="sm">
+                                  <Edit className="w-4 h-4 mr-1" />
+                                  Gerir Limites
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent className="max-w-2xl">
+                                <DialogHeader>
+                                  <DialogTitle>Gerir Limites - {account.accountNumber}</DialogTitle>
                                </DialogHeader>
                                <div className="space-y-4">
                                  <div>

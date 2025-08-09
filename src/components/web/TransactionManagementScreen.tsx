@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -25,10 +25,11 @@ interface Transaction {
 
 interface TransactionManagementScreenProps {
   onBack: () => void;
+  initialTransactionId?: string;
 }
 
-const TransactionManagementScreen = ({ onBack }: TransactionManagementScreenProps) => {
-  const [searchId, setSearchId] = useState('');
+const TransactionManagementScreen = ({ onBack, initialTransactionId }: TransactionManagementScreenProps) => {
+  const [searchId, setSearchId] = useState(initialTransactionId || '');
   const [transaction, setTransaction] = useState<Transaction | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedChild, setSelectedChild] = useState<Transaction | null>(null);
@@ -115,6 +116,13 @@ const TransactionManagementScreen = ({ onBack }: TransactionManagementScreenProp
       failure_reason: null
     }
   };
+
+  useEffect(() => {
+    if (initialTransactionId) {
+      // Trigger search on mount when preselected ID is provided
+      handleSearch();
+    }
+  }, [initialTransactionId]);
 
   const handleSearch = async () => {
     if (!searchId.trim()) return;
