@@ -42,6 +42,8 @@ import CashReserveScreen from '@/components/web/CashReserveScreen';
 import ExternalBankTransferScreen from '@/components/web/ExternalBankTransferScreen';
 import OperatorManagementScreen from '@/components/web/OperatorManagementScreen';
 import WithdrawalReportScreen from '@/components/web/WithdrawalReportScreen';
+import UserAccessManagementScreen from '@/components/web/UserAccessManagementScreen';
+import UserConfigScreen from '@/components/web/UserConfigScreen';
 
 type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation' | 'add-reconciliation' | 'account-creation' | 'web-login' | 'web-dashboard' | 'web-transactions' | 'web-extract' | 'web-account-management' | 'web-user-account-management' | 'web-user-access' | 'web-user-config' | 'web-create-user' | 'web-reconciliation' | 'web-transaction-management' | 'web-account-ownership' | 'web-bank-approval' | 'web-cash-verification' | 'web-cash-reserve' | 'web-external-bank-transfer' | 'web-operator-management' | 'web-withdrawal-report';
 
@@ -531,6 +533,20 @@ const handleWebAddReconciliation = () => {
               setWebSelectedTransactionId(id);
               setCurrentScreen('web-transaction-management');
             }}
+          />
+        );
+      case 'web-user-access':
+        return (
+          <UserAccessManagementScreen
+            phoneNumber={userManagementPhone}
+            onBack={handleWebBack}
+          />
+        );
+      case 'web-user-config':
+        return (
+          <UserConfigScreen
+            phoneNumber={userManagementPhone}
+            onBack={handleWebBack}
           />
         );
       case 'web-create-user':
