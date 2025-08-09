@@ -24,7 +24,7 @@ type AccountStatus = 'ACTIVE' | 'FROZEN' | 'CLOSED';
 
 const UserAccountManagementScreen = ({ onBack, phoneNumber, onOpenTransactionManagement, autoOpenAccess, autoOpenConfig }: UserAccountManagementScreenProps) => {
   const { toast } = useToast();
-  const [userAccessStep, setUserAccessStep] = useState<UserAccessStep>('initial');
+  const [userAccessStep, setUserAccessStep] = useState<UserAccessStep>('verified');
   const [dataAccessCode, setDataAccessCode] = useState('');
   const [operationCode, setOperationCode] = useState('');
   const [idVerificationChecked, setIdVerificationChecked] = useState(false);
@@ -162,8 +162,14 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber, onOpenTransactionMan
   const [cashoutState, setCashoutState] = useState<{[key:string]: { amount: string; smsStep: 'send'|'verify'|'verified'; code?: string }}>({});
 
   useEffect(() => {
-    if (autoOpenAccess) setShowUserAccessManagement(true);
-    if (autoOpenConfig) setShowUserConfig(true);
+    if (autoOpenAccess) {
+      setUserAccessStep('verified');
+      setShowUserAccessManagement(true);
+    }
+    if (autoOpenConfig) {
+      setUserAccessStep('verified');
+      setShowUserConfig(true);
+    }
   }, [autoOpenAccess, autoOpenConfig]);
 
   const toggleBalanceVisibility = (accountId: string) => {
