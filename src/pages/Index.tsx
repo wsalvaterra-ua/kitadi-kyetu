@@ -68,6 +68,8 @@ const Index = () => {
   
   // User management state
   const [userManagementPhone, setUserManagementPhone] = useState('');
+  const [autoOpenAccess, setAutoOpenAccess] = useState(false);
+  const [autoOpenConfig, setAutoOpenConfig] = useState(false);
   // Preselected transaction for Web Transaction Management
   const [webSelectedTransactionId, setWebSelectedTransactionId] = useState<string | null>(null);
 
@@ -502,11 +504,31 @@ const handleWebAddReconciliation = () => {
             onBack={handleWebBack}
             onUserFound={(phone) => {
               setUserManagementPhone(phone);
+              setAutoOpenAccess(false);
+              setAutoOpenConfig(false);
               setCurrentScreen('web-user-account-management');
             }}
             onCreateNewUser={(phone) => {
               setUserManagementPhone(phone);
               setCurrentScreen('web-create-user');
+            }}
+            onManageUser={(phone) => {
+              setUserManagementPhone(phone);
+              setAutoOpenAccess(false);
+              setAutoOpenConfig(false);
+              setCurrentScreen('web-user-account-management');
+            }}
+            onManageAccess={(phone) => {
+              setUserManagementPhone(phone);
+              setAutoOpenAccess(true);
+              setAutoOpenConfig(false);
+              setCurrentScreen('web-user-account-management');
+            }}
+            onManageConfig={(phone) => {
+              setUserManagementPhone(phone);
+              setAutoOpenAccess(false);
+              setAutoOpenConfig(true);
+              setCurrentScreen('web-user-account-management');
             }}
           />
         );
@@ -519,6 +541,8 @@ const handleWebAddReconciliation = () => {
               setWebSelectedTransactionId(id);
               setCurrentScreen('web-transaction-management');
             }}
+            autoOpenAccess={autoOpenAccess}
+            autoOpenConfig={autoOpenConfig}
           />
         );
       case 'web-create-user':

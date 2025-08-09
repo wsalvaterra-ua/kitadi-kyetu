@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -8,19 +8,21 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowLeft, User, Building, Wallet, Plus, Edit, Eye, EyeOff, Shield, Send, Upload, Smartphone, FileText, History, MapPin, Settings } from 'lucide-react';
+import { ArrowLeft, User, Building, Wallet, Plus, Edit, Eye, EyeOff, Shield, Send, Upload, Smartphone, FileText, History, MapPin, Settings, DollarSign } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface UserAccountManagementScreenProps {
   onBack: () => void;
   phoneNumber: string;
   onOpenTransactionManagement?: (transactionId: string) => void;
+  autoOpenAccess?: boolean;
+  autoOpenConfig?: boolean;
 }
 
 type UserAccessStep = 'initial' | 'data-access' | 'verified';
 type AccountStatus = 'ACTIVE' | 'FROZEN' | 'CLOSED';
 
-const UserAccountManagementScreen = ({ onBack, phoneNumber, onOpenTransactionManagement }: UserAccountManagementScreenProps) => {
+const UserAccountManagementScreen = ({ onBack, phoneNumber, onOpenTransactionManagement, autoOpenAccess, autoOpenConfig }: UserAccountManagementScreenProps) => {
   const { toast } = useToast();
   const [userAccessStep, setUserAccessStep] = useState<UserAccessStep>('initial');
   const [dataAccessCode, setDataAccessCode] = useState('');
@@ -158,6 +160,11 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber, onOpenTransactionMan
   const [userConfig, setUserConfig] = useState({ phone: phoneNumber, allowSmsTransactions: true });
   const [associationsData, setAssociationsData] = useState<{[key:string]: {businessId?: string; event?: string}}>({});
   const [cashoutState, setCashoutState] = useState<{[key:string]: { amount: string; smsStep: 'send'|'verify'|'verified'; code?: string }}>({});
+
+  useEffect(() => {
+    if (autoOpenAccess) setShowUserAccessManagement(true);
+    if (autoOpenConfig) setShowUserConfig(true);
+  }, [autoOpenAccess, autoOpenConfig]);
 
   const toggleBalanceVisibility = (accountId: string) => {
     setShowBalance(prev => ({
@@ -652,7 +659,34 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber, onOpenTransactionMan
           </DialogContent>
         </Dialog>
 
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        {/* User Config Modal */}
+        <Dialog open={showUserConfig} onOpenChange={setShowUserConfig}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Configurações do Utilizador</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label>Número de Telefone</Label>
+                <Input value={userConfig.phone} onChange={(e) => setUserConfig({ ...userConfig, phone: e.target.value })} />
+                <p className="text-xs text-gray-500 mt-1">Alterar o número irá requerer verificação posterior.</p>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox id="allowSms" checked={userConfig.allowSmsTransactions} onCheckedChange={(c) => setUserConfig({ ...userConfig, allowSmsTransactions: c === true })} />
+                <Label htmlFor="allowSms" className="text-sm">Permitir transações via SMS</Label>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline" className="flex-1" onClick={() => setShowUserConfig(false)}>Cancelar</Button>
+                <Button className="flex-1" onClick={() => {
+                  toast({ title: 'Configurações guardadas', description: 'As preferências foram atualizadas.' });
+                  setShowUserConfig(false);
+                }}>Guardar</Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <Card className="w-full max-w-md">
             <CardHeader>
               <CardTitle className="text-center">Utilizador Encontrado</CardTitle>
