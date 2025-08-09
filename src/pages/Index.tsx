@@ -43,7 +43,7 @@ import ExternalBankTransferScreen from '@/components/web/ExternalBankTransferScr
 import OperatorManagementScreen from '@/components/web/OperatorManagementScreen';
 import WithdrawalReportScreen from '@/components/web/WithdrawalReportScreen';
 
-type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation' | 'add-reconciliation' | 'account-creation' | 'web-login' | 'web-dashboard' | 'web-transactions' | 'web-extract' | 'web-account-management' | 'web-user-account-management' | 'web-create-user' | 'web-reconciliation' | 'web-transaction-management' | 'web-account-ownership' | 'web-bank-approval' | 'web-cash-verification' | 'web-cash-reserve' | 'web-external-bank-transfer' | 'web-operator-management' | 'web-withdrawal-report';
+type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation' | 'add-reconciliation' | 'account-creation' | 'web-login' | 'web-dashboard' | 'web-transactions' | 'web-extract' | 'web-account-management' | 'web-user-account-management' | 'web-user-access' | 'web-user-config' | 'web-create-user' | 'web-reconciliation' | 'web-transaction-management' | 'web-account-ownership' | 'web-bank-approval' | 'web-cash-verification' | 'web-cash-reserve' | 'web-external-bank-transfer' | 'web-operator-management' | 'web-withdrawal-report';
 
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('onboarding');
@@ -68,8 +68,6 @@ const Index = () => {
   
   // User management state
   const [userManagementPhone, setUserManagementPhone] = useState('');
-  const [autoOpenAccess, setAutoOpenAccess] = useState(false);
-  const [autoOpenConfig, setAutoOpenConfig] = useState(false);
   // Preselected transaction for Web Transaction Management
   const [webSelectedTransactionId, setWebSelectedTransactionId] = useState<string | null>(null);
 
@@ -504,8 +502,6 @@ const handleWebAddReconciliation = () => {
             onBack={handleWebBack}
             onUserFound={(phone) => {
               setUserManagementPhone(phone);
-              setAutoOpenAccess(false);
-              setAutoOpenConfig(false);
               setCurrentScreen('web-user-account-management');
             }}
             onCreateNewUser={(phone) => {
@@ -514,21 +510,15 @@ const handleWebAddReconciliation = () => {
             }}
             onManageUser={(phone) => {
               setUserManagementPhone(phone);
-              setAutoOpenAccess(false);
-              setAutoOpenConfig(false);
               setCurrentScreen('web-user-account-management');
             }}
             onManageAccess={(phone) => {
               setUserManagementPhone(phone);
-              setAutoOpenAccess(true);
-              setAutoOpenConfig(false);
-              setCurrentScreen('web-user-account-management');
+              setCurrentScreen('web-user-access');
             }}
             onManageConfig={(phone) => {
               setUserManagementPhone(phone);
-              setAutoOpenAccess(false);
-              setAutoOpenConfig(true);
-              setCurrentScreen('web-user-account-management');
+              setCurrentScreen('web-user-config');
             }}
           />
         );
@@ -541,8 +531,6 @@ const handleWebAddReconciliation = () => {
               setWebSelectedTransactionId(id);
               setCurrentScreen('web-transaction-management');
             }}
-            autoOpenAccess={autoOpenAccess}
-            autoOpenConfig={autoOpenConfig}
           />
         );
       case 'web-create-user':
