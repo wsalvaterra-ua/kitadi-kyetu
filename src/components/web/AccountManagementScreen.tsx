@@ -33,6 +33,7 @@ const AccountManagementScreen = ({ onBack, onUserFound, onCreateNewUser, onManag
   const [query, setQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [results, setResults] = useState<UserListItem[] | null>(null);
+  const [hasSearched, setHasSearched] = useState(false);
 
   const placeholder = useMemo(() => {
     switch (tab) {
@@ -51,6 +52,7 @@ const AccountManagementScreen = ({ onBack, onUserFound, onCreateNewUser, onManag
     const q = query.trim();
     if (!q) return;
     setIsSearching(true);
+    setHasSearched(true);
 
     setTimeout(() => {
       const filtered = MOCK_USERS.filter(u => {
@@ -92,7 +94,7 @@ const AccountManagementScreen = ({ onBack, onUserFound, onCreateNewUser, onManag
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <Tabs value={tab} onValueChange={(v) => setTab(v as any)} className="w-full">
+            <Tabs value={tab} onValueChange={(v) => { setTab(v as any); setResults(null); setHasSearched(false); }} className="w-full">
               <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="phone">Telefone</TabsTrigger>
                 <TabsTrigger value="name">Nome</TabsTrigger>
@@ -116,7 +118,7 @@ const AccountManagementScreen = ({ onBack, onUserFound, onCreateNewUser, onManag
                     type={tab === 'phone' ? 'tel' : 'text'}
                     placeholder={placeholder}
                     value={query}
-                    onChange={(e) => setQuery(e.target.value)}
+                    onChange={(e) => { setQuery(e.target.value); setResults(null); setHasSearched(false); }}
                     className={tab === 'phone' ? 'pl-10' : ''}
                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                   />
@@ -130,9 +132,9 @@ const AccountManagementScreen = ({ onBack, onUserFound, onCreateNewUser, onManag
               )}
             </div>
 
-            {/* Results List for name/id/nif searches */}
-            {results && (
-              <div className="space-y-3">
+            {/* Results List */}
+            {hasSearched && results && (
+              results.length === 0 ? (
                 <div className="space-y-2">
                   <p className="text-sm text-gray-500">Sem resultados para "{query}"</p>
                   {tab === 'phone' && (
@@ -141,21 +143,25 @@ const AccountManagementScreen = ({ onBack, onUserFound, onCreateNewUser, onManag
                     </Button>
                   )}
                 </div>
-                {results.map((u) => (
-                  <div key={u.phone} className="flex items-center justify-between p-3 border rounded-lg bg-white">
-                    <div>
-                      <p className="font-medium">{u.name}</p>
-                      <p className="text-xs text-gray-500">Tel: {u.phone} • ID: {u.idNumber} • NIF: {u.nif}</p>
+              ) : (
+                <div className="space-y-3">
+                  {results.map((u) => (
+                    <div key={u.phone} className="flex items-center justify-between p-3 border rounded-lg bg-white">
+                      <div>
+                        <p className="font-medium">{u.name}</p>
+                        <p className="text-xs text-gray-500">Tel: {u.phone} • ID: {u.idNumber} • NIF: {u.nif}</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button size="sm" onClick={() => onManageUser ? onManageUser(u.phone) : onUserFound(u.phone)}>Perfil & Contas</Button>
+                        <Button size="sm" variant="outline" onClick={() => onManageAccess && onManageAccess(u.phone)}>Acesso</Button>
+                        <Button size="sm" variant="outline" onClick={() => onManageConfig && onManageConfig(u.phone)}>Configurações</Button>
+                      </div>
                     </div>
-                    <div className="flex gap-2">
-                      <Button size="sm" onClick={() => onManageUser ? onManageUser(u.phone) : onUserFound(u.phone)}>Perfil & Contas</Button>
-                      <Button size="sm" variant="outline" onClick={() => onManageAccess && onManageAccess(u.phone)}>Acesso</Button>
-                      <Button size="sm" variant="outline" onClick={() => onManageConfig && onManageConfig(u.phone)}>Configurações</Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )
             )}
+
 
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <div className="flex items-start gap-3">
