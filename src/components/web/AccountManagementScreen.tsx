@@ -53,19 +53,8 @@ const AccountManagementScreen = ({ onBack, onUserFound, onCreateNewUser, onManag
     setIsSearching(true);
 
     setTimeout(() => {
-      if (tab === 'phone') {
-        const found = MOCK_USERS.find(u => u.phone === q);
-        if (found) {
-          onUserFound(found.phone);
-          setIsSearching(false);
-          return;
-        }
-        onCreateNewUser(q);
-        setIsSearching(false);
-        return;
-      }
-
       const filtered = MOCK_USERS.filter(u => {
+        if (tab === 'phone') return u.phone.includes(q);
         if (tab === 'name') return u.name.toLowerCase().includes(q.toLowerCase());
         if (tab === 'id') return u.idNumber.toLowerCase().includes(q.toLowerCase());
         if (tab === 'nif') return u.nif.toLowerCase().includes(q.toLowerCase());
@@ -133,7 +122,7 @@ const AccountManagementScreen = ({ onBack, onUserFound, onCreateNewUser, onManag
                   />
                 </div>
                 <Button onClick={handleSearch} disabled={!query.trim() || isSearching} className="px-6">
-                  {isSearching ? 'Procurando...' : 'Procurar'}
+                  {isSearching ? 'A listar...' : 'Listar Resultados'}
                 </Button>
               </div>
               {tab === 'phone' && (
@@ -144,9 +133,14 @@ const AccountManagementScreen = ({ onBack, onUserFound, onCreateNewUser, onManag
             {/* Results List for name/id/nif searches */}
             {results && (
               <div className="space-y-3">
-                {results.length === 0 && (
+                <div className="space-y-2">
                   <p className="text-sm text-gray-500">Sem resultados para "{query}"</p>
-                )}
+                  {tab === 'phone' && (
+                    <Button size="sm" onClick={() => onCreateNewUser(query)}>
+                      Criar novo utilizador com {query}
+                    </Button>
+                  )}
+                </div>
                 {results.map((u) => (
                   <div key={u.phone} className="flex items-center justify-between p-3 border rounded-lg bg-white">
                     <div>
