@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, User, Upload, Phone, MessageSquare, FileText } from 'lucide-react';
+import { ArrowLeft, User, Upload, Phone, MessageSquare, FileText, MapPin, Briefcase } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface CreateUserProfileScreenProps {
   phoneNumber: string;
@@ -34,6 +36,28 @@ const CreateUserProfileScreen = ({ phoneNumber, onBack, onUserCreated }: CreateU
     backId: null as File | null,
     contract: null as File | null
   });
+
+  const [isIndividual, setIsIndividual] = useState(false);
+  const [businessCategory, setBusinessCategory] = useState('');
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [coordsError, setCoordsError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+          setCoordsError(null);
+        },
+        () => {
+          setCoordsError('Localização não permitida');
+        },
+        { enableHighAccuracy: true, timeout: 5000 }
+      );
+    } else {
+      setCoordsError('Geolocalização não suportada');
+    }
+  }, []);
 
   const sendVerificationCode = () => {
     setVerificationSent(true);
@@ -248,6 +272,49 @@ const CreateUserProfileScreen = ({ phoneNumber, onBack, onUserCreated }: CreateU
                 />
               </div>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Account Type & Business */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Briefcase className="w-5 h-5" />
+              Tipo de Conta e Negócio
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-3">
+              <Checkbox id="isIndividual" checked={isIndividual} onCheckedChange={(v) => setIsIndividual(!!v)} />
+              <Label htmlFor="isIndividual">Conta Individual (Comerciante)</Label>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className={isIndividual ? '' : 'opacity-60'}>
+                <Label>Categoria do Negócio</Label>
+                <Select disabled={!isIndividual} value={businessCategory} onValueChange={setBusinessCategory}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecionar categoria" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="retalho">Retalho</SelectItem>
+                    <SelectItem value="restauracao">Restauração</SelectItem>
+                    <SelectItem value="servicos">Serviços</SelectItem>
+                    <SelectItem value="artesanato">Artesanato</SelectItem>
+                    <SelectItem value="outro">Outro</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Coordenadas atuais</Label>
+                <div className="flex items-center gap-2">
+                  <Input readOnly value={coords ? `${coords.lat.toFixed(6)}, ${coords.lng.toFixed(6)}` : (coordsError ? coordsError : 'A obter localização...')} />
+                  <MapPin className="w-4 h-4 text-gray-500" />
+                </div>
+              </div>
+            </div>
+            <p className="text-xs text-gray-500">
+              Usamos a localização apenas para registo do ponto de criação da conta.
+            </p>
           </CardContent>
         </Card>
 

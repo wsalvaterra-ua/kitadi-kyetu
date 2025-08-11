@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, Search, Phone, User } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 
 interface UserListItem {
   name: string;
@@ -34,6 +35,11 @@ const AccountManagementScreen = ({ onBack, onUserFound, onCreateNewUser, onManag
   const [isSearching, setIsSearching] = useState(false);
   const [results, setResults] = useState<UserListItem[] | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
+
+  const [verifyOpen, setVerifyOpen] = useState(false);
+  const [pendingPhone, setPendingPhone] = useState<string | null>(null);
+  const [codeSent, setCodeSent] = useState(false);
+  const [code, setCode] = useState('');
 
   const placeholder = useMemo(() => {
     switch (tab) {
@@ -65,6 +71,13 @@ const AccountManagementScreen = ({ onBack, onUserFound, onCreateNewUser, onManag
       setResults(filtered);
       setIsSearching(false);
     }, 500);
+  };
+
+  const handleVerifyAndNavigate = (phone: string) => {
+    setPendingPhone(phone);
+    setVerifyOpen(true);
+    setCode('');
+    setCodeSent(false);
   };
 
   return (
@@ -159,7 +172,7 @@ const AccountManagementScreen = ({ onBack, onUserFound, onCreateNewUser, onManag
                         <p className="text-xs text-gray-500">Tel: {u.phone} • ID: {u.idNumber} • NIF: {u.nif}</p>
                       </div>
                       <div className="flex gap-2">
-                        <Button size="sm" onClick={() => onManageUser ? onManageUser(u.phone) : onUserFound(u.phone)}>Perfil & Contas</Button>
+                        <Button size="sm" onClick={() => handleVerifyAndNavigate(u.phone)}>Perfil & Contas</Button>
                         <Button size="sm" variant="outline" onClick={() => onManageAccess && onManageAccess(u.phone)}>Acesso</Button>
                         <Button size="sm" variant="outline" onClick={() => onManageConfig && onManageConfig(u.phone)}>Configurações</Button>
                       </div>
@@ -183,6 +196,49 @@ const AccountManagementScreen = ({ onBack, onUserFound, onCreateNewUser, onManag
             </div>
           </CardContent>
         </Card>
+
+        <Dialog open={verifyOpen} onOpenChange={setVerifyOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Verificação de Segurança</DialogTitle>
+              <DialogDescription>
+                Envie o código por SMS e introduza-o para aceder ao perfil e contas.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-3">
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Código recebido pelo cliente"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                />
+                <Button
+                  variant="outline"
+                  onClick={() => setCodeSent(true)}
+                  disabled={codeSent}
+                >
+                  {codeSent ? 'Enviado' : 'Enviar Código'}
+                </Button>
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button variant="ghost" onClick={() => setVerifyOpen(false)}>Cancelar</Button>
+                <Button
+                  onClick={() => {
+                    if (!code.trim()) return;
+                    const phone = pendingPhone;
+                    setVerifyOpen(false);
+                    if (phone) {
+                      onManageUser ? onManageUser(phone) : onUserFound(phone);
+                    }
+                  }}
+                  disabled={!code.trim()}
+                >
+                  Verificar e Continuar
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
