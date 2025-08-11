@@ -118,7 +118,7 @@ const BankTransactionApprovalScreen = ({ onBack }: BankTransactionApprovalScreen
   };
 
   const getTypeLabel = (type: string) => {
-    return type === 'BANK_CASH_IN' ? 'Depósito Bancário' : 'Saque Bancário';
+    return type === 'BANK_CASH_IN' ? 'Depósito Bancário' : 'Levantamento Bancário';
   };
 
   const getTypeIcon = (type: string) => {
@@ -137,8 +137,8 @@ const BankTransactionApprovalScreen = ({ onBack }: BankTransactionApprovalScreen
               <ArrowLeft className="w-4 h-4" />
             </Button>
             <div>
-              <h1 className="text-xl font-bold text-kitadi-navy">Aprovação Bancária</h1>
-              <p className="text-sm text-gray-500">Aprovar depósitos e saques bancários</p>
+              <h1 className="text-xl font-bold text-kitadi-navy">Verificar Depósitos e Levantamentos Operacionais</h1>
+              <p className="text-sm text-gray-500">Verifique depósitos e levantamentos feitos pelos operadores com dados bancários oficiais</p>
             </div>
           </div>
         </div>
@@ -149,7 +149,7 @@ const BankTransactionApprovalScreen = ({ onBack }: BankTransactionApprovalScreen
         <Tabs defaultValue="deposits" className="space-y-6">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="deposits">Depósitos Pendentes ({mockDeposits.length})</TabsTrigger>
-            <TabsTrigger value="cashouts">Saques Pendentes ({mockCashouts.length})</TabsTrigger>
+            <TabsTrigger value="cashouts">Levantamentos Pendentes ({mockCashouts.length})</TabsTrigger>
           </TabsList>
           
           <TabsContent value="deposits" className="space-y-6">
@@ -162,7 +162,7 @@ const BankTransactionApprovalScreen = ({ onBack }: BankTransactionApprovalScreen
               </CardHeader>
               <CardContent>
                 <div className="p-3 bg-blue-50 border border-blue-200 rounded mb-4">
-                  <p className="text-blue-800 text-sm">Ao aprovar um depósito, está a confirmar que o operador <strong>depositou</strong> o valor indicado na conta bancária do Kitadi. Registe o <strong>ID do banco</strong>, <strong>ID da operação</strong> e o <strong>valor depositado</strong>.</p>
+                  <p className="text-blue-800 text-sm">Ao verificar um depósito, está a confirmar que o operador <strong>depositou</strong> o valor indicado na conta bancária do Kitadi. Registe o <strong>ID do banco</strong>, <strong>ID da operação</strong> e o <strong>valor depositado</strong>.</p>
                 </div>
                 <Table>
                   <TableHeader>
@@ -196,7 +196,7 @@ const BankTransactionApprovalScreen = ({ onBack }: BankTransactionApprovalScreen
                               className="bg-green-600 hover:bg-green-700"
                             >
                               <CheckCircle className="w-4 h-4 mr-1" />
-                              Aprovar
+                              Verificar
                             </Button>
                             <Button 
                               variant="outline" 
@@ -225,12 +225,12 @@ const BankTransactionApprovalScreen = ({ onBack }: BankTransactionApprovalScreen
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <CreditCard className="w-5 h-5" />
-                  Saques Bancários Pendentes
+                  Levantamentos Bancários Pendentes
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="p-3 bg-blue-50 border border-blue-200 rounded mb-4">
-                  <p className="text-blue-800 text-sm">Ao aprovar um saque, está a confirmar que o operador <strong>levantou</strong> a quantia indicada. Registe o <strong>ID do banco</strong>, <strong>ID da operação</strong> e o <strong>valor levantado</strong>.</p>
+                  <p className="text-blue-800 text-sm">Ao verificar um levantamento, está a confirmar que o operador <strong>levantou</strong> a quantia indicada. Registe o <strong>ID do banco</strong>, <strong>ID da operação</strong> e o <strong>valor levantado</strong>.</p>
                 </div>
                 <Table>
                   <TableHeader>
@@ -266,7 +266,7 @@ const BankTransactionApprovalScreen = ({ onBack }: BankTransactionApprovalScreen
                               className="bg-green-600 hover:bg-green-700"
                             >
                               <CheckCircle className="w-4 h-4 mr-1" />
-                              Aprovar
+                              Verificar
                             </Button>
                             <Button 
                               variant="outline" 
@@ -295,7 +295,7 @@ const BankTransactionApprovalScreen = ({ onBack }: BankTransactionApprovalScreen
         <Dialog open={showApproval} onOpenChange={setShowApproval}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Aprovar {selectedTransaction && getTypeLabel(selectedTransaction.type)}</DialogTitle>
+              <DialogTitle>Verificar {selectedTransaction && getTypeLabel(selectedTransaction.type)}</DialogTitle>
             </DialogHeader>
             {selectedTransaction && (
               <div className="space-y-4">
@@ -346,7 +346,7 @@ const BankTransactionApprovalScreen = ({ onBack }: BankTransactionApprovalScreen
                     onClick={handleApprove}
                     className="bg-green-600 hover:bg-green-700"
                   >
-                    Confirmar Aprovação
+                    Confirmar Verificação
                   </Button>
                   <Button 
                     variant="outline" 

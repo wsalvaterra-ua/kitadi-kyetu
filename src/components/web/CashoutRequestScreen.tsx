@@ -44,8 +44,8 @@ const CashoutRequestScreen = ({ onBack, onSubmit }: CashoutRequestScreenProps) =
               <ArrowLeft className="w-4 h-4" />
             </Button>
             <div>
-              <h1 className="text-lg font-bold text-kitadi-navy">Saque para Cliente</h1>
-              <p className="text-sm text-gray-500">Envie um pedido de saque para o cliente</p>
+              <h1 className="text-lg font-bold text-kitadi-navy">Levantamento para Cliente</h1>
+              <p className="text-sm text-gray-500">Envie um pedido de levantamento para o cliente</p>
             </div>
           </div>
         </div>
@@ -71,7 +71,7 @@ const CashoutRequestScreen = ({ onBack, onSubmit }: CashoutRequestScreenProps) =
             </div>
 
             <div>
-              <Label htmlFor="amount">Valor do Saque</Label>
+              <Label htmlFor="amount">Valor do Levantamento</Label>
               <Input
                 id="amount"
                 type="number"

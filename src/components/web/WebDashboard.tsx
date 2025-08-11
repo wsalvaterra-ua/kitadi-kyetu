@@ -198,15 +198,15 @@ const WebDashboard = ({
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Banknote className="w-5 h-5" />
-                    Saque para Cliente
+                    Levantamento para Cliente
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">
-                    Solicitar saque informando conta, valor e taxa estimada
+                    Solicitar levantamento informando conta, valor e taxa estimada
                   </p>
                   <Button variant="outline" className="mt-4 w-full">
-                    Solicitar Saque
+                    Solicitar Levantamento
                   </Button>
                 </CardContent>
               </Card>
@@ -266,15 +266,15 @@ const WebDashboard = ({
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <CheckCircle className="w-5 h-5" />
-                    Aprovação Bancária
+                    Verificar Depósitos e Levantamentos Operacionais
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">
-                    Aprovar depósitos e saques bancários
+                    Confirme depósitos e levantamentos operacionais com dados do banco
                   </p>
                   <Button variant="outline" className="mt-4 w-full">
-                    Aprovar
+                    Verificar
                   </Button>
                 </CardContent>
               </Card>
@@ -283,12 +283,12 @@ const WebDashboard = ({
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <DollarSign className="w-5 h-5" />
-                    Verificação de Dinheiro
+                    Verificar Recepção de Dinheiro
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">
-                    Verificar reconciliações pendentes
+                    Confirme que recebeu fisicamente o dinheiro do operador introduzindo o valor completo
                   </p>
                   <Button variant="outline" className="mt-4 w-full">
                     Verificar
@@ -317,12 +317,12 @@ const WebDashboard = ({
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <FileText className="w-5 h-5" />
-                    Transferências Externas
+                    Verificar Cash In via Banco
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">
-                    Verificar transferências bancárias externas
+                    Verifique cash in realizados via banco
                   </p>
                   <Button variant="outline" className="mt-4 w-full">
                     Verificar
@@ -334,12 +334,12 @@ const WebDashboard = ({
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <ArrowDownCircle className="w-5 h-5" />
-                    Reportar Saque Bancário
+                    Reportar Depósito Bancário Operacional
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">
-                    Reporte um saque informando banco, ID da operação, valor e data
+                    Registe um depósito operacional informando banco, ID da operação, valor e data
                   </p>
                   <Button variant="outline" className="mt-4 w-full">
                     Reportar

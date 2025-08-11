@@ -18,7 +18,7 @@ const WithdrawalReportScreen = ({ onBack }: WithdrawalReportScreenProps) => {
   const handleSubmit = () => {
     if (!bankId || !operationId || !amount || !date) return;
     console.log('Withdrawal report submitted', { bankId, operationId, amount, date });
-    alert('Saque reportado com sucesso!');
+    alert('Depósito reportado com sucesso!');
     setBankId('');
     setOperationId('');
     setAmount('');
@@ -35,8 +35,8 @@ const WithdrawalReportScreen = ({ onBack }: WithdrawalReportScreenProps) => {
               <ArrowLeft className="w-4 h-4" />
             </Button>
             <div>
-              <h1 className="text-xl font-bold text-kitadi-navy">Reportar Saque Bancário</h1>
-              <p className="text-sm text-gray-500">Informe os detalhes do saque realizado</p>
+              <h1 className="text-xl font-bold text-kitadi-navy">Reportar Depósito Bancário Operacional</h1>
+              <p className="text-sm text-gray-500">Registe um depósito operacional com banco, ID da operação, valor e data</p>
             </div>
           </div>
         </div>
@@ -46,7 +46,7 @@ const WithdrawalReportScreen = ({ onBack }: WithdrawalReportScreenProps) => {
       <div className="max-w-2xl mx-auto px-6 py-8">
         <Card>
           <CardHeader>
-            <CardTitle>Detalhes do Saque</CardTitle>
+            <CardTitle>Detalhes do Depósito Operacional</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid md:grid-cols-2 gap-4">
@@ -70,11 +70,11 @@ const WithdrawalReportScreen = ({ onBack }: WithdrawalReportScreenProps) => {
             <div className="flex gap-2">
               <Button onClick={handleSubmit} disabled={!bankId || !operationId || !amount || !date} className="bg-green-600 hover:bg-green-700">
                 <CheckCircle className="w-4 h-4 mr-2" />
-                Reportar Saque
+                Reportar Depósito
               </Button>
             </div>
             <div className="p-3 bg-blue-50 border border-blue-200 rounded">
-              <p className="text-blue-700 text-sm">Esta funcionalidade permite registar saques efetuados em bancos externos para efeitos de reconciliação e auditoria.</p>
+              <p className="text-blue-700 text-sm">Esta funcionalidade permite registar depósitos operacionais efetuados em bancos externos para efeitos de reconciliação e auditoria.</p>
             </div>
           </CardContent>
         </Card>

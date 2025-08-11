@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, DollarSign, User, AlertTriangle, CheckCircle, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, DollarSign, User, AlertTriangle, CheckCircle } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 interface CashVerification {
@@ -24,7 +24,6 @@ interface CashVerificationScreenProps {
 const CashVerificationScreen = ({ onBack }: CashVerificationScreenProps) => {
   const [selectedVerification, setSelectedVerification] = useState<CashVerification | null>(null);
   const [enteredValue, setEnteredValue] = useState('');
-  const [showFullValue, setShowFullValue] = useState<{ [key: string]: boolean }>({});
 
   const mockVerifications: CashVerification[] = [
     {
@@ -74,12 +73,6 @@ const CashVerificationScreen = ({ onBack }: CashVerificationScreenProps) => {
     alert('Verificação rejeitada!');
   };
 
-  const toggleShowValue = (id: string) => {
-    setShowFullValue(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
-  };
 
   const getStatusBadge = (status: string) => {
     const variants = {
@@ -101,8 +94,8 @@ const CashVerificationScreen = ({ onBack }: CashVerificationScreenProps) => {
               <ArrowLeft className="w-4 h-4" />
             </Button>
             <div>
-              <h1 className="text-xl font-bold text-kitadi-navy">Verificação de Dinheiro</h1>
-              <p className="text-sm text-gray-500">Verificar reconciliações pendentes</p>
+              <h1 className="text-xl font-bold text-kitadi-navy">Verificar Recepção de Dinheiro</h1>
+              <p className="text-sm text-gray-500">Confirme a recepção física de dinheiro dos operadores, introduzindo o valor completo</p>
             </div>
           </div>
         </div>
@@ -137,9 +130,7 @@ const CashVerificationScreen = ({ onBack }: CashVerificationScreenProps) => {
                   <TableHead>Operador</TableHead>
                   <TableHead>Telefone</TableHead>
                   <TableHead>Primeiro Dígito</TableHead>
-                  <TableHead>Valor Completo</TableHead>
                   <TableHead>Submetido em</TableHead>
-                  <TableHead>Status</TableHead>
                   <TableHead>Ações</TableHead>
                 </TableRow>
               </TableHeader>

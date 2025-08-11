@@ -118,8 +118,8 @@ const ExternalBankTransferScreen = ({ onBack }: ExternalBankTransferScreenProps)
               <ArrowLeft className="w-4 h-4" />
             </Button>
             <div>
-              <h1 className="text-xl font-bold text-kitadi-navy">Transferências Externas</h1>
-              <p className="text-sm text-gray-500">Verificar transferências bancárias externas</p>
+              <h1 className="text-xl font-bold text-kitadi-navy">Verificar Cash In via Banco</h1>
+              <p className="text-sm text-gray-500">Verifique cash in realizados via banco</p>
             </div>
           </div>
         </div>
@@ -149,17 +149,15 @@ const ExternalBankTransferScreen = ({ onBack }: ExternalBankTransferScreenProps)
                   </p>
                 </div>
                 <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>ID</TableHead>
-                      <TableHead>Conta Destino</TableHead>
-                      <TableHead>Valor</TableHead>
-                      <TableHead>Submetido por</TableHead>
-                      <TableHead>Data</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Conta Destino</TableHead>
+                    <TableHead>Valor</TableHead>
+                    <TableHead>Data</TableHead>
+                    <TableHead>Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
                   <TableBody>
                     {mockTransfers.map((transfer) => (
                       <TableRow key={transfer.id}>
@@ -218,6 +216,18 @@ const ExternalBankTransferScreen = ({ onBack }: ExternalBankTransferScreenProps)
                       <p className="font-mono text-lg">{selectedTransfer.targetAccount}</p>
                     </div>
                   </div>
+
+                  {selectedTransfer.proofUrl && (
+                    <div>
+                      <Button 
+                        variant="outline"
+                        onClick={() => window.open(selectedTransfer.proofUrl as string, '_blank')}
+                      >
+                        <Download className="w-4 h-4 mr-2" />
+                        Baixar Comprovativo
+                      </Button>
+                    </div>
+                  )}
 
                   <div className="grid md:grid-cols-4 gap-4">
                     <div>
