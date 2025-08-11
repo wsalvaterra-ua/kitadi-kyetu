@@ -144,28 +144,7 @@ const CashVerificationScreen = ({ onBack }: CashVerificationScreenProps) => {
                         {verification.firstDigit}***
                       </Badge>
                     </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        {showFullValue[verification.id] ? (
-                          <span className="font-bold">{verification.fullValue.toLocaleString()} STN</span>
-                        ) : (
-                          <span className="font-mono">****</span>
-                        )}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => toggleShowValue(verification.id)}
-                          className="p-1"
-                        >
-                          {showFullValue[verification.id] ? 
-                            <EyeOff className="w-4 h-4" /> : 
-                            <Eye className="w-4 h-4" />
-                          }
-                        </Button>
-                      </div>
-                    </TableCell>
                     <TableCell>{new Date(verification.submittedAt).toLocaleString()}</TableCell>
-                    <TableCell>{getStatusBadge(verification.status)}</TableCell>
                     <TableCell>
                       {verification.status === 'PENDING' && (
                         <div className="flex gap-2">
