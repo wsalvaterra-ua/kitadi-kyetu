@@ -90,32 +90,6 @@ const WebDashboard = ({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center">
-            <img 
-              src="/lovable-uploads/eaf20c9f-d9d2-4df9-a59b-9270a930044e.png" 
-              alt="Kitadi Logo" 
-              className="h-8 w-auto mr-3"
-            />
-            <div>
-              <h1 className="text-xl font-bold text-kitadi-navy">Kitadi Web</h1>
-              <p className="text-sm text-gray-500">
-                {userInfo.title} - Modo Consulta
-              </p>
-            </div>
-          </div>
-          <Button
-            variant="outline"
-            onClick={onLogout}
-            className="flex items-center gap-2"
-          >
-            <LogOut className="w-4 h-4" />
-            Sair
-          </Button>
-        </div>
-      </div>
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-6 py-8">

@@ -45,6 +45,7 @@ import WithdrawalReportScreen from '@/components/web/WithdrawalReportScreen';
 import UserAccessManagementScreen from '@/components/web/UserAccessManagementScreen';
 import UserConfigScreen from '@/components/web/UserConfigScreen';
 import CashoutRequestScreen from '@/components/web/CashoutRequestScreen';
+import WebAdminLayout from '@/components/web/layouts/WebAdminLayout';
 
 type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation' | 'add-reconciliation' | 'account-creation' | 'web-login' | 'web-dashboard' | 'web-transactions' | 'web-extract' | 'web-account-management' | 'web-user-account-management' | 'web-user-access' | 'web-user-config' | 'web-create-user' | 'web-reconciliation' | 'web-transaction-management' | 'web-account-ownership' | 'web-bank-approval' | 'web-cash-verification' | 'web-cash-reserve' | 'web-external-bank-transfer' | 'web-operator-management' | 'web-withdrawal-report' | 'web-agent-cashout';
 
@@ -200,7 +201,26 @@ const handleWebAddReconciliation = () => {
   const handleWebExternalBankTransfer = () => setCurrentScreen('web-external-bank-transfer');
   const handleWebOperatorManagement = () => setCurrentScreen('web-operator-management');
   const handleWebWithdrawalReport = () => setCurrentScreen('web-withdrawal-report');
-  const handleWebAgentCashout = () => setCurrentScreen('web-agent-cashout');
+const handleWebAgentCashout = () => setCurrentScreen('web-agent-cashout');
+
+  // Sidebar navigation for Backoffice (classic PHP-style)
+  const webNavItems = [
+    { key: 'dashboard', label: 'Dashboard', onClick: () => setCurrentScreen('web-dashboard') },
+    { key: 'transactions', label: 'Transações', onClick: handleWebTransactions },
+    { key: 'extract', label: 'Extratos', onClick: handleWebExtract },
+    { key: 'accountManagement', label: 'Gestão de Contas', onClick: handleWebCreateMerchantProfile },
+    ...(webUserType === 'agent' ? [
+      { key: 'transactionManagement', label: 'Gestão de Transações', onClick: handleWebTransactionManagement },
+      { key: 'accountOwnership', label: 'Proprietários de Conta', onClick: handleWebAccountOwnership },
+      { key: 'bankApproval', label: 'Aprovação Bancária', onClick: handleWebBankTransactionApproval },
+      { key: 'cashVerification', label: 'Verificação de Dinheiro', onClick: handleWebCashVerification },
+      { key: 'cashReserve', label: 'Reserva de Dinheiro', onClick: handleWebCashReserve },
+      { key: 'externalBankTransfer', label: 'Transferências Externas', onClick: handleWebExternalBankTransfer },
+      { key: 'operatorManagement', label: 'Gestão de Operadores', onClick: handleWebOperatorManagement },
+      { key: 'withdrawalReport', label: 'Reportar Saque Bancário', onClick: handleWebWithdrawalReport },
+      { key: 'agentCashout', label: 'Saque para Cliente', onClick: handleWebAgentCashout },
+    ] : []),
+  ] as const;
 
   const handleWebBack = () => {
     setCurrentScreen('web-dashboard');
@@ -615,11 +635,19 @@ const handleWebAddReconciliation = () => {
     }
   };
 
+  const isWebAppLayout = isWebVersion && currentScreen !== 'web-login' && currentScreen.startsWith('web-');
+
   return (
     <div className="min-h-screen bg-background">
-      <div className={`${isWebVersion ? 'max-w-6xl' : 'max-w-md'} mx-auto bg-white min-h-screen ${isWebVersion ? '' : 'shadow-lg'}`}>
-        {renderScreen()}
-      </div>
+      {isWebAppLayout ? (
+        <WebAdminLayout title="Kitadi Backoffice" userType={webUserType} onLogout={handleWebLogout} navItems={webNavItems as any}>
+          {renderScreen()}
+        </WebAdminLayout>
+      ) : (
+        <div className={`${isWebVersion ? 'max-w-6xl' : 'max-w-md'} mx-auto bg-white min-h-screen ${isWebVersion ? '' : 'shadow-lg'}`}>
+          {renderScreen()}
+        </div>
+      )}
     </div>
   );
 };
