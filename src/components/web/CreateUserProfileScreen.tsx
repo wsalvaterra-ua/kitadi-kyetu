@@ -39,9 +39,9 @@ const CreateUserProfileScreen = ({ phoneNumber, onBack, onUserCreated }: CreateU
 
   const [isIndividual, setIsIndividual] = useState(false);
   const [businessCategory, setBusinessCategory] = useState('');
+  const [eventAssociation, setEventAssociation] = useState('none');
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [coordsError, setCoordsError] = useState<string | null>(null);
-
   useEffect(() => {
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -310,6 +310,22 @@ const CreateUserProfileScreen = ({ phoneNumber, onBack, onUserCreated }: CreateU
                   <Input readOnly value={coords ? `${coords.lat.toFixed(6)}, ${coords.lng.toFixed(6)}` : (coordsError ? coordsError : 'A obter localização...')} />
                   <MapPin className="w-4 h-4 text-gray-500" />
                 </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label>Associação a Evento (opcional)</Label>
+                <Select value={eventAssociation} onValueChange={setEventAssociation}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecionar evento" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Nenhum</SelectItem>
+                    <SelectItem value="feira-st">Feira de São Tomé</SelectItem>
+                    <SelectItem value="go-to-market">Go To Market</SelectItem>
+                    <SelectItem value="campanha-verao">Campanha de Verão</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <p className="text-xs text-gray-500">

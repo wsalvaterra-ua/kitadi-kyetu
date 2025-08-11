@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LogOut, Download, Eye, CreditCard, Users, UserPlus, Building, Plus, Search, UserCheck, DollarSign, CheckCircle, Wallet, FileText, Settings, ArrowDownCircle } from 'lucide-react';
+import { LogOut, Download, Eye, CreditCard, Users, UserPlus, Building, Plus, Search, UserCheck, DollarSign, CheckCircle, Wallet, FileText, Settings, ArrowDownCircle, Banknote } from 'lucide-react';
 
 interface WebDashboardProps {
   userType: 'personal' | 'business' | 'agent' | 'business-associated' | 'merchant';
@@ -18,6 +18,7 @@ interface WebDashboardProps {
   onExternalBankTransfer?: () => void;
   onOperatorManagement?: () => void;
   onWithdrawalReport?: () => void;
+  onAgentCashoutRequest?: () => void;
 }
 
 const WebDashboard = ({ 
@@ -35,7 +36,8 @@ const WebDashboard = ({
   onCashReserve,
   onExternalBankTransfer,
   onOperatorManagement,
-  onWithdrawalReport
+  onWithdrawalReport,
+  onAgentCashoutRequest
 }: WebDashboardProps) => {
   const getUserTypeInfo = () => {
     switch (userType) {
@@ -188,6 +190,23 @@ const WebDashboard = ({
                   </p>
                   <Button variant="outline" className="mt-4 w-full">
                     Gerir
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onAgentCashoutRequest}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Banknote className="w-5 h-5" />
+                    Saque para Cliente
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600">
+                    Solicitar saque informando conta, valor e taxa estimada
+                  </p>
+                  <Button variant="outline" className="mt-4 w-full">
+                    Solicitar Saque
                   </Button>
                 </CardContent>
               </Card>
