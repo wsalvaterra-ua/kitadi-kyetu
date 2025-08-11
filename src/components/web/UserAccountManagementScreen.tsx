@@ -1545,16 +1545,38 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber, onOpenTransactionMan
                                          }))}
                                        />
                                      </div>
-                                     <div className="col-span-2">
-                                       <Label>Saldo Máximo</Label>
-                                       <Input 
-                                         value={accountManagementData[account.id]?.maxBalance || account.limits.maxBalance}
-                                         onChange={(e) => setAccountManagementData(prev => ({
-                                           ...prev,
-                                           [account.id]: { ...prev[account.id], maxBalance: e.target.value }
-                                         }))}
-                                       />
-                                     </div>
+                                      <div>
+                                        <Label>Limite Cashout Diário</Label>
+                                        <Input 
+                                          value={accountManagementData[account.id]?.cashoutDaily || ''}
+                                          onChange={(e) => setAccountManagementData(prev => ({
+                                            ...prev,
+                                            [account.id]: { ...prev[account.id], cashoutDaily: e.target.value }
+                                          }))}
+                                          placeholder="Ex: 100,000 STN"
+                                        />
+                                      </div>
+                                      <div>
+                                        <Label>Valor Enviado via SMS (Máx)</Label>
+                                        <Input 
+                                          value={accountManagementData[account.id]?.smsSendMax || ''}
+                                          onChange={(e) => setAccountManagementData(prev => ({
+                                            ...prev,
+                                            [account.id]: { ...prev[account.id], smsSendMax: e.target.value }
+                                          }))}
+                                          placeholder="Ex: 10,000 STN"
+                                        />
+                                      </div>
+                                      <div className="col-span-2">
+                                        <Label>Saldo Máximo</Label>
+                                        <Input 
+                                          value={accountManagementData[account.id]?.maxBalance || account.limits.maxBalance}
+                                          onChange={(e) => setAccountManagementData(prev => ({
+                                            ...prev,
+                                            [account.id]: { ...prev[account.id], maxBalance: e.target.value }
+                                          }))}
+                                        />
+                                      </div>
                                    </div>
                                  </div>
 
@@ -1607,9 +1629,83 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber, onOpenTransactionMan
                                    </Button>
                                  </div>
                                </div>
-                             </DialogContent>
-                           </Dialog>
-                         </div>
+                              </DialogContent>
+                            </Dialog>
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button variant="outline" size="sm">
+                                  <Settings className="w-4 h-4 mr-1" />
+                                  Gerir Associações
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent className="max-w-lg">
+                                <DialogHeader>
+                                  <DialogTitle>Gerir Associações - {account.accountNumber}</DialogTitle>
+                                </DialogHeader>
+                                <div className="space-y-4">
+                                  <div>
+                                    <Label>Perfil Comercial Associado</Label>
+                                    <Select
+                                      value={associationsData[account.id]?.businessId ?? 'none'}
+                                      onValueChange={(value) =>
+                                        setAssociationsData(prev => ({
+                                          ...prev,
+                                          [account.id]: { ...prev[account.id], businessId: value === 'none' ? undefined : value }
+                                        }))
+                                      }
+                                    >
+                                      <SelectTrigger>
+                                        <SelectValue placeholder="Selecione um perfil comercial" />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="none">Nenhum</SelectItem>
+                                        {businessProfiles.map(bp => (
+                                          <SelectItem key={bp.id} value={bp.id}>
+                                            {'businessName' in bp ? (bp as any).businessName : (bp as any).name}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                  <div>
+                                    <Label>Evento</Label>
+                                    <Select
+                                      value={associationsData[account.id]?.event ?? 'Nenhum'}
+                                      onValueChange={(value) =>
+                                        setAssociationsData(prev => ({
+                                          ...prev,
+                                          [account.id]: { ...prev[account.id], event: value }
+                                        }))
+                                      }
+                                    >
+                                      <SelectTrigger>
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {eventOptions.map(opt => (
+                                          <SelectItem key={opt} value={opt}>
+                                            {opt}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                    <p className="text-xs text-gray-500 mt-1">
+                                      Use "Feira" ou "Campanha Go-to-Market" para aplicar benefícios temporários.
+                                    </p>
+                                  </div>
+                                  <div className="flex gap-2">
+                                    <Button variant="outline" className="flex-1">Cancelar</Button>
+                                    <Button
+                                      className="flex-1"
+                                      onClick={() => toast({ title: 'Associações atualizadas', description: 'Associação guardada com sucesso.' })}
+                                    >
+                                      Guardar
+                                    </Button>
+                                  </div>
+                                </div>
+                              </DialogContent>
+                            </Dialog>
+                          </div>
                        </div>
                      </Card>
                    ))}

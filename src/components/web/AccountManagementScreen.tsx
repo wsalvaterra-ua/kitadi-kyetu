@@ -128,7 +128,14 @@ const AccountManagementScreen = ({ onBack, onUserFound, onCreateNewUser, onManag
                 </Button>
               </div>
               {tab === 'phone' && (
-                <p className="text-xs text-gray-500">Introduza o número completo com o código do país (+239)</p>
+                <div className="text-xs text-gray-500 space-y-1">
+                  <p>Introduza o número completo com o código do país (+239)</p>
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium select-all">Exemplo: +2399123456</span>
+                    <Button size="sm" variant="outline" onClick={() => navigator.clipboard?.writeText('+2399123456')}>Copiar</Button>
+                    <Button size="sm" variant="ghost" onClick={() => setQuery('+2399123456')}>Preencher</Button>
+                  </div>
+                </div>
               )}
             </div>
 
