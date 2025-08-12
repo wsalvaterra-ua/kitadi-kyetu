@@ -301,12 +301,12 @@ const WebDashboard = ({
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <FileText className="w-5 h-5" />
-                    Verificar Cash In via Banco
+                    Verificar Cash In/Out via Banco
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">
-                    Verifique cash in realizados via banco
+                    Verifique cash in/out realizados via banco
                   </p>
                   <Button variant="outline" className="mt-4 w-full">
                     Verificar

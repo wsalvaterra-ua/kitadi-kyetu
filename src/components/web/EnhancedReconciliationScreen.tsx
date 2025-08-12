@@ -268,6 +268,49 @@ const EnhancedReconciliationScreen = ({ onBack }: EnhancedReconciliationScreenPr
               </div>
             </DialogContent>
           </Dialog>
+
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Plus className="w-4 h-4 mr-2" />
+                Reportar Levantamento de Dinheiro Operacional
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Reportar Levantamento de Dinheiro Operacional</DialogTitle>
+              </DialogHeader>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="cashoutAmount">Valor Levantado (STN)</Label>
+                  <Input id="cashoutAmount" type="number" placeholder="Ex: 60000" />
+                </div>
+                <div>
+                  <Label htmlFor="cashoutOperationId">ID da Operação</Label>
+                  <Input id="cashoutOperationId" placeholder="Ex: OP-2024-0002" />
+                </div>
+                <div>
+                  <Label htmlFor="cashoutBankId">ID do Banco</Label>
+                  <Input id="cashoutBankId" placeholder="Ex: BFA-001" />
+                </div>
+                <div>
+                  <Label htmlFor="cashoutDate">Data</Label>
+                  <Input id="cashoutDate" type="date" />
+                </div>
+              </div>
+              <div className="p-3 bg-blue-50 border border-blue-200 rounded mt-4">
+                <p className="text-blue-700 text-sm">
+                  Este formulário é para quando você efetua um levantamento operacional no banco. Indique o valor levantado, o ID da operação, o ID do banco e a data. Este registo será utilizado para reconciliação.
+                </p>
+              </div>
+              <div className="flex gap-2 mt-4">
+                <Button className="bg-kitadi-orange hover:bg-kitadi-orange/90">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Guardar Registo
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
 
         {/* History */}

@@ -37,6 +37,43 @@ const ExternalBankTransferScreen = ({ onBack }: ExternalBankTransferScreenProps)
   const [newExternalTxId, setNewExternalTxId] = useState('');
   const [newBankId, setNewBankId] = useState('');
 
+  // Cash-out processing
+  interface PendingCashout {
+    id: string;
+    amount: number;
+    currency: string;
+    targetAccount: string;
+    targetBank: string;
+    requestedBy: string;
+    requestedAt: string;
+    status: 'PENDING' | 'PROCESSED';
+  }
+  const mockCashouts: PendingCashout[] = [
+    {
+      id: 'CO001',
+      amount: 120000,
+      currency: 'STN',
+      targetAccount: 'BANK-ACC-998877',
+      targetBank: 'BFA',
+      requestedBy: 'Cliente A',
+      requestedAt: '2024-01-16T11:10:00Z',
+      status: 'PENDING'
+    },
+    {
+      id: 'CO002',
+      amount: 80000,
+      currency: 'STN',
+      targetAccount: 'BANK-ACC-112233',
+      targetBank: 'BAI',
+      requestedBy: 'Cliente B',
+      requestedAt: '2024-01-16T12:25:00Z',
+      status: 'PENDING'
+    }
+  ];
+  const [selectedCashout, setSelectedCashout] = useState<PendingCashout | null>(null);
+  const [cashoutOperationId, setCashoutOperationId] = useState('');
+  const [cashoutTransferredAmount, setCashoutTransferredAmount] = useState('');
+
   const mockTransfers: ExternalTransfer[] = [
     {
       id: 'ET001',
@@ -118,8 +155,8 @@ const ExternalBankTransferScreen = ({ onBack }: ExternalBankTransferScreenProps)
               <ArrowLeft className="w-4 h-4" />
             </Button>
             <div>
-              <h1 className="text-xl font-bold text-kitadi-navy">Verificar Cash In via Banco</h1>
-              <p className="text-sm text-gray-500">Verifique cash in realizados via banco</p>
+              <h1 className="text-xl font-bold text-kitadi-navy">Verificar Cash In/Out via Banco</h1>
+              <p className="text-sm text-gray-500">Verifique cash in/out realizados via banco</p>
             </div>
           </div>
         </div>
@@ -127,13 +164,14 @@ const ExternalBankTransferScreen = ({ onBack }: ExternalBankTransferScreenProps)
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-6 py-8">
-        <Tabs defaultValue="pending" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="pending">Pendentes para Verificar ({mockTransfers.filter(t => t.status === 'PENDING').length})</TabsTrigger>
-            <TabsTrigger value="add-new">Adicionar Nova</TabsTrigger>
+        <Tabs defaultValue="with-proof" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="with-proof">Verify Cash in with Comprovativo ({mockTransfers.filter(t => t.status === 'PENDING').length})</TabsTrigger>
+            <TabsTrigger value="manual-cashin">cashin manual</TabsTrigger>
+            <TabsTrigger value="cashout">Cashout</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="pending" className="space-y-6">
+          <TabsContent value="with-proof" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -296,12 +334,12 @@ const ExternalBankTransferScreen = ({ onBack }: ExternalBankTransferScreenProps)
             )}
           </TabsContent>
           
-          <TabsContent value="add-new" className="space-y-6">
+          <TabsContent value="manual-cashin" className="space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Plus className="w-5 h-5" />
-                  Adicionar Nova Entrada de Dinheiro
+                  Cash-in Manual
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -371,6 +409,129 @@ const ExternalBankTransferScreen = ({ onBack }: ExternalBankTransferScreenProps)
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+          <TabsContent value="cashout" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Building className="w-5 h-5" />
+                  Pedidos de Cashout Pendentes
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded mb-4">
+                  <p className="text-blue-800 text-sm">
+                    Nesta secção, você deverá efetuar a transferência para o banco e número de conta solicitados. 
+                    Depois, registe o ID da operação e o valor transferido.
+                  </p>
+                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>ID</TableHead>
+                      <TableHead>Conta Destino</TableHead>
+                      <TableHead>Banco Destino</TableHead>
+                      <TableHead>Valor</TableHead>
+                      <TableHead>Data</TableHead>
+                      <TableHead>Ações</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {mockCashouts.map((cashout) => (
+                      <TableRow key={cashout.id}>
+                        <TableCell className="font-mono">{cashout.id}</TableCell>
+                        <TableCell className="font-mono">{cashout.targetAccount}</TableCell>
+                        <TableCell className="font-mono">{cashout.targetBank}</TableCell>
+                        <TableCell className="font-bold text-red-600">
+                          {cashout.amount.toLocaleString()} {cashout.currency}
+                        </TableCell>
+                        <TableCell>{new Date(cashout.requestedAt).toLocaleString()}</TableCell>
+                        <TableCell>
+                          <Button size="sm" onClick={() => setSelectedCashout(cashout)}>
+                            Processar
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+
+            {selectedCashout && (
+              <Card className="border-2 border-kitadi-orange">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="w-5 h-5" />
+                    Processar Cashout - {selectedCashout.id}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="targetBank">Banco Destino</Label>
+                      <Input id="targetBank" value={selectedCashout.targetBank} readOnly />
+                    </div>
+                    <div>
+                      <Label htmlFor="targetAccount">Conta Destino</Label>
+                      <Input id="targetAccount" value={selectedCashout.targetAccount} readOnly />
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="cashoutOperationId">ID da Operação</Label>
+                      <Input
+                        id="cashoutOperationId"
+                        placeholder="OP-XXXX"
+                        value={cashoutOperationId}
+                        onChange={(e) => setCashoutOperationId(e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="cashoutTransferredAmount">Valor Transferido (STN)</Label>
+                      <Input
+                        id="cashoutTransferredAmount"
+                        type="number"
+                        placeholder={selectedCashout.amount.toString()}
+                        value={cashoutTransferredAmount}
+                        onChange={(e) => setCashoutTransferredAmount(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button
+                      className="bg-green-600 hover:bg-green-700"
+                      onClick={() => {
+                        if (!cashoutOperationId || !cashoutTransferredAmount) return;
+                        console.log('Confirm cashout transfer:', {
+                          id: selectedCashout.id,
+                          operationId: cashoutOperationId,
+                          amount: cashoutTransferredAmount
+                        });
+                        alert('Cashout processado com sucesso!');
+                        setSelectedCashout(null);
+                        setCashoutOperationId('');
+                        setCashoutTransferredAmount('');
+                      }}
+                    >
+                      <CheckCircle className="w-4 h-4 mr-2" />
+                      Confirmar Transferência
+                    </Button>
+                    <Button variant="outline" onClick={() => setSelectedCashout(null)}>
+                      Cancelar
+                    </Button>
+                  </div>
+
+                  <div className="p-3 bg-blue-50 border border-blue-200 rounded">
+                    <p className="text-blue-700 text-sm">
+                      Os campos de banco e conta são apenas para leitura. Garanta que transfere exatamente para os dados apresentados.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
         </Tabs>
       </div>
