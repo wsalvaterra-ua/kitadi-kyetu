@@ -44,9 +44,9 @@ import OperatorManagementScreen from '@/components/web/OperatorManagementScreen'
 import WithdrawalReportScreen from '@/components/web/WithdrawalReportScreen';
 import UserAccessManagementScreen from '@/components/web/UserAccessManagementScreen';
 import UserConfigScreen from '@/components/web/UserConfigScreen';
-import CashoutRequestScreen from '@/components/web/CashoutRequestScreen';
+import ClientTransactionsScreen from '@/components/web/ClientTransactionsScreen';
 
-type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation' | 'add-reconciliation' | 'account-creation' | 'web-login' | 'web-dashboard' | 'web-transactions' | 'web-extract' | 'web-account-management' | 'web-user-account-management' | 'web-user-access' | 'web-user-config' | 'web-create-user' | 'web-reconciliation' | 'web-transaction-management' | 'web-account-ownership' | 'web-bank-approval' | 'web-cash-verification' | 'web-cash-reserve' | 'web-external-bank-transfer' | 'web-operator-management' | 'web-withdrawal-report' | 'web-agent-cashout';
+type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation' | 'add-reconciliation' | 'account-creation' | 'web-login' | 'web-dashboard' | 'web-transactions' | 'web-extract' | 'web-account-management' | 'web-user-account-management' | 'web-user-access' | 'web-user-config' | 'web-create-user' | 'web-reconciliation' | 'web-transaction-management' | 'web-account-ownership' | 'web-bank-approval' | 'web-cash-verification' | 'web-cash-reserve' | 'web-external-bank-transfer' | 'web-operator-management' | 'web-withdrawal-report' | 'web-client-transactions';
 
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('onboarding');
@@ -200,7 +200,7 @@ const handleWebAddReconciliation = () => {
   const handleWebExternalBankTransfer = () => setCurrentScreen('web-external-bank-transfer');
   const handleWebOperatorManagement = () => setCurrentScreen('web-operator-management');
   const handleWebWithdrawalReport = () => setCurrentScreen('web-withdrawal-report');
-  const handleWebAgentCashout = () => setCurrentScreen('web-agent-cashout');
+  const handleWebAgentCashout = () => setCurrentScreen('web-client-transactions');
 
   const handleWebBack = () => {
     setCurrentScreen('web-dashboard');
@@ -604,14 +604,10 @@ const handleWebAddReconciliation = () => {
         return (
           <WithdrawalReportScreen onBack={handleWebBack} />
         );
-      case 'web-agent-cashout':
+      case 'web-client-transactions':
         return (
-          <CashoutRequestScreen
+          <ClientTransactionsScreen
             onBack={handleWebBack}
-            onSubmit={({ accountNumber, amount, estimatedFee }) => {
-              console.log('Cashout request submitted:', { accountNumber, amount, estimatedFee });
-              setCurrentScreen('web-dashboard');
-            }}
           />
         );
       default:

@@ -321,7 +321,7 @@ const OperatorManagementScreen = ({ onBack }: OperatorManagementScreenProps) => 
                   className="bg-kitadi-orange hover:bg-kitadi-orange/90"
                 >
                   <Clock className="w-4 h-4 mr-2" />
-                  Salvar Horário
+                  Guardar Definições
                 </Button>
               </>
             )}

@@ -198,15 +198,15 @@ const WebDashboard = ({
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Banknote className="w-5 h-5" />
-                    Levantamento para Cliente
+                    Transações com Cliente
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">
-                    Solicitar levantamento informando conta, valor e taxa estimada
+                    Efetue Cash-in, Cash-out e transações em nome do cliente
                   </p>
                   <Button variant="outline" className="mt-4 w-full">
-                    Solicitar Levantamento
+                    Abrir
                   </Button>
                 </CardContent>
               </Card>
