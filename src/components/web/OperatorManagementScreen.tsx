@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { ArrowLeft, Settings, User, Clock, Calendar, UserCheck, UserX } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
 import { Checkbox } from '@/components/ui/checkbox';
 
 interface Operator {
@@ -32,6 +32,9 @@ const OperatorManagementScreen = ({ onBack }: OperatorManagementScreenProps) => 
   const [startTime, setStartTime] = useState('09:00');
   const [endTime, setEndTime] = useState('17:00');
   const [selectedActive, setSelectedActive] = useState<boolean | null>(null);
+  // Limits
+  const [maxCashLimit, setMaxCashLimit] = useState<string>('');
+  const [operationalCreditFloat, setOperationalCreditFloat] = useState<string>('');
 
   const mockOperators: Operator[] = [
     {
@@ -147,7 +150,7 @@ const OperatorManagementScreen = ({ onBack }: OperatorManagementScreenProps) => 
                 <TableRow>
                   <TableHead>Nome</TableHead>
                   <TableHead>Telefone</TableHead>
-                  <TableHead>Email</TableHead>
+                  
                   <TableHead>Status</TableHead>
                   <TableHead>Horário</TableHead>
                   <TableHead>Última Atividade</TableHead>
@@ -159,7 +162,7 @@ const OperatorManagementScreen = ({ onBack }: OperatorManagementScreenProps) => 
                   <TableRow key={operator.id}>
                     <TableCell className="font-medium">{operator.name}</TableCell>
                     <TableCell className="font-mono">{operator.phone}</TableCell>
-                    <TableCell>{operator.email}</TableCell>
+                    
                     <TableCell>{getStatusBadge(operator.isActive)}</TableCell>
                     <TableCell>
                       <div className="text-sm">
@@ -198,22 +201,6 @@ const OperatorManagementScreen = ({ onBack }: OperatorManagementScreenProps) => 
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Operator Selection */}
-            <div>
-              <Label htmlFor="operatorSelect">Selecionar Operador</Label>
-              <Select onValueChange={handleOperatorSelect}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Escolha um operador" />
-                </SelectTrigger>
-                <SelectContent>
-                  {mockOperators.map((operator) => (
-                    <SelectItem key={operator.id} value={operator.id}>
-                      {operator.name} - {operator.phone}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
 
             {selectedOperator && (
               <>
@@ -274,6 +261,35 @@ const OperatorManagementScreen = ({ onBack }: OperatorManagementScreenProps) => 
                       value={endTime}
                       onChange={(e) => setEndTime(e.target.value)}
                     />
+                  </div>
+                </div>
+
+                {/* Limites Financeiros */}
+                <div>
+                  <Label className="text-sm font-medium mb-3 block">
+                    Limites Financeiros
+                  </Label>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="maxCashLimit">Limite de Caixa (STN)</Label>
+                      <Input
+                        id="maxCashLimit"
+                        type="number"
+                        placeholder="Ex: 500000"
+                        value={maxCashLimit}
+                        onChange={(e) => setMaxCashLimit(e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="operationalCreditFloat">Limite OPERATIONAL_CREDIT_FLOAT (STN)</Label>
+                      <Input
+                        id="operationalCreditFloat"
+                        type="number"
+                        placeholder="Ex: 200000"
+                        value={operationalCreditFloat}
+                        onChange={(e) => setOperationalCreditFloat(e.target.value)}
+                      />
+                    </div>
                   </div>
                 </div>
 

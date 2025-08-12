@@ -166,7 +166,7 @@ const ExternalBankTransferScreen = ({ onBack }: ExternalBankTransferScreenProps)
       <div className="max-w-4xl mx-auto px-6 py-8">
         <Tabs defaultValue="with-proof" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="with-proof">Verificar Cash-in com Comprovativo ({mockTransfers.filter(t => t.status === 'PENDING').length})</TabsTrigger>
+            <TabsTrigger value="with-proof">Cash-in com Comprovativo ({mockTransfers.filter(t => t.status === 'PENDING').length})</TabsTrigger>
             <TabsTrigger value="manual-cashin">Cash-in Manual</TabsTrigger>
             <TabsTrigger value="cashout">Levantamentos</TabsTrigger>
           </TabsList>
@@ -206,19 +206,9 @@ const ExternalBankTransferScreen = ({ onBack }: ExternalBankTransferScreenProps)
                         </TableCell>
                         <TableCell>{transfer.submittedBy}</TableCell>
                         <TableCell>{new Date(transfer.submittedAt).toLocaleString()}</TableCell>
-                        <TableCell>{getStatusBadge(transfer.status)}</TableCell>
+                        
                         <TableCell>
                           <div className="flex gap-2">
-                            {transfer.proofUrl && (
-                              <Button 
-                                variant="outline" 
-                                size="sm"
-                                onClick={() => window.open(transfer.proofUrl, '_blank')}
-                              >
-                                <Download className="w-4 h-4 mr-1" />
-                                Comprovativo
-                              </Button>
-                            )}
                             {transfer.status === 'PENDING' && (
                               <Button 
                                 size="sm"
@@ -480,13 +470,13 @@ const ExternalBankTransferScreen = ({ onBack }: ExternalBankTransferScreenProps)
 
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="cashoutOperationId">ID da Operação</Label>
-                      <Input
-                        id="cashoutOperationId"
-                        placeholder="OP-XXXX"
-                        value={cashoutOperationId}
-                        onChange={(e) => setCashoutOperationId(e.target.value)}
-                      />
+                        <Label htmlFor="cashoutOperationId">ID da Transação Externa</Label>
+                        <Input
+                          id="cashoutOperationId"
+                          placeholder="TRX-XXXX"
+                          value={cashoutOperationId}
+                          onChange={(e) => setCashoutOperationId(e.target.value)}
+                        />
                     </div>
                     <div>
                       <Label htmlFor="cashoutTransferredAmount">Valor Transferido (STN)</Label>
