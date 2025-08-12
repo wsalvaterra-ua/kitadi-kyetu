@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, CheckCircle, X, Building, CreditCard, ArrowUpDown } from 'lucide-react';
+import { ArrowLeft, CheckCircle, X, Building, CreditCard, ArrowUpDown, DollarSign, AlertTriangle, User } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -36,6 +36,9 @@ const BankTransactionApprovalScreen = ({ onBack }: BankTransactionApprovalScreen
   const [rejectionReason, setRejectionReason] = useState('');
   const [showApproval, setShowApproval] = useState(false);
   const [showRejection, setShowRejection] = useState(false);
+  const [showCashVerify, setShowCashVerify] = useState(false);
+  const [selectedCashReceipt, setSelectedCashReceipt] = useState<CashReceipt | null>(null);
+  const [enteredValue, setEnteredValue] = useState('');
 
   const mockDeposits: BankTransaction[] = [
     {
@@ -138,7 +141,7 @@ const BankTransactionApprovalScreen = ({ onBack }: BankTransactionApprovalScreen
             </Button>
             <div>
               <h1 className="text-xl font-bold text-kitadi-navy">Verificar Depósitos e Levantamentos Operacionais</h1>
-              <p className="text-sm text-gray-500">Verifique depósitos e levantamentos feitos pelos operadores com dados bancários oficiais</p>
+              <p className="text-sm text-gray-500">Verifique depósitos, levantamentos e recepção de dinheiro físico dos operadores com dados bancários e confirmações presenciais</p>
             </div>
           </div>
         </div>
@@ -147,9 +150,10 @@ const BankTransactionApprovalScreen = ({ onBack }: BankTransactionApprovalScreen
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-6 py-8">
         <Tabs defaultValue="deposits" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="deposits">Depósitos Pendentes ({mockDeposits.length})</TabsTrigger>
             <TabsTrigger value="cashouts">Levantamentos Pendentes ({mockCashouts.length})</TabsTrigger>
+            <TabsTrigger value="cash-reception">Recepção de Dinheiro ({mockCashReceipts.length})</TabsTrigger>
           </TabsList>
           
           <TabsContent value="deposits" className="space-y-6">
@@ -286,6 +290,129 @@ const BankTransactionApprovalScreen = ({ onBack }: BankTransactionApprovalScreen
                     ))}
                   </TableBody>
                 </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="cash-reception" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <DollarSign className="w-5 h-5" />
+                  Recepção de Dinheiro Físico
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded">
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="w-5 h-5 text-amber-600 mt-0.5" />
+                    <div>
+                      <p className="text-amber-800 text-sm">
+                        Ao verificar uma recepção de dinheiro, está a confirmar que o operador lhe <strong>entregou</strong> o valor indicado em numerário.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Operador</TableHead>
+                      <TableHead>Telefone</TableHead>
+                      <TableHead>Primeiro Dígito</TableHead>
+                      <TableHead>Submetido em</TableHead>
+                      <TableHead>Ações</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {mockCashReceipts.map((verification) => (
+                      <TableRow key={verification.id}>
+                        <TableCell className="font-medium">{verification.operatorName}</TableCell>
+                        <TableCell className="font-mono">{verification.operatorPhone}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="bg-kitadi-orange text-white">
+                            {verification.firstDigit}***
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{new Date(verification.submittedAt).toLocaleString()}</TableCell>
+                        <TableCell>
+                          <Button 
+                            size="sm"
+                            onClick={() => {
+                              setSelectedCashReceipt(verification);
+                              setShowCashVerify(true);
+                            }}
+                            className="bg-green-600 hover:bg-green-700"
+                          >
+                            <CheckCircle className="w-4 h-4 mr-1" />
+                            Verificar
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+
+                <Dialog open={showCashVerify} onOpenChange={setShowCashVerify}>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Verificar Recepção de Dinheiro</DialogTitle>
+                    </DialogHeader>
+                    {selectedCashReceipt && (
+                      <div className="space-y-4">
+                        <div className="p-3 bg-gray-50 rounded border">
+                          <div className="flex items-center gap-2 mb-2">
+                            <User className="w-4 h-4" />
+                            <span className="font-medium">{selectedCashReceipt.operatorName}</span>
+                          </div>
+                          <p><strong>Telefone:</strong> {selectedCashReceipt.operatorPhone}</p>
+                          <p><strong>Primeiro Dígito:</strong> {selectedCashReceipt.firstDigit}</p>
+                        </div>
+
+                        <div>
+                          <Label htmlFor="verifyAmount">Valor Recebido (STN)</Label>
+                          <Input
+                            id="verifyAmount"
+                            type="number"
+                            placeholder="Ex: 50000"
+                            value={enteredValue}
+                            onChange={(e) => setEnteredValue(e.target.value)}
+                          />
+                          <p className="text-xs text-gray-500 mt-1">O valor deve começar com o dígito "{selectedCashReceipt.firstDigit}"</p>
+                        </div>
+
+                        <div className="flex gap-2">
+                          <Button 
+                            onClick={() => {
+                              if (parseInt(enteredValue) === selectedCashReceipt.fullValue) {
+                                alert('Valor verificado com sucesso!');
+                              } else {
+                                alert('Valor incorreto! Tente novamente.');
+                              }
+                              setEnteredValue('');
+                              setSelectedCashReceipt(null);
+                              setShowCashVerify(false);
+                            }}
+                            className="bg-green-600 hover:bg-green-700"
+                            disabled={!enteredValue}
+                          >
+                            Confirmar Verificação
+                          </Button>
+                          <Button 
+                            variant="outline" 
+                            onClick={() => {
+                              setEnteredValue('');
+                              setSelectedCashReceipt(null);
+                              setShowCashVerify(false);
+                            }}
+                          >
+                            Cancelar
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </DialogContent>
+                </Dialog>
               </CardContent>
             </Card>
           </TabsContent>

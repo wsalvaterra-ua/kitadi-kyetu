@@ -31,6 +31,7 @@ const OperatorManagementScreen = ({ onBack }: OperatorManagementScreenProps) => 
   const [workingDays, setWorkingDays] = useState<string[]>([]);
   const [startTime, setStartTime] = useState('09:00');
   const [endTime, setEndTime] = useState('17:00');
+  const [selectedActive, setSelectedActive] = useState<boolean | null>(null);
 
   const mockOperators: Operator[] = [
     {
@@ -77,6 +78,7 @@ const OperatorManagementScreen = ({ onBack }: OperatorManagementScreenProps) => 
       setWorkingDays(operator.workingDays);
       setStartTime(operator.startTime);
       setEndTime(operator.endTime);
+      setSelectedActive(operator.isActive);
     }
   };
 
@@ -170,10 +172,6 @@ const OperatorManagementScreen = ({ onBack }: OperatorManagementScreenProps) => 
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Switch
-                          checked={operator.isActive}
-                          onCheckedChange={(checked) => handleToggleOperatorStatus(operator.id, checked)}
-                        />
                         <Button 
                           variant="outline" 
                           size="sm"
@@ -196,7 +194,7 @@ const OperatorManagementScreen = ({ onBack }: OperatorManagementScreenProps) => 
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Clock className="w-5 h-5" />
-              Gerir Horário do Operador
+              Definições do Operador
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -219,6 +217,24 @@ const OperatorManagementScreen = ({ onBack }: OperatorManagementScreenProps) => 
 
             {selectedOperator && (
               <>
+                {/* Status Toggle inside settings */}
+                <div>
+                  <Label className="text-sm font-medium mb-3 block">
+                    <UserCheck className="w-4 h-4 inline mr-2" />
+                    Status do Operador
+                  </Label>
+                  <div className="flex items-center gap-3">
+                    <Switch
+                      checked={!!selectedActive}
+                      onCheckedChange={(checked) => {
+                        setSelectedActive(checked);
+                        handleToggleOperatorStatus(selectedOperator, checked);
+                      }}
+                    />
+                    {selectedActive ? <Badge variant="default">Ativo</Badge> : <Badge variant="secondary">Inativo</Badge>}
+                  </div>
+                </div>
+
                 {/* Working Days */}
                 <div>
                   <Label className="text-sm font-medium mb-3 block">

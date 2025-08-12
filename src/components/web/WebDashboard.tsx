@@ -266,12 +266,12 @@ const WebDashboard = ({
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <CheckCircle className="w-5 h-5" />
-                    Verificar Depósitos e Levantamentos Operacionais
+                    Verificar Operações Operacionais (Banco e Dinheiro Físico)
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">
-                    Confirme depósitos e levantamentos operacionais com dados do banco
+                    Verifique depósitos, levantamentos e recepção de dinheiro físico com base em dados bancários e confirmação manual
                   </p>
                   <Button variant="outline" className="mt-4 w-full">
                     Verificar
@@ -279,22 +279,6 @@ const WebDashboard = ({
                 </CardContent>
               </Card>
 
-              <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onCashVerification}>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <DollarSign className="w-5 h-5" />
-                    Verificar Recepção de Dinheiro
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">
-                    Confirme que recebeu fisicamente o dinheiro do operador introduzindo o valor completo
-                  </p>
-                  <Button variant="outline" className="mt-4 w-full">
-                    Verificar
-                  </Button>
-                </CardContent>
-              </Card>
 
               <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onCashReserve}>
                 <CardHeader>
@@ -330,22 +314,6 @@ const WebDashboard = ({
                 </CardContent>
               </Card>
 
-              <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onWithdrawalReport}>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <ArrowDownCircle className="w-5 h-5" />
-                    Reportar Depósito Bancário Operacional
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">
-                    Registe um depósito operacional informando banco, ID da operação, valor e data
-                  </p>
-                  <Button variant="outline" className="mt-4 w-full">
-                    Reportar
-                  </Button>
-                </CardContent>
-              </Card>
 
               <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onOperatorManagement}>
                 <CardHeader>

@@ -114,7 +114,7 @@ const EnhancedReconciliationScreen = ({ onBack }: EnhancedReconciliationScreenPr
             </Button>
             <div>
               <h1 className="text-xl font-bold text-kitadi-navy">Reconciliação</h1>
-              <p className="text-sm text-gray-500">Gerir reconciliação e histórico</p>
+              <p className="text-sm text-gray-500">Registe depósitos operacionais e entregas de dinheiro físico e consulte o histórico por data</p>
             </div>
           </div>
         </div>
@@ -189,50 +189,82 @@ const EnhancedReconciliationScreen = ({ onBack }: EnhancedReconciliationScreenPr
           </CardContent>
         </Card>
 
-        {/* Actions */}
-        <div className="flex justify-end mb-4">
+        {/* Ações */}
+        <div className="flex flex-col md:flex-row gap-3 justify-end mb-4">
           <Dialog>
             <DialogTrigger asChild>
               <Button className="bg-kitadi-orange hover:bg-kitadi-orange/90">
                 <Plus className="w-4 h-4 mr-2" />
-                Adicionar Reconciliação
+                Reportar Depósito Bancário Operacional
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Adicionar Nova Reconciliação</DialogTitle>
+                <DialogTitle>Reportar Depósito Bancário Operacional</DialogTitle>
               </DialogHeader>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="amount">Valor (STN)</Label>
-                  <Input
-                    id="amount"
-                    type="number"
-                    placeholder="50000"
-                    value={newAmount}
-                    onChange={(e) => setNewAmount(e.target.value)}
-                  />
+                  <Label htmlFor="bankId">ID do Banco</Label>
+                  <Input id="bankId" placeholder="Ex: BFA-001" />
                 </div>
                 <div>
-                  <Label htmlFor="description">Descrição</Label>
-                  <Input
-                    id="description"
-                    placeholder="Descrição da transação"
-                    value={newDescription}
-                    onChange={(e) => setNewDescription(e.target.value)}
-                  />
+                  <Label htmlFor="operationId">ID da Operação</Label>
+                  <Input id="operationId" placeholder="Ex: OP-2024-0001" />
                 </div>
-              </div>
-              <div className="flex gap-2 mt-4">
-                <Button onClick={handleAddReport} disabled={!newAmount || !newDescription} className="bg-kitadi-orange hover:bg-kitadi-orange/90">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Guardar
-                </Button>
+                <div>
+                  <Label htmlFor="depositAmount">Valor (STN)</Label>
+                  <Input id="depositAmount" type="number" placeholder="Ex: 50000" />
+                </div>
+                <div>
+                  <Label htmlFor="depositDate">Data do Depósito</Label>
+                  <Input id="depositDate" type="date" />
+                </div>
               </div>
               <div className="p-3 bg-blue-50 border border-blue-200 rounded mt-4">
                 <p className="text-blue-700 text-sm">
-                  Confirme apenas valores físicos recebidos/entregues para este dia de reconciliação.
+                  Use este formulário para registar depósitos feitos em banco pelos operadores. Estes registos serão cruzados com os dados bancários oficiais.
                 </p>
+              </div>
+              <div className="flex gap-2 mt-4">
+                <Button className="bg-kitadi-orange hover:bg-kitadi-orange/90">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Guardar Registo
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Plus className="w-4 h-4 mr-2" />
+                Reportar Entrega de Dinheiro Físico
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Reportar Entrega de Dinheiro Físico</DialogTitle>
+              </DialogHeader>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="md:col-span-2">
+                  <Label htmlFor="cashAmount">Valor Entregue (STN)</Label>
+                  <Input id="cashAmount" type="number" placeholder="Ex: 75000" />
+                </div>
+                <div className="md:col-span-2">
+                  <Label htmlFor="cashDate">Data da Entrega</Label>
+                  <Input id="cashDate" type="date" />
+                </div>
+              </div>
+              <div className="p-3 bg-blue-50 border border-blue-200 rounded mt-4">
+                <p className="text-blue-700 text-sm">
+                  Utilize este registo quando um operador lhe entrega dinheiro em numerário. Este valor deve constar no resumo de reconciliação do dia.
+                </p>
+              </div>
+              <div className="flex gap-2 mt-4">
+                <Button className="bg-kitadi-orange hover:bg-kitadi-orange/90">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Guardar Registo
+                </Button>
               </div>
             </DialogContent>
           </Dialog>
@@ -250,7 +282,6 @@ const EnhancedReconciliationScreen = ({ onBack }: EnhancedReconciliationScreenPr
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>ID Relatório</TableHead>
                   <TableHead>ID Transação</TableHead>
                   <TableHead>Operador</TableHead>
                   <TableHead>Valor</TableHead>
@@ -261,7 +292,6 @@ const EnhancedReconciliationScreen = ({ onBack }: EnhancedReconciliationScreenPr
               <TableBody>
                 {mockReports.map((report) => (
                   <TableRow key={report.id}>
-                    <TableCell className="font-mono">{report.id}</TableCell>
                     <TableCell className="font-mono">{report.transactionId}</TableCell>
                     <TableCell>{report.operatorName}</TableCell>
                     <TableCell className="font-bold">
