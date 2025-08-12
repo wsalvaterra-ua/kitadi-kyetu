@@ -24,6 +24,15 @@ interface BankTransaction {
   status: 'PENDING';
 }
 
+interface CashReceipt {
+  id: string;
+  operatorName: string;
+  operatorPhone: string;
+  firstDigit: number;
+  fullValue: number;
+  submittedAt: string;
+}
+
 interface BankTransactionApprovalScreenProps {
   onBack: () => void;
 }
@@ -86,6 +95,25 @@ const BankTransactionApprovalScreen = ({ onBack }: BankTransactionApprovalScreen
       createdAt: '2024-01-15T16:10:00Z',
       status: 'PENDING'
     }
+  ];
+
+  const mockCashReceipts: CashReceipt[] = [
+    {
+      id: 'CR001',
+      operatorName: 'Agente A',
+      operatorPhone: '+239 900-0000',
+      firstDigit: 5,
+      fullValue: 50000,
+      submittedAt: '2024-01-15T12:05:00Z',
+    },
+    {
+      id: 'CR002',
+      operatorName: 'Agente B',
+      operatorPhone: '+239 900-0001',
+      firstDigit: 7,
+      fullValue: 70000,
+      submittedAt: '2024-01-15T15:40:00Z',
+    },
   ];
 
   const handleApprove = () => {
