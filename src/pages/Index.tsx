@@ -492,6 +492,10 @@ const handleWebAddReconciliation = () => {
           <WebTransactionsScreen 
             userType={webUserType}
             onBack={handleWebBack}
+            onOpenTransactionManagement={(id: string) => {
+              setWebSelectedTransactionId(id);
+              setCurrentScreen('web-transaction-management');
+            }}
           />
         );
       case 'web-extract':

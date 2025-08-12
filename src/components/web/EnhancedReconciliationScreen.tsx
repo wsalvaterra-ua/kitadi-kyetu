@@ -81,13 +81,13 @@ const EnhancedReconciliationScreen = ({ onBack }: EnhancedReconciliationScreenPr
   };
 
   const getStatusBadge = (status: string) => {
-    const variants = {
-      PENDING: 'secondary',
-      COMPLETED: 'default',
-      REJECTED: 'destructive'
-    } as const;
-    
-    return <Badge variant={variants[status as keyof typeof variants]}>{status}</Badge>;
+    if (status === 'COMPLETED') {
+      return <Badge variant="outline" className="rounded-sm bg-green-50 text-green-700 border-green-200">Concluído</Badge>;
+    }
+    if (status === 'PENDING') {
+      return <Badge variant="outline" className="rounded-sm bg-yellow-50 text-yellow-700 border-yellow-200">Pendente</Badge>;
+    }
+    return <Badge variant="outline" className="rounded-sm bg-red-50 text-red-700 border-red-200">Rejeitado</Badge>;
   };
 
   const getStatusIcon = (status: string) => {
@@ -222,7 +222,7 @@ const EnhancedReconciliationScreen = ({ onBack }: EnhancedReconciliationScreenPr
               </div>
               <div className="p-3 bg-blue-50 border border-blue-200 rounded mt-4">
                 <p className="text-blue-700 text-sm">
-                  Use este formulário para registar depósitos feitos em banco pelos operadores. Estes registos serão cruzados com os dados bancários oficiais.
+                  Este formulário é para quando você efetua um depósito operacional no banco. Indique o ID do banco, o ID da operação, o valor e a data do depósito. O registo será posteriormente reconciliado com os dados bancários.
                 </p>
               </div>
               <div className="flex gap-2 mt-4">
@@ -257,7 +257,7 @@ const EnhancedReconciliationScreen = ({ onBack }: EnhancedReconciliationScreenPr
               </div>
               <div className="p-3 bg-blue-50 border border-blue-200 rounded mt-4">
                 <p className="text-blue-700 text-sm">
-                  Utilize este registo quando um operador lhe entrega dinheiro em numerário. Este valor deve constar no resumo de reconciliação do dia.
+                  Use este formulário quando você entregar dinheiro físico a outro operador/cofre. Indique o valor e a data. Após submeter, aguarde até que o dinheiro seja contado e verificado pelo outro operador para a confirmação final.
                 </p>
               </div>
               <div className="flex gap-2 mt-4">
@@ -298,10 +298,7 @@ const EnhancedReconciliationScreen = ({ onBack }: EnhancedReconciliationScreenPr
                       {report.amount.toLocaleString()} STN
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-2">
-                        {getStatusIcon(report.status)}
-                        {getStatusBadge(report.status)}
-                      </div>
+                      {getStatusBadge(report.status)}
                     </TableCell>
                     <TableCell>
                       {new Date(report.createdAt).toLocaleString()}

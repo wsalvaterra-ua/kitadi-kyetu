@@ -266,12 +266,12 @@ const WebDashboard = ({
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <CheckCircle className="w-5 h-5" />
-                    Verificar Operações Operacionais (Banco e Dinheiro Físico)
+                    Verificar Operações de Reconciliação
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-600">
-                    Verifique depósitos, levantamentos e recepção de dinheiro físico com base em dados bancários e confirmação manual
+                    Verifique operações ligadas à reconciliação: depósitos bancários, levantamentos e receção de dinheiro físico
                   </p>
                   <Button variant="outline" className="mt-4 w-full">
                     Verificar

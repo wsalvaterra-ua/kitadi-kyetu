@@ -3,9 +3,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Search, Phone, User } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ArrowLeft, Search, Phone, User } from 'lucide-react';
 
 interface UserListItem {
   name: string;
@@ -107,18 +107,20 @@ const AccountManagementScreen = ({ onBack, onUserFound, onCreateNewUser, onManag
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <Tabs value={tab} onValueChange={(v) => { setTab(v as any); setResults(null); setHasSearched(false); }} className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="phone">Telefone</TabsTrigger>
-                <TabsTrigger value="name">Nome</TabsTrigger>
-                <TabsTrigger value="id">Identificação</TabsTrigger>
-                <TabsTrigger value="nif">NIF</TabsTrigger>
-              </TabsList>
-              <TabsContent value="phone" className="space-y-2" />
-              <TabsContent value="name" className="space-y-2" />
-              <TabsContent value="id" className="space-y-2" />
-              <TabsContent value="nif" className="space-y-2" />
-            </Tabs>
+            <div className="grid gap-2">
+              <Label className="text-sm font-medium">Critério de Pesquisa</Label>
+              <Select value={tab} onValueChange={(v) => { setTab(v as any); setResults(null); setHasSearched(false); }}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Escolha o critério" />
+                </SelectTrigger>
+                <SelectContent className="z-50 bg-white">
+                  <SelectItem value="phone">Telefone</SelectItem>
+                  <SelectItem value="name">Nome</SelectItem>
+                  <SelectItem value="id">Identificação</SelectItem>
+                  <SelectItem value="nif">NIF</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
             <div className="space-y-2">
               <Label className="text-sm font-medium">

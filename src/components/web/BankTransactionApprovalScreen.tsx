@@ -168,8 +168,8 @@ const BankTransactionApprovalScreen = ({ onBack }: BankTransactionApprovalScreen
               <ArrowLeft className="w-4 h-4" />
             </Button>
             <div>
-              <h1 className="text-xl font-bold text-kitadi-navy">Verificar Depósitos e Levantamentos Operacionais</h1>
-              <p className="text-sm text-gray-500">Verifique depósitos, levantamentos e recepção de dinheiro físico dos operadores com dados bancários e confirmações presenciais</p>
+              <h1 className="text-xl font-bold text-kitadi-navy">Verificar Operações de Reconciliação</h1>
+              <p className="text-sm text-gray-500">Verifique depósitos, levantamentos e receção de dinheiro físico dos operadores com dados bancários e confirmações presenciais</p>
             </div>
           </div>
         </div>

@@ -24,9 +24,10 @@ interface Transaction {
 interface WebTransactionsScreenProps {
   userType: 'personal' | 'business' | 'agent' | 'business-associated' | 'merchant';
   onBack: () => void;
+  onOpenTransactionManagement: (id: string) => void;
 }
 
-const WebTransactionsScreen = ({ userType, onBack }: WebTransactionsScreenProps) => {
+const WebTransactionsScreen = ({ userType, onBack, onOpenTransactionManagement }: WebTransactionsScreenProps) => {
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -512,34 +513,8 @@ const WebTransactionsScreen = ({ userType, onBack }: WebTransactionsScreenProps)
       <div className="max-w-4xl mx-auto px-6 py-8">
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl text-kitadi-navy flex items-center justify-between">
+            <CardTitle className="text-2xl text-kitadi-navy">
               Histórico de Transações
-              <div className="flex gap-2">
-                <Button 
-                  variant="outline" 
-                  onClick={handleRefresh}
-                  disabled={isRefreshing}
-                  className="gap-2"
-                >
-                  <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-                  {isRefreshing ? 'Atualizando...' : 'Atualizar'}
-                </Button>
-                <Button variant="outline" onClick={() => {
-                  // Generate CSV
-                  const csvContent = transactions.map(t => 
-                    `${t.date},${t.time},${t.type},${t.amount},${t.from || t.to || ''}`
-                  ).join('\n');
-                  const blob = new Blob([csvContent], { type: 'text/csv' });
-                  const url = URL.createObjectURL(blob);
-                  const a = document.createElement('a');
-                  a.href = url;
-                  a.download = 'transacoes.csv';
-                  a.click();
-                }}>
-                  <Download className="w-4 h-4 mr-2" />
-                  Exportar CSV
-                </Button>
-              </div>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -552,7 +527,7 @@ const WebTransactionsScreen = ({ userType, onBack }: WebTransactionsScreenProps)
                       <div 
                         key={transaction.id} 
                         className="flex items-center justify-between p-4 hover:bg-gray-50 rounded-lg border border-gray-100 cursor-pointer transition-colors"
-                        onClick={() => setSelectedTransaction(transaction)}
+                        onClick={() => onOpenTransactionManagement(transaction.transactionId)}
                       >
                         <div className="flex items-center space-x-3">
                           <div className="relative">
@@ -568,9 +543,13 @@ const WebTransactionsScreen = ({ userType, onBack }: WebTransactionsScreenProps)
                               <p className="font-medium text-gray-900">
                                 {getTransactionLabel(transaction.type, transaction)}
                               </p>
-                              {transaction.status === 'pending' && (
+                              {transaction.status === 'pending' ? (
                                 <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
                                   Pendente
+                                </Badge>
+                              ) : (
+                                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 text-xs">
+                                  Concluída
                                 </Badge>
                               )}
                             </div>
