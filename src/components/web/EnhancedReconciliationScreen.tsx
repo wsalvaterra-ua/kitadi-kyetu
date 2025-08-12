@@ -190,7 +190,7 @@ const EnhancedReconciliationScreen = ({ onBack }: EnhancedReconciliationScreenPr
         </Card>
 
         {/* Ações */}
-        <div className="flex flex-col md:flex-row gap-3 justify-end mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
           <Dialog>
             <DialogTrigger asChild>
               <Button className="bg-kitadi-orange hover:bg-kitadi-orange/90">

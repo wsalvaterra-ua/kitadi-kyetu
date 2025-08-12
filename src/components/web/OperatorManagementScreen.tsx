@@ -271,7 +271,7 @@ const OperatorManagementScreen = ({ onBack }: OperatorManagementScreenProps) => 
                   </Label>
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="maxCashLimit">Limite de Caixa (STN)</Label>
+                      <Label htmlFor="maxCashLimit">Limite de Dinheiro Vivo (STN)</Label>
                       <Input
                         id="maxCashLimit"
                         type="number"
