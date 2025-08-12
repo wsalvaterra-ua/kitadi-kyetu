@@ -166,9 +166,9 @@ const ExternalBankTransferScreen = ({ onBack }: ExternalBankTransferScreenProps)
       <div className="max-w-4xl mx-auto px-6 py-8">
         <Tabs defaultValue="with-proof" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="with-proof">Verify Cash in with Comprovativo ({mockTransfers.filter(t => t.status === 'PENDING').length})</TabsTrigger>
-            <TabsTrigger value="manual-cashin">cashin manual</TabsTrigger>
-            <TabsTrigger value="cashout">Cashout</TabsTrigger>
+            <TabsTrigger value="with-proof">Verificar Cash-in com Comprovativo ({mockTransfers.filter(t => t.status === 'PENDING').length})</TabsTrigger>
+            <TabsTrigger value="manual-cashin">Cash-in Manual</TabsTrigger>
+            <TabsTrigger value="cashout">Levantamentos</TabsTrigger>
           </TabsList>
           
           <TabsContent value="with-proof" className="space-y-6">
