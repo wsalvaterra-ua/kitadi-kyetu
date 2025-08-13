@@ -16,8 +16,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: 210 60% 15%;
 
-    /* Primary color using Kitadi's deep navy blue */
-    --primary: 210 60% 15%;
+    /* Primary color using Kitadi's orange */
+    --primary: 35 85% 55%;
     --primary-foreground: 0 0% 98%;
 
     /* Secondary using Kitadi's warm amber/orange */
@@ -27,9 +27,9 @@
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    /* Accent using Kitadi's orange tone */
-    --accent: 20 85% 55%;
-    --accent-foreground: 0 0% 98%;
+    /* Accent using Kitadi's light orange for hover */
+    --accent: 35 85% 70%;
+    --accent-foreground: 210 60% 15%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;

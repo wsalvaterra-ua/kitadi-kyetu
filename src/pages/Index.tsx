@@ -30,6 +30,7 @@ import WebDashboard from '@/components/web/WebDashboard';
 import WebTransactionsScreen from '@/components/web/WebTransactionsScreen';
 import WebExtractScreen from '@/components/web/WebExtractScreen';
 import AccountManagementScreen from '@/components/web/AccountManagementScreen';
+import { BackofficeLayout } from '@/components/layout/BackofficeLayout';
 import UserAccountManagementScreen from '@/components/web/UserAccountManagementScreen';
 import UserProfileScreen from '@/components/web/UserProfileScreen';
 import CreateUserProfileScreen from '@/components/web/CreateUserProfileScreen';
@@ -160,6 +161,10 @@ const Index = () => {
   const handleWebVersion = () => {
     setIsWebVersion(true);
     setCurrentScreen('web-login');
+  };
+
+  const handleWebNavigate = (screen: string) => {
+    setCurrentScreen(screen as AppScreen);
   };
 
   const handleWebLogin = (userType: 'personal' | 'business' | 'agent' | 'business-associated' | 'merchant') => {
@@ -469,146 +474,272 @@ const handleWebAddReconciliation = () => {
         );
       case 'web-dashboard':
         return (
-          <WebDashboard
-            userType={webUserType}
+          <BackofficeLayout
             onLogout={handleWebLogout}
-            onViewTransactions={handleWebTransactions}
-            onDownloadExtract={handleWebExtract}
-            onCreateMerchantProfile={handleWebCreateMerchantProfile}
-            onAddReconciliation={handleWebAddReconciliation}
-            onTransactionManagement={handleWebTransactionManagement}
-            onAccountOwnership={handleWebAccountOwnership}
-            onBankTransactionApproval={handleWebBankTransactionApproval}
-            onCashVerification={handleWebCashVerification}
-            onCashReserve={handleWebCashReserve}
-            onExternalBankTransfer={handleWebExternalBankTransfer}
-            onOperatorManagement={handleWebOperatorManagement}
-            onWithdrawalReport={handleWebWithdrawalReport}
-            onAgentCashoutRequest={handleWebAgentCashout}
-          />
+            onNavigate={handleWebNavigate}
+            currentScreen={currentScreen}
+            userType={webUserType}
+          >
+            <WebDashboard
+              userType={webUserType}
+              onLogout={handleWebLogout}
+              onViewTransactions={handleWebTransactions}
+              onDownloadExtract={handleWebExtract}
+              onCreateMerchantProfile={handleWebCreateMerchantProfile}
+              onAddReconciliation={handleWebAddReconciliation}
+              onTransactionManagement={handleWebTransactionManagement}
+              onAccountOwnership={handleWebAccountOwnership}
+              onBankTransactionApproval={handleWebBankTransactionApproval}
+              onCashVerification={handleWebCashVerification}
+              onCashReserve={handleWebCashReserve}
+              onExternalBankTransfer={handleWebExternalBankTransfer}
+              onOperatorManagement={handleWebOperatorManagement}
+              onWithdrawalReport={handleWebWithdrawalReport}
+              onAgentCashoutRequest={handleWebAgentCashout}
+            />
+          </BackofficeLayout>
         );
       case 'web-transactions':
         return (
-          <WebTransactionsScreen 
+          <BackofficeLayout
+            onLogout={handleWebLogout}
+            onNavigate={handleWebNavigate}
+            currentScreen={currentScreen}
             userType={webUserType}
-            onBack={handleWebBack}
-            onOpenTransactionManagement={(id: string) => {
-              setWebSelectedTransactionId(id);
-              setCurrentScreen('web-transaction-management');
-            }}
-          />
+          >
+            <WebTransactionsScreen 
+              userType={webUserType}
+              onBack={handleWebBack}
+              onOpenTransactionManagement={(id: string) => {
+                setWebSelectedTransactionId(id);
+                setCurrentScreen('web-transaction-management');
+              }}
+            />
+          </BackofficeLayout>
         );
       case 'web-extract':
         return (
-          <WebExtractScreen 
+          <BackofficeLayout
+            onLogout={handleWebLogout}
+            onNavigate={handleWebNavigate}
+            currentScreen={currentScreen}
             userType={webUserType}
-            onBack={handleWebBack}
-          />
+          >
+            <WebExtractScreen 
+              userType={webUserType}
+              onBack={handleWebBack}
+            />
+          </BackofficeLayout>
         );
       case 'web-account-management':
         return (
-          <AccountManagementScreen
-            onBack={handleWebBack}
-            onUserFound={(phone) => {
-              setUserManagementPhone(phone);
-              setCurrentScreen('web-user-account-management');
-            }}
-            onCreateNewUser={(phone) => {
-              setUserManagementPhone(phone);
-              setCurrentScreen('web-create-user');
-            }}
-            onManageUser={(phone) => {
-              setUserManagementPhone(phone);
-              setCurrentScreen('web-user-account-management');
-            }}
-            onManageAccess={(phone) => {
-              setUserManagementPhone(phone);
-              setCurrentScreen('web-user-access');
-            }}
-            onManageConfig={(phone) => {
-              setUserManagementPhone(phone);
-              setCurrentScreen('web-user-config');
-            }}
-          />
+          <BackofficeLayout
+            onLogout={handleWebLogout}
+            onNavigate={handleWebNavigate}
+            currentScreen={currentScreen}
+            userType={webUserType}
+          >
+            <AccountManagementScreen
+              onBack={handleWebBack}
+              onUserFound={(phone) => {
+                setUserManagementPhone(phone);
+                setCurrentScreen('web-user-account-management');
+              }}
+              onCreateNewUser={(phone) => {
+                setUserManagementPhone(phone);
+                setCurrentScreen('web-create-user');
+              }}
+              onManageUser={(phone) => {
+                setUserManagementPhone(phone);
+                setCurrentScreen('web-user-account-management');
+              }}
+              onManageAccess={(phone) => {
+                setUserManagementPhone(phone);
+                setCurrentScreen('web-user-access');
+              }}
+              onManageConfig={(phone) => {
+                setUserManagementPhone(phone);
+                setCurrentScreen('web-user-config');
+              }}
+            />
+          </BackofficeLayout>
         );
       case 'web-user-account-management':
         return (
-          <UserAccountManagementScreen
-            phoneNumber={userManagementPhone}
-            onBack={handleWebBack}
-            onOpenTransactionManagement={(id: string) => {
-              setWebSelectedTransactionId(id);
-              setCurrentScreen('web-transaction-management');
-            }}
-          />
+          <BackofficeLayout
+            onLogout={handleWebLogout}
+            onNavigate={handleWebNavigate}
+            currentScreen={currentScreen}
+            userType={webUserType}
+          >
+            <UserAccountManagementScreen
+              phoneNumber={userManagementPhone}
+              onBack={handleWebBack}
+              onOpenTransactionManagement={(id: string) => {
+                setWebSelectedTransactionId(id);
+                setCurrentScreen('web-transaction-management');
+              }}
+            />
+          </BackofficeLayout>
         );
       case 'web-user-access':
         return (
-          <UserAccessManagementScreen
-            phoneNumber={userManagementPhone}
-            onBack={handleWebBack}
-          />
+          <BackofficeLayout
+            onLogout={handleWebLogout}
+            onNavigate={handleWebNavigate}
+            currentScreen={currentScreen}
+            userType={webUserType}
+          >
+            <UserAccessManagementScreen
+              phoneNumber={userManagementPhone}
+              onBack={handleWebBack}
+            />
+          </BackofficeLayout>
         );
       case 'web-user-config':
         return (
-          <UserConfigScreen
-            phoneNumber={userManagementPhone}
-            onBack={handleWebBack}
-          />
+          <BackofficeLayout
+            onLogout={handleWebLogout}
+            onNavigate={handleWebNavigate}
+            currentScreen={currentScreen}
+            userType={webUserType}
+          >
+            <UserConfigScreen
+              phoneNumber={userManagementPhone}
+              onBack={handleWebBack}
+            />
+          </BackofficeLayout>
         );
       case 'web-create-user':
         return (
-          <CreateUserProfileScreen
-            phoneNumber={userManagementPhone}
-            onBack={handleWebBack}
-            onUserCreated={() => {
-              setCurrentScreen('web-user-account-management');
-            }}
-          />
+          <BackofficeLayout
+            onLogout={handleWebLogout}
+            onNavigate={handleWebNavigate}
+            currentScreen={currentScreen}
+            userType={webUserType}
+          >
+            <CreateUserProfileScreen
+              phoneNumber={userManagementPhone}
+              onBack={handleWebBack}
+              onUserCreated={() => {
+                setCurrentScreen('web-user-account-management');
+              }}
+            />
+          </BackofficeLayout>
         );
       case 'web-reconciliation':
         return (
-          <EnhancedReconciliationScreen
-            onBack={handleWebBack}
-          />
+          <BackofficeLayout
+            onLogout={handleWebLogout}
+            onNavigate={handleWebNavigate}
+            currentScreen={currentScreen}
+            userType={webUserType}
+          >
+            <EnhancedReconciliationScreen
+              onBack={handleWebBack}
+            />
+          </BackofficeLayout>
         );
       case 'web-transaction-management':
         return (
-          <TransactionManagementScreen onBack={handleWebBack} initialTransactionId={webSelectedTransactionId || undefined} />
+          <BackofficeLayout
+            onLogout={handleWebLogout}
+            onNavigate={handleWebNavigate}
+            currentScreen={currentScreen}
+            userType={webUserType}
+          >
+            <TransactionManagementScreen onBack={handleWebBack} initialTransactionId={webSelectedTransactionId || undefined} />
+          </BackofficeLayout>
         );
       case 'web-account-ownership':
         return (
-          <AccountOwnershipScreen onBack={handleWebBack} />
+          <BackofficeLayout
+            onLogout={handleWebLogout}
+            onNavigate={handleWebNavigate}
+            currentScreen={currentScreen}
+            userType={webUserType}
+          >
+            <AccountOwnershipScreen onBack={handleWebBack} />
+          </BackofficeLayout>
         );
       case 'web-bank-approval':
         return (
-          <BankTransactionApprovalScreen onBack={handleWebBack} />
+          <BackofficeLayout
+            onLogout={handleWebLogout}
+            onNavigate={handleWebNavigate}
+            currentScreen={currentScreen}
+            userType={webUserType}
+          >
+            <BankTransactionApprovalScreen onBack={handleWebBack} />
+          </BackofficeLayout>
         );
       case 'web-cash-verification':
         return (
-          <CashVerificationScreen onBack={handleWebBack} />
+          <BackofficeLayout
+            onLogout={handleWebLogout}
+            onNavigate={handleWebNavigate}
+            currentScreen={currentScreen}
+            userType={webUserType}
+          >
+            <CashVerificationScreen onBack={handleWebBack} />
+          </BackofficeLayout>
         );
       case 'web-cash-reserve':
         return (
-          <CashReserveScreen onBack={handleWebBack} />
+          <BackofficeLayout
+            onLogout={handleWebLogout}
+            onNavigate={handleWebNavigate}
+            currentScreen={currentScreen}
+            userType={webUserType}
+          >
+            <CashReserveScreen onBack={handleWebBack} />
+          </BackofficeLayout>
         );
       case 'web-external-bank-transfer':
         return (
-          <ExternalBankTransferScreen onBack={handleWebBack} />
+          <BackofficeLayout
+            onLogout={handleWebLogout}
+            onNavigate={handleWebNavigate}
+            currentScreen={currentScreen}
+            userType={webUserType}
+          >
+            <ExternalBankTransferScreen onBack={handleWebBack} />
+          </BackofficeLayout>
         );
       case 'web-operator-management':
         return (
-          <OperatorManagementScreen onBack={handleWebBack} />
+          <BackofficeLayout
+            onLogout={handleWebLogout}
+            onNavigate={handleWebNavigate}
+            currentScreen={currentScreen}
+            userType={webUserType}
+          >
+            <OperatorManagementScreen onBack={handleWebBack} />
+          </BackofficeLayout>
         );
       case 'web-withdrawal-report':
         return (
-          <WithdrawalReportScreen onBack={handleWebBack} />
+          <BackofficeLayout
+            onLogout={handleWebLogout}
+            onNavigate={handleWebNavigate}
+            currentScreen={currentScreen}
+            userType={webUserType}
+          >
+            <WithdrawalReportScreen onBack={handleWebBack} />
+          </BackofficeLayout>
         );
       case 'web-client-transactions':
         return (
-          <ClientTransactionsScreen
-            onBack={handleWebBack}
-          />
+          <BackofficeLayout
+            onLogout={handleWebLogout}
+            onNavigate={handleWebNavigate}
+            currentScreen={currentScreen}
+            userType={webUserType}
+          >
+            <ClientTransactionsScreen
+              onBack={handleWebBack}
+            />
+          </BackofficeLayout>
         );
       default:
         return <OnboardingScreen onComplete={handleOnboardingComplete} onWebVersion={handleWebVersion} />;
@@ -617,9 +748,13 @@ const handleWebAddReconciliation = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className={`${isWebVersion ? 'max-w-6xl' : 'max-w-md'} mx-auto bg-white min-h-screen ${isWebVersion ? '' : 'shadow-lg'}`}>
-        {renderScreen()}
-      </div>
+      {isWebVersion ? (
+        renderScreen()
+      ) : (
+        <div className="max-w-md mx-auto bg-white min-h-screen shadow-lg">
+          {renderScreen()}
+        </div>
+      )}
     </div>
   );
 };
