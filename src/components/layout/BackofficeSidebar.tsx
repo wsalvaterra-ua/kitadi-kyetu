@@ -12,7 +12,9 @@ import {
   Settings,
   ChevronDown,
   Menu,
-  X
+  X,
+  CheckCircle,
+  Wallet
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -31,12 +33,15 @@ interface MenuItem {
   children?: MenuItem[];
 }
 
-const menuItems: MenuItem[] = [
+const dashboardItems: MenuItem[] = [
   {
     title: "Dashboard",
     icon: LayoutDashboard,
     screen: "web-dashboard"
-  },
+  }
+];
+
+const customerItems: MenuItem[] = [
   {
     title: "Customer Search",
     icon: Search,
@@ -51,29 +56,55 @@ const menuItems: MenuItem[] = [
     title: "Account Creation",
     icon: UserPlus,
     screen: "web-create-user"
+  }
+];
+
+const transactionItems: MenuItem[] = [
+  {
+    title: "Client Transactions",
+    icon: ArrowLeftRight,
+    screen: "web-transactions"
   },
+  {
+    title: "Transaction Management",
+    icon: Search,
+    screen: "web-transaction-management"
+  }
+];
+
+const accountItems: MenuItem[] = [
   {
     title: "Business Accounts",
     icon: Building2,
     screen: "web-account-management"
+  },
+  {
+    title: "Account Ownership",
+    icon: CreditCard,
+    screen: "web-account-ownership"
   }
 ];
 
 const operationsItems: MenuItem[] = [
-  {
-    title: "Transactions",
-    icon: ArrowLeftRight,
-    screen: "web-transactions"
-  },
   {
     title: "Cash Operations",
     icon: DollarSign,
     screen: "web-cash-verification"
   },
   {
-    title: "Account Management",
-    icon: CreditCard,
-    screen: "web-account-ownership"
+    title: "Bank Approvals",
+    icon: CheckCircle,
+    screen: "web-bank-approval"
+  },
+  {
+    title: "Cash Reserves",
+    icon: Wallet,
+    screen: "web-cash-reserve"
+  },
+  {
+    title: "External Transfers",
+    icon: ArrowLeftRight,
+    screen: "web-external-bank-transfer"
   }
 ];
 
@@ -82,6 +113,11 @@ const systemItems: MenuItem[] = [
     title: "Reports",
     icon: FileText,
     screen: "web-withdrawal-report"
+  },
+  {
+    title: "Operator Management",
+    icon: Users,
+    screen: "web-operator-management"
   },
   {
     title: "Settings",
@@ -173,19 +209,30 @@ export function BackofficeSidebar({
       isCollapsed ? "w-20" : "w-64"
     )}>
       {/* Header */}
-      <div className="p-4 border-b border-sidebar-border">
+      <div className="p-4 border-b border-sidebar-border bg-white">
         <div className="flex items-center justify-between">
           {!isCollapsed && (
             <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center border border-gray-200">
+                <img 
+                  src="/lovable-uploads/36c7e433-7a25-4dc4-883e-498016607394.png" 
+                  alt="Kitadi Logo" 
+                  className="w-8 h-8 object-contain"
+                />
+              </div>
+              <div>
+                <h1 className="text-lg font-semibold text-kitadi-navy">Kitadi</h1>
+                <p className="text-sm text-gray-500">Backoffice</p>
+              </div>
+            </div>
+          )}
+          {isCollapsed && (
+            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center border border-gray-200 mx-auto">
               <img 
                 src="/lovable-uploads/36c7e433-7a25-4dc4-883e-498016607394.png" 
                 alt="Kitadi Logo" 
-                className="w-8 h-8 rounded-lg object-contain"
+                className="w-6 h-6 object-contain"
               />
-              <div>
-                <h1 className="text-lg font-semibold text-sidebar-foreground">Kitadi</h1>
-                <p className="text-sm text-sidebar-foreground/60">Backoffice</p>
-              </div>
             </div>
           )}
           <Button
@@ -202,8 +249,32 @@ export function BackofficeSidebar({
       {/* Navigation */}
       <div className="flex-1 overflow-y-auto">
         <MenuSection
-          title="Main Menu"
-          items={menuItems}
+          title="Dashboard"
+          items={dashboardItems}
+          isCollapsed={isCollapsed}
+          onNavigate={onNavigate}
+          currentScreen={currentScreen}
+        />
+        
+        <MenuSection
+          title="Customers"
+          items={customerItems}
+          isCollapsed={isCollapsed}
+          onNavigate={onNavigate}
+          currentScreen={currentScreen}
+        />
+        
+        <MenuSection
+          title="Transactions"
+          items={transactionItems}
+          isCollapsed={isCollapsed}
+          onNavigate={onNavigate}
+          currentScreen={currentScreen}
+        />
+        
+        <MenuSection
+          title="Accounts"
+          items={accountItems}
           isCollapsed={isCollapsed}
           onNavigate={onNavigate}
           currentScreen={currentScreen}

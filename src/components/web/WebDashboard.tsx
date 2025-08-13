@@ -122,14 +122,14 @@ const WebDashboard = ({
         {/* Balance Card */}
         <Card className="mb-8">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-kitadi-orange">
               <CreditCard className="w-5 h-5" />
               {userInfo.title}
             </CardTitle>
             <p className="text-sm text-gray-600">{userInfo.description}</p>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-kitadi-navy mb-2">
+            <div className="text-3xl font-bold text-kitadi-orange mb-2">
               {userInfo.balance}
             </div>
             <p className="text-gray-600">
@@ -142,7 +142,7 @@ const WebDashboard = ({
         <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
           <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onViewTransactions}>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-kitadi-orange">
                 <Eye className="w-5 h-5" />
                 Ver Transações
               </CardTitle>
@@ -159,7 +159,7 @@ const WebDashboard = ({
 
           <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onDownloadExtract}>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-kitadi-orange">
                 <Download className="w-5 h-5" />
                 Baixar Extrato
               </CardTitle>
@@ -179,7 +179,7 @@ const WebDashboard = ({
             <>
               <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onCreateMerchantProfile}>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-kitadi-orange">
                     <Building className="w-5 h-5" />
                     Gerir Clientes
                   </CardTitle>
@@ -196,7 +196,7 @@ const WebDashboard = ({
 
               <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onAgentCashoutRequest}>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-kitadi-orange">
                     <Banknote className="w-5 h-5" />
                     Transações com Cliente
                   </CardTitle>
@@ -213,7 +213,7 @@ const WebDashboard = ({
 
               <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onTransactionManagement}>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-kitadi-orange">
                     <Search className="w-5 h-5" />
                     Gestão de Transações
                   </CardTitle>
@@ -230,7 +230,7 @@ const WebDashboard = ({
 
               <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onAccountOwnership}>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-kitadi-orange">
                     <UserCheck className="w-5 h-5" />
                     Gestão de Proprietários
                   </CardTitle>
@@ -247,7 +247,7 @@ const WebDashboard = ({
 
               <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onAddReconciliation}>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-kitadi-orange">
                     <Plus className="w-5 h-5" />
                     Reconciliação
                   </CardTitle>
@@ -264,7 +264,7 @@ const WebDashboard = ({
 
               <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onBankTransactionApproval}>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-kitadi-orange">
                     <CheckCircle className="w-5 h-5" />
                     Verificar Operações de Reconciliação
                   </CardTitle>
@@ -282,7 +282,7 @@ const WebDashboard = ({
 
               <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onCashReserve}>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-kitadi-orange">
                     <Wallet className="w-5 h-5" />
                     Reserva de Dinheiro
                   </CardTitle>
@@ -299,7 +299,7 @@ const WebDashboard = ({
 
               <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onExternalBankTransfer}>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-kitadi-orange">
                     <FileText className="w-5 h-5" />
                     Verificar Cash In/Out via Banco
                   </CardTitle>
@@ -317,7 +317,7 @@ const WebDashboard = ({
 
               <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onOperatorManagement}>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-kitadi-orange">
                     <Settings className="w-5 h-5" />
                     Gestão de Operadores
                   </CardTitle>
@@ -339,7 +339,7 @@ const WebDashboard = ({
         {(userType === 'merchant' || userType === 'business' || userType === 'agent' || userType === 'business-associated') && (
           <Card className="mt-6">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-kitadi-orange">
                 <Users className="w-5 h-5" />
                 {userType === 'merchant' && 'Informações Comerciais'}
                 {userType === 'business' && 'Métricas do Negócio'}

@@ -41,7 +41,7 @@ export function BackofficeLayout({
   };
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="min-h-screen bg-background flex w-full">
       <BackofficeSidebar
         isCollapsed={isSidebarCollapsed}
         onToggleCollapse={toggleSidebar}
@@ -49,16 +49,16 @@ export function BackofficeLayout({
         currentScreen={currentScreen}
       />
       
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Top Header */}
         <header className="bg-card border-b border-border px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-semibold text-foreground">{getPageTitle()}</h1>
+              <h1 className="text-2xl font-semibold text-kitadi-orange">{getPageTitle()}</h1>
               <nav className="flex items-center space-x-2 text-sm text-muted-foreground mt-1">
                 <span>Home</span>
                 <span>›</span>
-                <span className="text-foreground">{getPageTitle()}</span>
+                <span className="text-kitadi-orange">{getPageTitle()}</span>
               </nav>
             </div>
             
@@ -91,7 +91,7 @@ export function BackofficeLayout({
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 p-6 overflow-y-auto">
+        <main className="flex-1 p-6 overflow-y-auto w-full">
           {children}
         </main>
       </div>
