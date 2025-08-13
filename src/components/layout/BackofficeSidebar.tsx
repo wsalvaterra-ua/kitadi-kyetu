@@ -115,8 +115,8 @@ const MenuSection = ({
             size="sm"
             className={cn(
               "w-12 h-12 p-0 mx-auto mb-2 flex items-center justify-center",
-              "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-              currentScreen === item.screen && "bg-sidebar-primary text-sidebar-primary-foreground"
+              "text-sidebar-foreground hover:bg-kitadi-orange/10 hover:text-kitadi-orange",
+              currentScreen === item.screen && "bg-kitadi-orange text-white"
             )}
             onClick={() => item.screen && onNavigate(item.screen)}
             title={item.title}
@@ -146,8 +146,8 @@ const MenuSection = ({
               variant="ghost"
               size="sm"
               className={cn(
-                "w-full justify-start px-4 py-3 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                currentScreen === item.screen && "bg-sidebar-primary text-sidebar-primary-foreground"
+                "w-full justify-start px-4 py-3 text-sidebar-foreground hover:bg-kitadi-orange/10 hover:text-kitadi-orange",
+                currentScreen === item.screen && "bg-kitadi-orange text-white"
               )}
               onClick={() => item.screen && onNavigate(item.screen)}
             >
@@ -177,9 +177,11 @@ export function BackofficeSidebar({
         <div className="flex items-center justify-between">
           {!isCollapsed && (
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-kitadi-orange rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">K</span>
-              </div>
+              <img 
+                src="/lovable-uploads/36c7e433-7a25-4dc4-883e-498016607394.png" 
+                alt="Kitadi Logo" 
+                className="w-8 h-8 rounded-lg object-contain"
+              />
               <div>
                 <h1 className="text-lg font-semibold text-sidebar-foreground">Kitadi</h1>
                 <p className="text-sm text-sidebar-foreground/60">Backoffice</p>
