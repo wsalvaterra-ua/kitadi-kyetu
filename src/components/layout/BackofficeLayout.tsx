@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { BackofficeSidebar } from "./BackofficeSidebar";
 import { Button } from "@/components/ui/button";
-import { LogOut, Bell, User } from "lucide-react";
+import { LogOut, User, PanelLeft } from "lucide-react";
 
 interface BackofficeLayoutProps {
   children: React.ReactNode;
@@ -53,20 +53,26 @@ export function BackofficeLayout({
         {/* Top Header */}
         <header className="bg-card border-b border-border px-6 py-4">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold text-kitadi-orange">{getPageTitle()}</h1>
-              <nav className="flex items-center space-x-2 text-sm text-muted-foreground mt-1">
-                <span>Home</span>
-                <span>›</span>
-                <span className="text-kitadi-orange">{getPageTitle()}</span>
-              </nav>
+            <div className="flex items-center space-x-4">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={toggleSidebar}
+                className="p-2 text-kitadi-orange hover:bg-kitadi-orange/10"
+              >
+                <PanelLeft className="h-5 w-5" />
+              </Button>
+              <div>
+                <h1 className="text-2xl font-semibold text-kitadi-orange">{getPageTitle()}</h1>
+                <nav className="flex items-center space-x-2 text-sm text-muted-foreground mt-1">
+                  <span>Home</span>
+                  <span>›</span>
+                  <span className="text-kitadi-orange">{getPageTitle()}</span>
+                </nav>
+              </div>
             </div>
             
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm" className="p-2">
-                <Bell className="h-5 w-5" />
-              </Button>
-              
               <div className="flex items-center space-x-3">
                 <div className="text-right">
                   <p className="text-sm font-medium text-foreground">Operador</p>

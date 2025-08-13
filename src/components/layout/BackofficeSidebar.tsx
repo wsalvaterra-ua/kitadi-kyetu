@@ -35,7 +35,7 @@ interface MenuItem {
 
 const dashboardItems: MenuItem[] = [
   {
-    title: "Dashboard",
+    title: "Painel de Controle",
     icon: LayoutDashboard,
     screen: "web-dashboard"
   }
@@ -43,17 +43,17 @@ const dashboardItems: MenuItem[] = [
 
 const customerItems: MenuItem[] = [
   {
-    title: "Customer Search",
+    title: "Busca de Clientes",
     icon: Search,
     screen: "web-user-account-management"
   },
   {
-    title: "Customer Profiles",
+    title: "Perfis de Clientes",
     icon: Users,
     screen: "web-user-access"
   },
   {
-    title: "Account Creation",
+    title: "Criação de Conta",
     icon: UserPlus,
     screen: "web-create-user"
   }
@@ -61,12 +61,12 @@ const customerItems: MenuItem[] = [
 
 const transactionItems: MenuItem[] = [
   {
-    title: "Client Transactions",
+    title: "Transações de Clientes",
     icon: ArrowLeftRight,
     screen: "web-transactions"
   },
   {
-    title: "Transaction Management",
+    title: "Gestão de Transações",
     icon: Search,
     screen: "web-transaction-management"
   }
@@ -74,12 +74,12 @@ const transactionItems: MenuItem[] = [
 
 const accountItems: MenuItem[] = [
   {
-    title: "Business Accounts",
+    title: "Contas Empresariais",
     icon: Building2,
     screen: "web-account-management"
   },
   {
-    title: "Account Ownership",
+    title: "Propriedade de Conta",
     icon: CreditCard,
     screen: "web-account-ownership"
   }
@@ -87,22 +87,22 @@ const accountItems: MenuItem[] = [
 
 const operationsItems: MenuItem[] = [
   {
-    title: "Cash Operations",
+    title: "Operações de Caixa",
     icon: DollarSign,
     screen: "web-cash-verification"
   },
   {
-    title: "Bank Approvals",
+    title: "Aprovações Bancárias",
     icon: CheckCircle,
     screen: "web-bank-approval"
   },
   {
-    title: "Cash Reserves",
+    title: "Reservas de Caixa",
     icon: Wallet,
     screen: "web-cash-reserve"
   },
   {
-    title: "External Transfers",
+    title: "Transferências Externas",
     icon: ArrowLeftRight,
     screen: "web-external-bank-transfer"
   }
@@ -110,17 +110,17 @@ const operationsItems: MenuItem[] = [
 
 const systemItems: MenuItem[] = [
   {
-    title: "Reports",
+    title: "Relatórios",
     icon: FileText,
     screen: "web-withdrawal-report"
   },
   {
-    title: "Operator Management",
+    title: "Gestão de Operadores",
     icon: Users,
     screen: "web-operator-management"
   },
   {
-    title: "Settings",
+    title: "Configurações",
     icon: Settings,
     screen: "web-user-config"
   }
@@ -215,7 +215,7 @@ export function BackofficeSidebar({
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center border border-gray-200">
                 <img 
-                  src="/lovable-uploads/36c7e433-7a25-4dc4-883e-498016607394.png" 
+                  src="/lovable-uploads/eaf20c9f-d9d2-4df9-a59b-9270a930044e.png" 
                   alt="Kitadi Logo" 
                   className="w-8 h-8 object-contain"
                 />
@@ -229,27 +229,19 @@ export function BackofficeSidebar({
           {isCollapsed && (
             <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center border border-gray-200 mx-auto">
               <img 
-                src="/lovable-uploads/36c7e433-7a25-4dc4-883e-498016607394.png" 
+                src="/lovable-uploads/eaf20c9f-d9d2-4df9-a59b-9270a930044e.png" 
                 alt="Kitadi Logo" 
                 className="w-6 h-6 object-contain"
               />
             </div>
           )}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onToggleCollapse}
-            className="p-2 text-sidebar-foreground hover:bg-sidebar-accent"
-          >
-            {isCollapsed ? <Menu className="h-5 w-5" /> : <X className="h-5 w-5" />}
-          </Button>
         </div>
       </div>
 
       {/* Navigation */}
       <div className="flex-1 overflow-y-auto">
         <MenuSection
-          title="Dashboard"
+          title="Painel"
           items={dashboardItems}
           isCollapsed={isCollapsed}
           onNavigate={onNavigate}
@@ -257,7 +249,7 @@ export function BackofficeSidebar({
         />
         
         <MenuSection
-          title="Customers"
+          title="Clientes"
           items={customerItems}
           isCollapsed={isCollapsed}
           onNavigate={onNavigate}
@@ -265,7 +257,7 @@ export function BackofficeSidebar({
         />
         
         <MenuSection
-          title="Transactions"
+          title="Transações"
           items={transactionItems}
           isCollapsed={isCollapsed}
           onNavigate={onNavigate}
@@ -273,7 +265,7 @@ export function BackofficeSidebar({
         />
         
         <MenuSection
-          title="Accounts"
+          title="Contas"
           items={accountItems}
           isCollapsed={isCollapsed}
           onNavigate={onNavigate}
@@ -281,7 +273,7 @@ export function BackofficeSidebar({
         />
         
         <MenuSection
-          title="Operations"
+          title="Operações"
           items={operationsItems}
           isCollapsed={isCollapsed}
           onNavigate={onNavigate}
@@ -289,7 +281,7 @@ export function BackofficeSidebar({
         />
         
         <MenuSection
-          title="System"
+          title="Sistema"
           items={systemItems}
           isCollapsed={isCollapsed}
           onNavigate={onNavigate}
