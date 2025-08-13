@@ -16,11 +16,11 @@
     --popover: 0 0% 100%;
     --popover-foreground: 210 60% 15%;
 
-    /* Primary color using Kitadi's orange */
-    --primary: 35 85% 55%;
+    /* Primary color using Kitadi's main orange */
+    --primary: 15 87% 54%;
     --primary-foreground: 0 0% 98%;
 
-    /* Secondary using Kitadi's warm amber/orange */
+    /* Secondary using Kitadi's secondary orange */
     --secondary: 35 85% 55%;
     --secondary-foreground: 210 60% 15%;
 
@@ -52,8 +52,8 @@
     /* Custom Kitadi brand colors */
     --kitadi-navy: 210 60% 15%;
     --kitadi-navy-overlay: 210deg 60% 15% / 57%;
-    --kitadi-orange: 35 85% 55%;
-    --kitadi-red-orange: 20 85% 55%;
+    --kitadi-orange: 15 87% 54%;
+    --kitadi-secondary-orange: 35 85% 55%;
     --kitadi-light-orange: 35 85% 70%;
   }
 
@@ -67,7 +67,7 @@
     --popover: 210 60% 10%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 35 85% 55%;
+    --primary: 15 87% 54%;
     --primary-foreground: 210 60% 15%;
 
     --secondary: 210 50% 20%;
@@ -98,8 +98,8 @@
     /* Custom Kitadi brand colors for dark mode */
     --kitadi-navy: 210 60% 15%;
     --kitadi-navy-overlay: 210deg 60% 15% / 57%;
-    --kitadi-orange: 35 85% 55%;
-    --kitadi-red-orange: 20 85% 55%;
+    --kitadi-orange: 15 87% 54%;
+    --kitadi-secondary-orange: 35 85% 55%;
     --kitadi-light-orange: 35 85% 70%;
   }
 }
@@ -128,8 +128,8 @@
     background-color: hsl(var(--kitadi-orange));
   }
   
-  .bg-kitadi-red-orange {
-    background-color: hsl(var(--kitadi-red-orange));
+  .bg-kitadi-secondary-orange {
+    background-color: hsl(var(--kitadi-secondary-orange));
   }
   
   .bg-kitadi-light-orange {
@@ -144,8 +144,8 @@
     color: hsl(var(--kitadi-orange));
   }
   
-  .text-kitadi-red-orange {
-    color: hsl(var(--kitadi-red-orange));
+  .text-kitadi-secondary-orange {
+    color: hsl(var(--kitadi-secondary-orange));
   }
   
   .border-kitadi-navy {
