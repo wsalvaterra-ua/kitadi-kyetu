@@ -24,18 +24,34 @@ export function BackofficeLayout({
     setIsSidebarCollapsed(!isSidebarCollapsed);
   };
 
+  const getCategoryTitle = () => {
+    const categories: Record<string, string> = {
+      'web-dashboard': 'Painel',
+      'web-transactions': 'Transações',
+      'web-user-account-management': 'Clientes',
+      'web-user-access': 'Clientes',
+      'web-create-user': 'Clientes',
+      'web-account-management': 'Contas',
+      'web-cash-verification': 'Operações',
+      'web-account-ownership': 'Contas',
+      'web-withdrawal-report': 'Sistema',
+      'web-user-config': 'Sistema'
+    };
+    return categories[currentScreen] || 'Kitadi Backoffice';
+  };
+
   const getPageTitle = () => {
     const titles: Record<string, string> = {
-      'web-dashboard': 'Dashboard',
-      'web-transactions': 'Client Transactions',
-      'web-user-account-management': 'Customer Search',
-      'web-user-access': 'Customer Profiles',
-      'web-create-user': 'Account Creation',
-      'web-account-management': 'Business Accounts',
-      'web-cash-verification': 'Cash Operations',
-      'web-account-ownership': 'Account Management',
-      'web-withdrawal-report': 'Reports',
-      'web-user-config': 'Settings'
+      'web-dashboard': 'Painel de Controle',
+      'web-transactions': 'Transações de Clientes',
+      'web-user-account-management': 'Busca de Clientes',
+      'web-user-access': 'Perfis de Clientes',
+      'web-create-user': 'Criação de Conta',
+      'web-account-management': 'Contas Empresariais',
+      'web-cash-verification': 'Operações de Caixa',
+      'web-account-ownership': 'Propriedade de Conta',
+      'web-withdrawal-report': 'Relatórios',
+      'web-user-config': 'Configurações'
     };
     return titles[currentScreen] || 'Kitadi Backoffice';
   };
@@ -63,11 +79,11 @@ export function BackofficeLayout({
                 <PanelLeft className="h-5 w-5" />
               </Button>
               <div>
-                <h1 className="text-2xl font-semibold text-kitadi-orange">{getPageTitle()}</h1>
+                <h1 className="text-2xl font-semibold text-foreground">{getCategoryTitle()}</h1>
                 <nav className="flex items-center space-x-2 text-sm text-muted-foreground mt-1">
                   <span>Home</span>
                   <span>›</span>
-                  <span className="text-kitadi-orange">{getPageTitle()}</span>
+                  <span className="text-foreground font-semibold">{getPageTitle()}</span>
                 </nav>
               </div>
             </div>
@@ -97,7 +113,7 @@ export function BackofficeLayout({
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 p-6 overflow-y-auto w-full">
+        <main className="flex-1 overflow-y-auto w-full">
           {children}
         </main>
       </div>

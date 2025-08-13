@@ -89,36 +89,7 @@ const WebDashboard = ({
   const userInfo = getUserTypeInfo();
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center">
-            <img 
-              src="/lovable-uploads/eaf20c9f-d9d2-4df9-a59b-9270a930044e.png" 
-              alt="Kitadi Logo" 
-              className="h-8 w-auto mr-3"
-            />
-            <div>
-              <h1 className="text-xl font-bold text-kitadi-navy">Kitadi Web</h1>
-              <p className="text-sm text-gray-500">
-                {userInfo.title} - Modo Consulta
-              </p>
-            </div>
-          </div>
-          <Button
-            variant="outline"
-            onClick={onLogout}
-            className="flex items-center gap-2"
-          >
-            <LogOut className="w-4 h-4" />
-            Sair
-          </Button>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-6 py-8">
+    <div className="w-full px-6 py-8">
         {/* Balance Card */}
         <Card className="mb-8">
           <CardHeader>
@@ -138,202 +109,227 @@ const WebDashboard = ({
           </CardContent>
         </Card>
 
-        {/* Action Cards */}
-        <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
-          <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onViewTransactions}>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-kitadi-orange">
-                <Eye className="w-5 h-5" />
-                Ver Transações
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">
-                Consulte o histórico completo de transações realizadas
-              </p>
-              <Button variant="outline" className="mt-4 w-full">
-                Abrir Histórico
-              </Button>
-            </CardContent>
-          </Card>
+        {/* Consultas */}
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold text-kitadi-navy mb-4">Consultas</h2>
+          <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+            <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onViewTransactions}>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-kitadi-orange">
+                  <Eye className="w-5 h-5" />
+                  Ver Transações
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600">
+                  Consulte o histórico completo de transações realizadas
+                </p>
+                <Button variant="outline" className="mt-4 w-full">
+                  Abrir Histórico
+                </Button>
+              </CardContent>
+            </Card>
 
-          <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onDownloadExtract}>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-kitadi-orange">
-                <Download className="w-5 h-5" />
-                Baixar Extrato
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">
-                Gere e baixe extratos detalhados em formato CSV
-              </p>
-              <Button variant="outline" className="mt-4 w-full">
-                Gerar Extrato
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Agent-specific action cards */}
-          {userType === 'agent' && (
-            <>
-              <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onCreateMerchantProfile}>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-kitadi-orange">
-                    <Building className="w-5 h-5" />
-                    Gerir Clientes
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">
-                    Pesquise clientes e gira perfis e contas bancárias
-                  </p>
-                  <Button variant="outline" className="mt-4 w-full">
-                    Gerir
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onAgentCashoutRequest}>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-kitadi-orange">
-                    <Banknote className="w-5 h-5" />
-                    Transações com Cliente
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">
-                    Efetue Cash-in, Cash-out e transações em nome do cliente
-                  </p>
-                  <Button variant="outline" className="mt-4 w-full">
-                    Abrir
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onTransactionManagement}>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-kitadi-orange">
-                    <Search className="w-5 h-5" />
-                    Gestão de Transações
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">
-                    Pesquisar e gerir transações por ID
-                  </p>
-                  <Button variant="outline" className="mt-4 w-full">
-                    Pesquisar
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onAccountOwnership}>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-kitadi-orange">
-                    <UserCheck className="w-5 h-5" />
-                    Gestão de Proprietários
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">
-                    Gerir proprietários de contas bancárias
-                  </p>
-                  <Button variant="outline" className="mt-4 w-full">
-                    Gerir
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onAddReconciliation}>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-kitadi-orange">
-                    <Plus className="w-5 h-5" />
-                    Reconciliação
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">
-                    Gerir reconciliação e histórico
-                  </p>
-                  <Button variant="outline" className="mt-4 w-full">
-                    Abrir
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onBankTransactionApproval}>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-kitadi-orange">
-                    <CheckCircle className="w-5 h-5" />
-                    Verificar Operações de Reconciliação
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">
-                    Verifique operações ligadas à reconciliação: depósitos bancários, levantamentos e receção de dinheiro físico
-                  </p>
-                  <Button variant="outline" className="mt-4 w-full">
-                    Verificar
-                  </Button>
-                </CardContent>
-              </Card>
-
-
-              <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onCashReserve}>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-kitadi-orange">
-                    <Wallet className="w-5 h-5" />
-                    Reserva de Dinheiro
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">
-                    Gerir reserva de dinheiro do cofre
-                  </p>
-                  <Button variant="outline" className="mt-4 w-full">
-                    Gerir
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onExternalBankTransfer}>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-kitadi-orange">
-                    <FileText className="w-5 h-5" />
-                    Verificar Cash In/Out via Banco
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">
-                    Verifique cash in/out realizados via banco
-                  </p>
-                  <Button variant="outline" className="mt-4 w-full">
-                    Verificar
-                  </Button>
-                </CardContent>
-              </Card>
-
-
-              <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onOperatorManagement}>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-kitadi-orange">
-                    <Settings className="w-5 h-5" />
-                    Gestão de Operadores
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600">
-                    Gerir horários e status dos operadores
-                  </p>
-                  <Button variant="outline" className="mt-4 w-full">
-                    Gerir
-                  </Button>
-                </CardContent>
-              </Card>
-            </>
-          )}
+            <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onDownloadExtract}>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-kitadi-orange">
+                  <Download className="w-5 h-5" />
+                  Baixar Extrato
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600">
+                  Gere e baixe extratos detalhados em formato CSV
+                </p>
+                <Button variant="outline" className="mt-4 w-full">
+                  Gerar Extrato
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         </div>
+
+        {/* Agent-specific action cards */}
+        {userType === 'agent' && (
+          <>
+            {/* Gestão de Clientes */}
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold text-kitadi-navy mb-4">Gestão de Clientes</h2>
+              <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onCreateMerchantProfile}>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-kitadi-orange">
+                      <Building className="w-5 h-5" />
+                      Gerir Clientes
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600">
+                      Pesquise clientes e gira perfis e contas bancárias
+                    </p>
+                    <Button variant="outline" className="mt-4 w-full">
+                      Gerir
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onAccountOwnership}>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-kitadi-orange">
+                      <UserCheck className="w-5 h-5" />
+                      Gestão de Proprietários
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600">
+                      Gerir proprietários de contas bancárias
+                    </p>
+                    <Button variant="outline" className="mt-4 w-full">
+                      Gerir
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+
+            {/* Transações */}
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold text-kitadi-navy mb-4">Transações</h2>
+              <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onAgentCashoutRequest}>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-kitadi-orange">
+                      <Banknote className="w-5 h-5" />
+                      Transações com Cliente
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600">
+                      Efetue Cash-in, Cash-out e transações em nome do cliente
+                    </p>
+                    <Button variant="outline" className="mt-4 w-full">
+                      Abrir
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onTransactionManagement}>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-kitadi-orange">
+                      <Search className="w-5 h-5" />
+                      Gestão de Transações
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600">
+                      Pesquisar e gerir transações por ID
+                    </p>
+                    <Button variant="outline" className="mt-4 w-full">
+                      Pesquisar
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+
+            {/* Operações Financeiras */}
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold text-kitadi-navy mb-4">Operações Financeiras</h2>
+              <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onAddReconciliation}>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-kitadi-orange">
+                      <Plus className="w-5 h-5" />
+                      Reconciliação
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600">
+                      Gerir reconciliação e histórico
+                    </p>
+                    <Button variant="outline" className="mt-4 w-full">
+                      Abrir
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onBankTransactionApproval}>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-kitadi-orange">
+                      <CheckCircle className="w-5 h-5" />
+                      Verificar Operações de Reconciliação
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600">
+                      Verifique operações ligadas à reconciliação: depósitos bancários, levantamentos e receção de dinheiro físico
+                    </p>
+                    <Button variant="outline" className="mt-4 w-full">
+                      Verificar
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onCashReserve}>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-kitadi-orange">
+                      <Wallet className="w-5 h-5" />
+                      Reserva de Dinheiro
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600">
+                      Gerir reserva de dinheiro do cofre
+                    </p>
+                    <Button variant="outline" className="mt-4 w-full">
+                      Gerir
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onExternalBankTransfer}>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-kitadi-orange">
+                      <FileText className="w-5 h-5" />
+                      Verificar Cash In/Out via Banco
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600">
+                      Verifique cash in/out realizados via banco
+                    </p>
+                    <Button variant="outline" className="mt-4 w-full">
+                      Verificar
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+
+            {/* Sistema */}
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold text-kitadi-navy mb-4">Sistema</h2>
+              <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onOperatorManagement}>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-kitadi-orange">
+                      <Settings className="w-5 h-5" />
+                      Gestão de Operadores
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600">
+                      Gerir horários e status dos operadores
+                    </p>
+                    <Button variant="outline" className="mt-4 w-full">
+                      Gerir
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </>
+        )}
 
         {/* Additional Info for Business/Agent/Merchant accounts */}
         {(userType === 'merchant' || userType === 'business' || userType === 'agent' || userType === 'business-associated') && (
@@ -418,14 +414,6 @@ const WebDashboard = ({
           </Card>
         )}
 
-        {/* Read-only Notice */}
-        <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-blue-800 text-sm text-center">
-            <strong>Modo Consulta:</strong> Esta é uma versão somente leitura. 
-            Para realizar transações, utilize a versão mobile do Kitadi.
-          </p>
-        </div>
-      </div>
     </div>
   );
 };
