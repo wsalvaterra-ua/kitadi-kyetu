@@ -3,7 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Banknote, Download, ArrowLeftRight } from 'lucide-react';
+import { Banknote, Download, ArrowLeftRight } from 'lucide-react';
+import { PageHeader } from './PageHeader';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useToast } from '@/components/ui/use-toast';
@@ -67,20 +68,11 @@ const ClientTransactionsScreen = ({ onBack }: ClientTransactionsScreenProps) => 
 
   return (
     <div className="min-h-screen bg-content">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center">
-            <Button variant="ghost" onClick={onBack} className="mr-2">
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
-            <div>
-              <h1 className="text-xl font-bold text-kitadi-navy">Transações com Cliente</h1>
-              <p className="text-sm text-gray-500">Efetue Cash-in, Cash-out e transações em nome do cliente</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHeader 
+        title="Transações com Cliente"
+        description="Efetue Cash-in, Cash-out e transações em nome do cliente"
+        onBack={onBack}
+      />
 
       {/* Main */}
       <div className="max-w-4xl mx-auto px-6 py-8">

@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, User, Upload, Phone, MessageSquare, FileText, MapPin, Briefcase } from 'lucide-react';
+import { User, Upload, Phone, MessageSquare, FileText, MapPin, Briefcase } from 'lucide-react';
+import { PageHeader } from './PageHeader';
 import { useToast } from '@/hooks/use-toast';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -118,20 +119,11 @@ const CreateUserProfileScreen = ({ phoneNumber, onBack, onUserCreated }: CreateU
 
   return (
     <div className="min-h-screen bg-content">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center">
-            <Button variant="ghost" onClick={onBack} className="mr-4">
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
-            <div>
-              <h1 className="text-xl font-bold text-kitadi-navy">Criar Perfil do Utilizador</h1>
-              <p className="text-sm text-gray-500">{phoneNumber} - Novo utilizador</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHeader 
+        title="Criar Perfil do Utilizador"
+        description={`${phoneNumber} - Novo utilizador`}
+        onBack={onBack}
+      />
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-6 py-8 space-y-6">

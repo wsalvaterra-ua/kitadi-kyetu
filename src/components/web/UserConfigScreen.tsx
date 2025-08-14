@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowLeft, Settings } from 'lucide-react';
+import { Settings } from 'lucide-react';
+import { PageHeader } from './PageHeader';
 
 interface Props {
   onBack: () => void;
@@ -19,19 +20,11 @@ const UserConfigScreen = ({ onBack, phoneNumber }: Props) => {
 
   return (
     <div className="min-h-screen bg-content">
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center">
-            <Button variant="ghost" onClick={onBack} className="mr-4">
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
-            <div>
-              <h1 className="text-xl font-bold text-kitadi-navy">Configurações do Utilizador</h1>
-              <p className="text-sm text-gray-500">Atualizar dados de contacto e preferências</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHeader 
+        title="Configurações do Utilizador"
+        description="Atualizar dados de contacto e preferências"
+        onBack={onBack}
+      />
 
       <div className="max-w-3xl mx-auto px-6 py-8">
         <Card>

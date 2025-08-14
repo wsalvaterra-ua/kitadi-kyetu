@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Wallet, ArrowUpCircle, ArrowDownCircle, TrendingUp, Clock } from 'lucide-react';
+import { Wallet, ArrowUpCircle, ArrowDownCircle, TrendingUp, Clock } from 'lucide-react';
+import { PageHeader } from './PageHeader';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -100,20 +101,11 @@ const CashReserveScreen = ({ onBack }: CashReserveScreenProps) => {
 
   return (
     <div className="min-h-screen bg-content">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center">
-            <Button variant="ghost" onClick={onBack} className="mr-4">
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
-            <div>
-              <h1 className="text-xl font-bold text-kitadi-navy">Reserva de Dinheiro</h1>
-              <p className="text-sm text-gray-500">Gerir reserva de dinheiro do cofre</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHeader 
+        title="Reserva de Dinheiro"
+        description="Gerir reserva de dinheiro do cofre"
+        onBack={onBack}
+      />
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-6 py-8">

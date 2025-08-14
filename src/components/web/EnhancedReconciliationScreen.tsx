@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Plus, Calendar, DollarSign, Clock, CheckCircle, AlertCircle, TrendingUp } from 'lucide-react';
+import { Plus, Calendar, DollarSign, Clock, CheckCircle, AlertCircle, TrendingUp } from 'lucide-react';
+import { PageHeader } from './PageHeader';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
@@ -105,20 +106,11 @@ const EnhancedReconciliationScreen = ({ onBack }: EnhancedReconciliationScreenPr
 
   return (
     <div className="min-h-screen bg-content">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center">
-            <Button variant="ghost" onClick={onBack} className="mr-4">
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
-            <div>
-              <h1 className="text-xl font-bold text-kitadi-navy">Reconciliação</h1>
-              <p className="text-sm text-gray-500">Registe depósitos operacionais e entregas de dinheiro físico e consulte o histórico por data</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHeader 
+        title="Reconciliação"
+        description="Registe depósitos operacionais e entregas de dinheiro físico e consulte o histórico por data"
+        onBack={onBack}
+      />
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-6 py-8">

@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, FileText, Download, Plus, CheckCircle, Building } from 'lucide-react';
+import { FileText, Download, Plus, CheckCircle, Building } from 'lucide-react';
+import { PageHeader } from './PageHeader';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -147,20 +148,11 @@ const ExternalBankTransferScreen = ({ onBack }: ExternalBankTransferScreenProps)
 
   return (
     <div className="min-h-screen bg-content">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center">
-            <Button variant="ghost" onClick={onBack} className="mr-4">
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
-            <div>
-              <h1 className="text-xl font-bold text-kitadi-navy">Verificar Cash In/Out via Banco</h1>
-              <p className="text-sm text-gray-500">Verifique cash in/out realizados via banco</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHeader 
+        title="Verificar Cash In/Out via Banco"
+        description="Verifique cash in/out realizados via banco"
+        onBack={onBack}
+      />
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-6 py-8">

@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, User, Building, Link, Phone, Upload, FileImage } from 'lucide-react';
+import { User, Building, Link, Phone, Upload, FileImage, ArrowLeft } from 'lucide-react';
+import { PageHeader } from './PageHeader';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 
@@ -138,30 +139,11 @@ const WebAccountCreationScreen = ({ onBack }: WebAccountCreationScreenProps) => 
 
   return (
     <div className="min-h-screen bg-content">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-4xl mx-auto flex items-center">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={showTabs ? handleBackToPhoneInput : onBack}
-            className="mr-4"
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </Button>
-          <div className="flex items-center">
-            <img 
-              src="/lovable-uploads/eaf20c9f-d9d2-4df9-a59b-9270a930044e.png" 
-              alt="Kitadi Logo" 
-              className="h-8 w-auto mr-3"
-            />
-            <div>
-              <h1 className="text-xl font-bold text-kitadi-navy">Criação de Contas</h1>
-              <p className="text-sm text-gray-500">Agente - Criar novas contas de utilizador</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHeader 
+        title="Criação de Contas"
+        description="Agente - Criar novas contas de utilizador"
+        onBack={showTabs ? handleBackToPhoneInput : onBack}
+      />
 
       <div className="max-w-4xl mx-auto px-6 py-8">
         {!showTabs ? (

@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, CheckCircle, X, Building, CreditCard, ArrowUpDown, DollarSign, AlertTriangle, User } from 'lucide-react';
+import { CheckCircle, X, Building, CreditCard, ArrowUpDown, DollarSign, AlertTriangle, User } from 'lucide-react';
+import { PageHeader } from './PageHeader';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -160,20 +161,11 @@ const BankTransactionApprovalScreen = ({ onBack }: BankTransactionApprovalScreen
 
   return (
     <div className="min-h-screen bg-content">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center">
-            <Button variant="ghost" onClick={onBack} className="mr-4">
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
-            <div>
-              <h1 className="text-xl font-bold text-kitadi-navy">Verificar Operações de Reconciliação</h1>
-              <p className="text-sm text-gray-500">Verifique depósitos, levantamentos e receção de dinheiro físico dos operadores com dados bancários e confirmações presenciais</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHeader 
+        title="Verificar Operações de Reconciliação"
+        description="Verifique depósitos, levantamentos e receção de dinheiro físico dos operadores com dados bancários e confirmações presenciais"
+        onBack={onBack}
+      />
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-6 py-8">

@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Download, Send, Smartphone, Plus, ArrowDownToLine, Clock, RefreshCw, ArrowUpDown } from 'lucide-react';
+import { Download, Send, Smartphone, Plus, ArrowDownToLine, Clock, RefreshCw, ArrowUpDown, ArrowLeft } from 'lucide-react';
+import { PageHeader } from './PageHeader';
 import { Badge } from '@/components/ui/badge';
 import { useState } from 'react';
 
@@ -487,27 +488,11 @@ const WebTransactionsScreen = ({ userType, onBack, onOpenTransactionManagement }
 
   return (
     <div className="min-h-screen bg-content">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-4xl mx-auto flex items-center">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onBack}
-            className="mr-4"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <div className="flex items-center">
-            <img 
-              src="/lovable-uploads/eaf20c9f-d9d2-4df9-a59b-9270a930044e.png" 
-              alt="Kitadi Logo" 
-              className="h-6 w-auto mr-2"
-            />
-            <h1 className="text-xl font-bold text-kitadi-navy">Histórico de Transações</h1>
-          </div>
-        </div>
-      </div>
+      <PageHeader 
+        title="Histórico de Transações"
+        description=""
+        onBack={onBack}
+      />
 
       {/* Content */}
       <div className="max-w-4xl mx-auto px-6 py-8">

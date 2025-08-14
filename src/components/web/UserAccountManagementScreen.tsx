@@ -8,7 +8,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowLeft, User, Building, Wallet, Plus, Edit, Eye, EyeOff, Shield, Send, Upload, Smartphone, FileText, History, MapPin, Settings, DollarSign } from 'lucide-react';
+import { User, Building, Wallet, Plus, Edit, Eye, EyeOff, Shield, Send, Upload, Smartphone, FileText, History, MapPin, Settings, DollarSign, ArrowLeft } from 'lucide-react';
+import { PageHeader } from './PageHeader';
 import { useToast } from '@/hooks/use-toast';
 
 interface UserAccountManagementScreenProps {
@@ -778,7 +779,7 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber, onOpenTransactionMan
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-content">
         {/* Operation Code Modal */}
         {showOperationCode && (
           <Dialog open={showOperationCode} onOpenChange={setShowOperationCode}>
@@ -809,22 +810,11 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber, onOpenTransactionMan
           </Dialog>
         )}
 
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center">
-            <Button variant="ghost" onClick={onBack} className="mr-4">
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
-            <div>
-              <h1 className="text-xl font-bold text-kitadi-navy">Gestão de Utilizador</h1>
-              <p className="text-sm text-gray-500">
-                Telefone: {phoneNumber} | ID: {personalData.idNumber}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHeader 
+        title="Gestão de Utilizador"
+        description={`Telefone: ${phoneNumber} | ID: ${personalData.idNumber}`}
+        onBack={onBack}
+      />
 
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-6 py-8">

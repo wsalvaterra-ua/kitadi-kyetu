@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { ArrowLeft, Settings, User, Clock, Calendar, UserCheck, UserX } from 'lucide-react';
+import { Settings, User, Clock, Calendar, UserCheck, UserX } from 'lucide-react';
+import { PageHeader } from './PageHeader';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 import { Checkbox } from '@/components/ui/checkbox';
@@ -119,20 +120,11 @@ const OperatorManagementScreen = ({ onBack }: OperatorManagementScreenProps) => 
 
   return (
     <div className="min-h-screen bg-content">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center">
-            <Button variant="ghost" onClick={onBack} className="mr-4">
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
-            <div>
-              <h1 className="text-xl font-bold text-kitadi-navy">Gestão de Operadores</h1>
-              <p className="text-sm text-gray-500">Gerir horários e status dos operadores</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHeader 
+        title="Gestão de Operadores"
+        description="Gerir horários e status dos operadores"
+        onBack={onBack}
+      />
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-6 py-8">
