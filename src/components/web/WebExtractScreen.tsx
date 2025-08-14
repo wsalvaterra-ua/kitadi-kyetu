@@ -81,7 +81,6 @@ const WebExtractScreen = ({ userType, onBack }: WebExtractScreenProps) => {
       />
 
       <div className="w-full p-8">
-        <div className="max-w-2xl mx-auto">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -186,7 +185,6 @@ const WebExtractScreen = ({ userType, onBack }: WebExtractScreenProps) => {
             </Button>
           </CardContent>
         </Card>
-        </div>
       </div>
     </div>
   );

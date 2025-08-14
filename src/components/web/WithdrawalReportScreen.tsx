@@ -34,7 +34,6 @@ const WithdrawalReportScreen = ({ onBack }: WithdrawalReportScreenProps) => {
       />
       
       <div className="w-full p-8">
-        <div className="max-w-2xl mx-auto">
         <Card>
           <CardHeader>
             <CardTitle>Detalhes do Depósito Operacional</CardTitle>
@@ -69,7 +68,6 @@ const WithdrawalReportScreen = ({ onBack }: WithdrawalReportScreenProps) => {
             </div>
           </CardContent>
         </Card>
-        </div>
       </div>
     </div>
   );

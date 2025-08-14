@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Search, Phone, User } from 'lucide-react';
+import { PageHeader } from './PageHeader';
 interface UserListItem {
   name: string;
   phone: string;
@@ -90,24 +91,14 @@ const AccountManagementScreen = ({
     setCode('');
     setCodeSent(false);
   };
-  return <div className="min-h-screen bg-content">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center">
-            <Button variant="ghost" onClick={onBack} className="mr-4">
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
-            <div>
-              <h1 className="text-xl font-bold text-kitadi-navy">Gestão de Contas</h1>
-              <p className="text-sm text-gray-500">Procurar e gerir contas bancárias</p>
-            </div>
-          </div>
-        </div>
-      </div>
+  return <div className="w-full">
+      <PageHeader 
+        title="Gerir Clientes"
+        description="Procurar e gerir utilizadores e contas bancárias"
+        onBack={onBack}
+      />
 
-      {/* Main Content */}
-      <div className="max-w-3xl mx-auto px-6 py-8">
+      <div className="w-full p-8">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
