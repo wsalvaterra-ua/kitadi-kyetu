@@ -58,26 +58,28 @@ export function BackofficeLayout({
 
   return (
     <div className="min-h-screen bg-background flex w-full">
-      <BackofficeSidebar
+      {/* Sidebar is now hidden for simplified layout */}
+      {/* <BackofficeSidebar
         isCollapsed={isSidebarCollapsed}
         onToggleCollapse={toggleSidebar}
         onNavigate={onNavigate}
         currentScreen={currentScreen}
-      />
+      /> */}
       
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 w-full">
         {/* Top Header */}
         <header className="bg-card border-b border-border px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <Button 
+              {/* Sidebar toggle button is hidden since sidebar is hidden */}
+              {/* <Button 
                 variant="ghost" 
                 size="sm" 
                 onClick={toggleSidebar}
                 className="p-2 text-kitadi-orange hover:bg-kitadi-orange/10"
               >
                 <PanelLeft className="h-5 w-5" />
-              </Button>
+              </Button> */}
               <div>
                 <h1 className="text-2xl font-semibold text-foreground">{getCategoryTitle()}</h1>
               </div>
