@@ -11,7 +11,7 @@ const buttonVariants = cva(
       variant: {
         default: "bg-kitadi-orange text-white hover:bg-kitadi-orange/90",
         destructive:
-          "bg-kitadi-yellow text-white hover:bg-kitadi-yellow/90",
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
           "border border-kitadi-orange bg-transparent text-kitadi-orange hover:bg-kitadi-orange hover:text-white",
         secondary:

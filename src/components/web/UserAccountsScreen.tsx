@@ -20,14 +20,14 @@ interface UserAccountsScreenProps {
 interface Account {
   id: string;
   accountNumber: string;
-  accountType: 'personal' | 'business' | 'merchant';
-  accountNature: 'checking' | 'savings' | 'current';
+  accountType: 'carteira' | 'credito operacional' | 'sistema' | 'escrow buffer';
+  accountNature: 'particular' | 'comercial' | 'operador';
   balance: number;
   status: 'ACTIVE' | 'FROZEN' | 'CLOSED';
   name: string;
   commercialProfile?: string;
-  type?: 'personal' | 'business' | 'merchant';
-  nature?: 'checking' | 'savings' | 'current';
+  type?: 'carteira' | 'credito operacional' | 'sistema' | 'escrow buffer';
+  nature?: 'particular' | 'comercial' | 'operador';
   profile?: string;
   event?: string;
 }
@@ -56,8 +56,8 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
     {
       id: 'acc001',
       accountNumber: '1000000123',
-      accountType: 'personal',
-      accountNature: 'checking',
+      accountType: 'carteira',
+      accountNature: 'particular',
       balance: 45000,
       status: 'ACTIVE',
       name: 'Conta Principal',
@@ -66,8 +66,8 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
     {
       id: 'acc002', 
       accountNumber: '2000000456',
-      accountType: 'business',
-      accountNature: 'current',
+      accountType: 'carteira',
+      accountNature: 'comercial',
       balance: 125000,
       status: 'ACTIVE',
       name: 'Loja Online',
@@ -76,8 +76,8 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
     {
       id: 'acc003',
       accountNumber: '3000000789',
-      accountType: 'merchant',
-      accountNature: 'current',
+      accountType: 'carteira',
+      accountNature: 'comercial',
       balance: 67000,
       status: 'FROZEN',
       name: 'Restaurante Central',
@@ -141,8 +141,8 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
     const newAccount: Account = {
       id: `acc${Date.now()}`,
       accountNumber: `${Math.floor(Math.random() * 9000000000) + 1000000000}`,
-      accountType: 'business',
-      accountNature: 'current',
+      accountType: 'carteira',
+      accountNature: 'comercial',
       balance: 0,
       status: 'ACTIVE',
       name: newAccountName,
@@ -196,18 +196,19 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
 
   const getTypeLabel = (type: string) => {
     switch (type) {
-      case 'personal': return 'Pessoal';
-      case 'business': return 'Comercial';
-      case 'merchant': return 'Comerciante';
+      case 'carteira': return 'Carteira';
+      case 'credito operacional': return 'Crédito Operacional';
+      case 'sistema': return 'Sistema';
+      case 'escrow buffer': return 'Escrow Buffer';
       default: return type;
     }
   };
 
   const getNatureLabel = (nature: string) => {
     switch (nature) {
-      case 'checking': return 'Conta Corrente';
-      case 'savings': return 'Poupança';
-      case 'current': return 'Conta à Ordem';
+      case 'particular': return 'Particular';
+      case 'comercial': return 'Comercial';
+      case 'operador': return 'Operador';
       default: return nature;
     }
   };
@@ -347,41 +348,42 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
                                    </div>
                                    <div>
                                      <Label htmlFor="editAccountType">Tipo de Conta</Label>
-                                     <Select 
-                                       value={selectedAccount.type} 
-                                        onValueChange={(value: 'personal' | 'business' | 'merchant') => setSelectedAccount({
-                                          ...selectedAccount,
-                                          type: value
-                                        })}
-                                     >
-                                       <SelectTrigger>
-                                         <SelectValue />
-                                       </SelectTrigger>
-                                       <SelectContent>
-                                         <SelectItem value="personal">Pessoal</SelectItem>
-                                         <SelectItem value="business">Comercial</SelectItem>
-                                         <SelectItem value="merchant">Comerciante</SelectItem>
-                                       </SelectContent>
-                                     </Select>
+                                      <Select 
+                                        value={selectedAccount.type} 
+                                         onValueChange={(value: 'carteira' | 'credito operacional' | 'sistema' | 'escrow buffer') => setSelectedAccount({
+                                           ...selectedAccount,
+                                           type: value
+                                         })}
+                                      >
+                                        <SelectTrigger>
+                                          <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          <SelectItem value="carteira">Carteira</SelectItem>
+                                          <SelectItem value="credito operacional">Crédito Operacional</SelectItem>
+                                          <SelectItem value="sistema">Sistema</SelectItem>
+                                          <SelectItem value="escrow buffer">Escrow Buffer</SelectItem>
+                                        </SelectContent>
+                                      </Select>
                                    </div>
                                    <div>
                                      <Label htmlFor="editAccountNature">Natureza da Conta</Label>
-                                     <Select 
-                                       value={selectedAccount.nature} 
-                                        onValueChange={(value: 'checking' | 'savings' | 'current') => setSelectedAccount({
-                                          ...selectedAccount,
-                                          nature: value
-                                        })}
-                                     >
-                                       <SelectTrigger>
-                                         <SelectValue />
-                                       </SelectTrigger>
-                                       <SelectContent>
-                                         <SelectItem value="checking">Conta Corrente</SelectItem>
-                                         <SelectItem value="savings">Poupança</SelectItem>
-                                         <SelectItem value="current">Conta à Ordem</SelectItem>
-                                       </SelectContent>
-                                     </Select>
+                                      <Select 
+                                        value={selectedAccount.nature} 
+                                         onValueChange={(value: 'particular' | 'comercial' | 'operador') => setSelectedAccount({
+                                           ...selectedAccount,
+                                           nature: value
+                                         })}
+                                      >
+                                        <SelectTrigger>
+                                          <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          <SelectItem value="particular">Particular</SelectItem>
+                                          <SelectItem value="comercial">Comercial</SelectItem>
+                                          <SelectItem value="operador">Operador</SelectItem>
+                                        </SelectContent>
+                                      </Select>
                                    </div>
                                    <div>
                                      <Label htmlFor="editAccountProfile">Perfil Comercial</Label>

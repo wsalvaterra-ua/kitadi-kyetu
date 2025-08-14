@@ -548,32 +548,15 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
                              onChange={(e) => setNewAddress(e.target.value)}
                            />
                          </div>
-                         <div>
-                           <Label htmlFor="gpsCoordinates">Coordenadas GPS</Label>
-                           <div className="flex gap-2">
-                             <Input
-                               id="gpsCoordinates"
-                               placeholder="Ex: 0.3365° N, 6.7273° E"
-                               value={newGpsCoordinates}
-                               onChange={(e) => setNewGpsCoordinates(e.target.value)}
-                             />
-                             <Button
-                               type="button"
-                               size="sm"
-                               variant="outline"
-                               onClick={() => {
-                                 if (navigator.geolocation) {
-                                   navigator.geolocation.getCurrentPosition((position) => {
-                                     const coords = `${position.coords.latitude.toFixed(4)}° N, ${position.coords.longitude.toFixed(4)}° E`;
-                                     setNewGpsCoordinates(coords);
-                                   });
-                                 }
-                               }}
-                             >
-                               <MapPin className="w-4 h-4" />
-                             </Button>
-                           </div>
-                         </div>
+                          <div>
+                            <Label htmlFor="gpsCoordinates">Coordenadas GPS</Label>
+                            <Input
+                              id="gpsCoordinates"
+                              placeholder="Ex: 0.3365° N, 6.7273° E"
+                              value={newGpsCoordinates}
+                              onChange={(e) => setNewGpsCoordinates(e.target.value)}
+                            />
+                          </div>
                          <div>
                            <Label htmlFor="description">Descrição</Label>
                            <textarea
@@ -744,37 +727,17 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
                                          })}
                                        />
                                      </div>
-                                     <div>
-                                       <Label htmlFor="editGpsCoordinates">Coordenadas GPS</Label>
-                                       <div className="flex gap-2">
-                                         <Input
-                                           id="editGpsCoordinates"
-                                           value={editingProfile.gpsCoordinates}
-                                           onChange={(e) => setEditingProfile({
-                                             ...editingProfile,
-                                             gpsCoordinates: e.target.value
-                                           })}
-                                         />
-                                         <Button
-                                           type="button"
-                                           size="sm"
-                                           variant="outline"
-                                           onClick={() => {
-                                             if (navigator.geolocation) {
-                                               navigator.geolocation.getCurrentPosition((position) => {
-                                                 const coords = `${position.coords.latitude.toFixed(4)}° N, ${position.coords.longitude.toFixed(4)}° E`;
-                                                 setEditingProfile({
-                                                   ...editingProfile!,
-                                                   gpsCoordinates: coords
-                                                 });
-                                               });
-                                             }
-                                           }}
-                                         >
-                                           <MapPin className="w-4 h-4" />
-                                         </Button>
-                                       </div>
-                                     </div>
+                                      <div>
+                                        <Label htmlFor="editGpsCoordinates">Coordenadas GPS</Label>
+                                        <Input
+                                          id="editGpsCoordinates"
+                                          value={editingProfile.gpsCoordinates}
+                                          onChange={(e) => setEditingProfile({
+                                            ...editingProfile,
+                                            gpsCoordinates: e.target.value
+                                          })}
+                                        />
+                                      </div>
                                      <div>
                                        <Label htmlFor="editDescription">Descrição</Label>
                                        <textarea
