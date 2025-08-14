@@ -172,6 +172,7 @@ const AccountManagementScreen = ({ onBack, onUserFound, onCreateNewUser, onManag
                         <Button size="sm" variant="outline" onClick={() => onManageAccounts && onManageAccounts(u.phone)}>Contas</Button>
                         <Button size="sm" variant="outline" onClick={() => onManageAccess && onManageAccess(u.phone)}>Acesso</Button>
                         <Button size="sm" variant="outline" onClick={() => onManageConfig && onManageConfig(u.phone)}>Configurações</Button>
+                        <Button size="sm" variant="outline" onClick={() => onManageConfig && onManageConfig(u.phone)}>Proprietários</Button>
                       </div>
                     </div>
                   ))}

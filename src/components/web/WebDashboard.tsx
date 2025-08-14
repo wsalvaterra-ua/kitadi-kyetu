@@ -131,14 +131,6 @@ const WebDashboard = ({
                   </div>
                 </CardContent>
               </Card>
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-kitadi-orange">37</div>
-                    <p className="text-sm text-gray-600">Clientes com 1ª transação no mês</p>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
           </div>
         ) : (
