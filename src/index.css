@@ -36,7 +36,19 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 210 60% 15%;
+    --ring: 15 87% 54%;
+
+    /* Content background */
+    --content-background: 27 11.53% 94.66%;
+    
+    /* Category label color */
+    --category-muted: 210 10% 45%;
+    
+    /* Tab bar background */
+    --tab-background: 220 13% 91%;
+    
+    /* Yellow theme for negative buttons */
+    --kitadi-yellow: 45 93% 58%;
 
     --radius: 0.5rem;
 
@@ -55,6 +67,7 @@
     --kitadi-orange: 15 87% 54%;
     --kitadi-secondary-orange: 35 85% 55%;
     --kitadi-light-orange: 35 85% 70%;
+    --kitadi-yellow: 45 93% 58%;
   }
 
   .dark {
@@ -154,5 +167,29 @@
   
   .border-kitadi-orange {
     border-color: hsl(var(--kitadi-orange));
+  }
+  
+  .bg-content {
+    background-color: hsl(var(--content-background));
+  }
+  
+  .text-category-muted {
+    color: hsl(var(--category-muted));
+  }
+  
+  .bg-tab {
+    background-color: hsl(var(--tab-background));
+  }
+  
+  .bg-kitadi-yellow {
+    background-color: hsl(var(--kitadi-yellow));
+  }
+  
+  .text-kitadi-yellow {
+    color: hsl(var(--kitadi-yellow));
+  }
+  
+  .border-kitadi-yellow {
+    border-color: hsl(var(--kitadi-yellow));
   }
 }
