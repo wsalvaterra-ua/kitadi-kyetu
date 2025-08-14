@@ -170,10 +170,19 @@ const BankTransactionApprovalScreen = ({ onBack }: BankTransactionApprovalScreen
       {/* Main Content */}
       <div className="w-full p-8">
         <Tabs defaultValue="deposits" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="deposits">Depósitos Pendentes ({mockDeposits.length})</TabsTrigger>
-            <TabsTrigger value="cashouts">Levantamentos Pendentes ({mockCashouts.length})</TabsTrigger>
-            <TabsTrigger value="cash-reception">Recepção de Dinheiro ({mockCashReceipts.length})</TabsTrigger>
+          <TabsList className="flex w-full overflow-x-auto min-h-[44px]">
+            <TabsTrigger value="deposits" className="flex-shrink-0 px-3 py-2">
+              <span className="hidden sm:inline">Depósitos Pendentes ({mockDeposits.length})</span>
+              <span className="sm:hidden">Depósitos ({mockDeposits.length})</span>
+            </TabsTrigger>
+            <TabsTrigger value="cashouts" className="flex-shrink-0 px-3 py-2">
+              <span className="hidden sm:inline">Levantamentos Pendentes ({mockCashouts.length})</span>
+              <span className="sm:hidden">Levantamentos ({mockCashouts.length})</span>
+            </TabsTrigger>
+            <TabsTrigger value="cash-reception" className="flex-shrink-0 px-3 py-2">
+              <span className="hidden sm:inline">Recepção de Dinheiro ({mockCashReceipts.length})</span>
+              <span className="sm:hidden">Recepção ({mockCashReceipts.length})</span>
+            </TabsTrigger>
           </TabsList>
           
           <TabsContent value="deposits" className="space-y-6">
