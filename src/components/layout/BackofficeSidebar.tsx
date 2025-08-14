@@ -168,7 +168,7 @@ const MenuSection = ({
     <div className="py-4">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between px-4 py-2 text-xs font-semibold text-sidebar-foreground/70 uppercase tracking-wider hover:text-sidebar-foreground transition-colors"
+        className="w-full flex items-center justify-between px-4 py-2 text-xs font-semibold text-category-muted uppercase tracking-wider hover:text-category-muted transition-colors"
       >
         {title}
         <ChevronDown className={cn("h-4 w-4 transition-transform", !isExpanded && "-rotate-90")} />
