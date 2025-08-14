@@ -41,7 +41,7 @@ const WebLoginScreen = ({ onLoginSuccess, onBack }: WebLoginScreenProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-content flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
         {/* Header */}
         <div className="flex items-center mb-8">

@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowLeft, User, Building, Phone, MessageSquare, Plus, Trash2, Upload, Download, Edit } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { PageHeader } from './PageHeader';
@@ -31,6 +32,7 @@ interface Document {
   name: string;
   submissionDate: string;
   type: 'id' | 'proof_address' | 'business_license' | 'other';
+  documentType: string;
 }
 
 const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserProfileScreenProps) => {
@@ -38,6 +40,15 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
   const [userStatus, setUserStatus] = useState<'ACTIVE' | 'SUSPENDED' | 'PENDING_KYC' | 'CLOSED'>('ACTIVE');
   const [documentName, setDocumentName] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [documentType, setDocumentType] = useState('');
+  const [identityVerified, setIdentityVerified] = useState(false);
+  const [addProfileOpen, setAddProfileOpen] = useState(false);
+  const [editProfileOpen, setEditProfileOpen] = useState(false);
+  const [editingProfile, setEditingProfile] = useState<BusinessProfile | null>(null);
+  const [newProfileName, setNewProfileName] = useState('');
+  const [newProfileLocation, setNewProfileLocation] = useState('');
+  const [newProfileType, setNewProfileType] = useState('');
+  const [fiscalNumber, setFiscalNumber] = useState('');
   
   // Mock user data - exemplo de utilizador existente: Maria dos Santos Almeida
   const [userData, setUserData] = useState({
@@ -57,9 +68,9 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
   ]);
 
   const [documents] = useState<Document[]>([
-    { id: 'doc001', name: 'Bilhete de Identidade', submissionDate: '2024-01-15', type: 'id' },
-    { id: 'doc002', name: 'Comprovativo de Morada', submissionDate: '2024-01-14', type: 'proof_address' },
-    { id: 'doc003', name: 'Licença Comercial', submissionDate: '2024-01-13', type: 'business_license' }
+    { id: 'doc001', name: 'Bilhete de Identidade', submissionDate: '2024-01-15', type: 'id', documentType: 'Bilhete de Identidade' },
+    { id: 'doc002', name: 'Comprovativo de Morada', submissionDate: '2024-01-14', type: 'proof_address', documentType: 'Comprovativo de Morada' },
+    { id: 'doc003', name: 'Licença Comercial', submissionDate: '2024-01-13', type: 'business_license', documentType: 'Licença Comercial' }
   ]);
 
   const getStatusColor = (status: string) => {
@@ -87,10 +98,10 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
   };
 
   const uploadDocument = () => {
-    if (!documentName.trim() || !selectedFile) {
+    if (!documentName.trim() || !selectedFile || !documentType) {
       toast({
         title: "Erro",
-        description: "Selecione um arquivo e insira o nome do documento",
+        description: "Preencha todos os campos e selecione um arquivo",
         variant: "destructive"
       });
       return;
@@ -103,6 +114,7 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
     
     setDocumentName('');
     setSelectedFile(null);
+    setDocumentType('');
   };
 
   const downloadDocument = (docName: string) => {
@@ -113,20 +125,67 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
   };
 
   const addBusinessProfile = () => {
+    if (!newProfileName.trim() || !newProfileLocation.trim() || !newProfileType.trim()) {
+      toast({
+        title: "Erro",
+        description: "Preencha todos os campos obrigatórios",
+        variant: "destructive"
+      });
+      return;
+    }
+
     const newProfile: BusinessProfile = {
       id: `biz${Date.now()}`,
-      name: 'Novo Perfil Comercial',
-      location: 'São Tomé',
-      businessType: 'Comércio',
+      name: newProfileName,
+      location: newProfileLocation,
+      businessType: newProfileType,
       status: 'pending'
     };
     
     setBusinessProfiles([newProfile, ...businessProfiles]);
+    setNewProfileName('');
+    setNewProfileLocation('');
+    setNewProfileType('');
+    setAddProfileOpen(false);
     
     toast({
       title: "Perfil criado",
       description: "Novo perfil comercial adicionado",
     });
+  };
+
+  const updateBusinessProfile = () => {
+    if (!editingProfile) return;
+    
+    setBusinessProfiles(businessProfiles.map(profile => 
+      profile.id === editingProfile.id ? editingProfile : profile
+    ));
+    
+    setEditProfileOpen(false);
+    setEditingProfile(null);
+    
+    toast({
+      title: "Perfil atualizado",
+      description: "Alterações guardadas com sucesso",
+    });
+  };
+
+  const removeBusinessProfile = (profileId: string) => {
+    setBusinessProfiles(businessProfiles.filter(profile => profile.id !== profileId));
+    toast({
+      title: "Perfil removido",
+      description: "Perfil comercial removido com sucesso",
+    });
+  };
+
+  const getDocumentTypeLabel = (type: string) => {
+    switch (type) {
+      case 'id': return 'Documento de Identidade';
+      case 'proof_address': return 'Comprovativo de Morada';
+      case 'business_license': return 'Licença Comercial';
+      case 'other': return 'Outro';
+      default: return type;
+    }
   };
 
   const saveUserProfile = () => {
@@ -157,7 +216,6 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
             <TabsTrigger value="personal" className="flex-1">Perfil Pessoal</TabsTrigger>
             <TabsTrigger value="commercial" className="flex-1">Perfis Comerciais</TabsTrigger>
             <TabsTrigger value="documents" className="flex-1">Documentos</TabsTrigger>
-            <TabsTrigger value="accounts" className="flex-1">Contas</TabsTrigger>
           </TabsList>
 
           <TabsContent value="personal" className="w-full">
@@ -169,6 +227,15 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                <div className="flex items-center space-x-2 mb-4">
+                  <Checkbox 
+                    id="identity-verified" 
+                    checked={identityVerified}
+                    onCheckedChange={(checked) => setIdentityVerified(checked === true)}
+                  />
+                  <Label htmlFor="identity-verified">Identidade verificada</Label>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="firstName">Primeiro Nome</Label>
@@ -221,6 +288,7 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
                       id="idNumber"
                       value={userData.idNumber}
                       onChange={(e) => setUserData({...userData, idNumber: e.target.value})}
+                      disabled={!identityVerified}
                     />
                   </div>
                   <div>
@@ -229,6 +297,7 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
                       id="nationality"
                       value={userData.nationality}
                       onChange={(e) => setUserData({...userData, nationality: e.target.value})}
+                      disabled={!identityVerified}
                       className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       <option value="STP">São Tomé e Príncipe</option>
@@ -257,9 +326,22 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
                       type="date"
                       value={userData.expiryDate}
                       onChange={(e) => setUserData({...userData, expiryDate: e.target.value})}
+                      disabled={!identityVerified}
                     />
                   </div>
                 </div>
+
+                {identityVerified && (
+                  <div>
+                    <Label htmlFor="fiscalNumber">Número Fiscal (Opcional)</Label>
+                    <Input
+                      id="fiscalNumber"
+                      placeholder="Ex: 123456789"
+                      value={fiscalNumber}
+                      onChange={(e) => setFiscalNumber(e.target.value)}
+                    />
+                  </div>
+                )}
 
                 <div>
                   <Label htmlFor="status">Estado da Conta</Label>
@@ -301,10 +383,56 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
                     <Building className="w-5 h-5" />
                     Perfis Comerciais
                   </div>
-                  <Button size="sm" variant="outline" onClick={addBusinessProfile}>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Adicionar Perfil Comercial
-                  </Button>
+                  <Dialog open={addProfileOpen} onOpenChange={setAddProfileOpen}>
+                    <DialogTrigger asChild>
+                      <Button size="sm" variant="outline">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Adicionar Perfil Comercial
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Adicionar Perfil Comercial</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="profileName">Nome do Perfil</Label>
+                          <Input
+                            id="profileName"
+                            placeholder="Ex: Silva Commerce Lda"
+                            value={newProfileName}
+                            onChange={(e) => setNewProfileName(e.target.value)}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="profileLocation">Localização</Label>
+                          <Input
+                            id="profileLocation"
+                            placeholder="Ex: São Tomé"
+                            value={newProfileLocation}
+                            onChange={(e) => setNewProfileLocation(e.target.value)}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="profileType">Tipo de Negócio</Label>
+                          <Input
+                            id="profileType"
+                            placeholder="Ex: Comércio"
+                            value={newProfileType}
+                            onChange={(e) => setNewProfileType(e.target.value)}
+                          />
+                        </div>
+                        <div className="flex gap-2">
+                          <Button variant="outline" onClick={() => setAddProfileOpen(false)}>
+                            Cancelar
+                          </Button>
+                          <Button onClick={addBusinessProfile}>
+                            Adicionar
+                          </Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -314,7 +442,6 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
                       <TableHead>Nome</TableHead>
                       <TableHead>Localização</TableHead>
                       <TableHead>Tipo de Negócio</TableHead>
-                      <TableHead>Status</TableHead>
                       <TableHead>Ações</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -325,17 +452,77 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
                         <TableCell>{profile.location}</TableCell>
                         <TableCell>{profile.businessType}</TableCell>
                         <TableCell>
-                          <Badge className={getStatusColor(profile.status)}>
-                            {getStatusText(profile.status)}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
                           <div className="flex gap-2">
-                            <Button size="sm" variant="outline">
-                              <Edit className="w-3 h-3 mr-1" />
-                              Editar
-                            </Button>
-                            <Button size="sm" variant="destructive">
+                            <Dialog open={editProfileOpen && editingProfile?.id === profile.id} onOpenChange={setEditProfileOpen}>
+                              <DialogTrigger asChild>
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => setEditingProfile(profile)}
+                                >
+                                  <Edit className="w-3 h-3 mr-1" />
+                                  Editar
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Editar Perfil Comercial</DialogTitle>
+                                </DialogHeader>
+                                {editingProfile && (
+                                  <div className="space-y-4">
+                                    <div>
+                                      <Label htmlFor="editProfileName">Nome do Perfil</Label>
+                                      <Input
+                                        id="editProfileName"
+                                        value={editingProfile.name}
+                                        onChange={(e) => setEditingProfile({
+                                          ...editingProfile,
+                                          name: e.target.value
+                                        })}
+                                      />
+                                    </div>
+                                    <div>
+                                      <Label htmlFor="editProfileLocation">Localização</Label>
+                                      <Input
+                                        id="editProfileLocation"
+                                        value={editingProfile.location}
+                                        onChange={(e) => setEditingProfile({
+                                          ...editingProfile,
+                                          location: e.target.value
+                                        })}
+                                      />
+                                    </div>
+                                    <div>
+                                      <Label htmlFor="editProfileType">Tipo de Negócio</Label>
+                                      <Input
+                                        id="editProfileType"
+                                        value={editingProfile.businessType}
+                                        onChange={(e) => setEditingProfile({
+                                          ...editingProfile,
+                                          businessType: e.target.value
+                                        })}
+                                      />
+                                    </div>
+                                    <div className="flex gap-2">
+                                      <Button variant="outline" onClick={() => {
+                                        setEditProfileOpen(false);
+                                        setEditingProfile(null);
+                                      }}>
+                                        Cancelar
+                                      </Button>
+                                      <Button onClick={updateBusinessProfile}>
+                                        Guardar
+                                      </Button>
+                                    </div>
+                                  </div>
+                                )}
+                              </DialogContent>
+                            </Dialog>
+                            <Button 
+                              size="sm" 
+                              variant="destructive"
+                              onClick={() => removeBusinessProfile(profile.id)}
+                            >
                               <Trash2 className="w-3 h-3 mr-1" />
                               Remover
                             </Button>
@@ -371,6 +558,22 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
                       />
                     </div>
                     <div>
+                      <Label htmlFor="documentType">Tipo de Documento</Label>
+                      <Select value={documentType} onValueChange={setDocumentType}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o tipo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Bilhete de Identidade">Bilhete de Identidade</SelectItem>
+                          <SelectItem value="Passaporte">Passaporte</SelectItem>
+                          <SelectItem value="Carta de Condução">Carta de Condução</SelectItem>
+                          <SelectItem value="Comprovativo de Morada">Comprovativo de Morada</SelectItem>
+                          <SelectItem value="Licença Comercial">Licença Comercial</SelectItem>
+                          <SelectItem value="Outro">Outro</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
                       <Label htmlFor="documentFile">Selecionar Arquivo</Label>
                       <Input
                         id="documentFile"
@@ -403,7 +606,7 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
                         <TableCell>{document.submissionDate}</TableCell>
                         <TableCell>
                           <Badge variant="outline">
-                            {document.type.replace('_', ' ').toUpperCase()}
+                            {getDocumentTypeLabel(document.type)}
                           </Badge>
                         </TableCell>
                         <TableCell>
@@ -424,31 +627,6 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
             </Card>
           </TabsContent>
 
-          <TabsContent value="accounts" className="w-full">
-            <Card className="w-full">
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Building className="w-5 h-5" />
-                    Gestão de Contas
-                  </div>
-                  <Button 
-                    size="sm" 
-                    variant="outline"
-                    onClick={onAccountsManagement}
-                  >
-                    Gerir Contas
-                  </Button>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  A gestão detalhada de contas foi movida para uma tela dedicada. 
-                  Clique no botão "Gerir Contas" para acessar todas as funcionalidades de contas.
-                </p>
-              </CardContent>
-            </Card>
-          </TabsContent>
         </Tabs>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, Calendar, CheckCircle } from 'lucide-react';
+import { PageHeader } from './PageHeader';
 
 interface WithdrawalReportScreenProps {
   onBack: () => void;
@@ -26,24 +27,14 @@ const WithdrawalReportScreen = ({ onBack }: WithdrawalReportScreenProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center">
-            <Button variant="ghost" onClick={onBack} className="mr-4">
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
-            <div>
-              <h1 className="text-xl font-bold text-kitadi-navy">Reportar Depósito Bancário Operacional</h1>
-              <p className="text-sm text-gray-500">Registe um depósito operacional com banco, ID da operação, valor e data</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="max-w-2xl mx-auto px-6 py-8">
+    <div className="w-full">
+      <PageHeader 
+        title="Reportar Depósito Operacional" 
+        onBack={onBack}
+      />
+      
+      <div className="w-full p-8">
+        <div className="max-w-2xl mx-auto">
         <Card>
           <CardHeader>
             <CardTitle>Detalhes do Depósito Operacional</CardTitle>
@@ -78,6 +69,7 @@ const WithdrawalReportScreen = ({ onBack }: WithdrawalReportScreenProps) => {
             </div>
           </CardContent>
         </Card>
+        </div>
       </div>
     </div>
   );

@@ -41,8 +41,10 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
   const { toast } = useToast();
   const [newAccountName, setNewAccountName] = useState('');
   const [newAccountProfile, setNewAccountProfile] = useState('');
+  const [newAccountEvent, setNewAccountEvent] = useState('');
   const [selectedAccount, setSelectedAccount] = useState<Account | null>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [limitsDialogOpen, setLimitsDialogOpen] = useState(false);
   const [transactionDialogOpen, setTransactionDialogOpen] = useState(false);
 
   // Mock data
@@ -80,10 +82,19 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
   ]);
 
   const commercialProfiles = [
+    'Nenhuma associação',
     'Silva Commerce Lda',
     'Restaurante Central',
     'Boutique Fashion',
     'Tech Solutions STP'
+  ];
+
+  const events = [
+    'Nenhuma associação',
+    'Evento Cultural 2024',
+    'Festival de Música',
+    'Conferência Tech',
+    'Feira de Negócios'
   ];
 
   const mockTransactions: Transaction[] = [
@@ -114,10 +125,10 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
   ];
 
   const createAccount = () => {
-    if (!newAccountName.trim() || !newAccountProfile) {
+    if (!newAccountName.trim()) {
       toast({
         title: "Erro",
-        description: "Preencha todos os campos obrigatórios",
+        description: "Nome da conta é obrigatório",
         variant: "destructive"
       });
       return;
@@ -137,6 +148,7 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
     setAccounts([...accounts, newAccount]);
     setNewAccountName('');
     setNewAccountProfile('');
+    setNewAccountEvent('');
     
     toast({
       title: "Conta criada",
@@ -211,7 +223,7 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <Label htmlFor="accountName">Nome da Conta</Label>
                 <Input
@@ -222,7 +234,7 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
                 />
               </div>
               <div>
-                <Label htmlFor="commercialProfile">Perfil Comercial</Label>
+                <Label htmlFor="commercialProfile">Perfil Comercial (Opcional)</Label>
                 <Select value={newAccountProfile} onValueChange={setNewAccountProfile}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione o perfil" />
@@ -230,6 +242,19 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
                   <SelectContent>
                     {commercialProfiles.map((profile) => (
                       <SelectItem key={profile} value={profile}>{profile}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="eventAssociation">Associação de Evento (Opcional)</Label>
+                <Select value={newAccountEvent} onValueChange={setNewAccountEvent}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o evento" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {events.map((event) => (
+                      <SelectItem key={event} value={event}>{event}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -353,65 +378,75 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
                             </DialogContent>
                           </Dialog>
 
-                          <Button size="sm" variant="outline">
-                            <Settings className="w-3 h-3 mr-1" />
-                            Limites
-                          </Button>
-
-                          <Dialog open={transactionDialogOpen && selectedAccount?.id === account.id} onOpenChange={setTransactionDialogOpen}>
+                          <Dialog open={limitsDialogOpen && selectedAccount?.id === account.id} onOpenChange={setLimitsDialogOpen}>
                             <DialogTrigger asChild>
                               <Button 
                                 size="sm" 
                                 variant="outline"
                                 onClick={() => setSelectedAccount(account)}
                               >
-                                <Clock className="w-3 h-3 mr-1" />
-                                Histórico
+                                <Settings className="w-3 h-3 mr-1" />
+                                Limites
                               </Button>
                             </DialogTrigger>
-                            <DialogContent className="max-w-4xl">
+                            <DialogContent>
                               <DialogHeader>
-                                <DialogTitle>Histórico de Transações - {account.name}</DialogTitle>
+                                <DialogTitle>Configurar Limites - {account.name}</DialogTitle>
                               </DialogHeader>
-                              <div>
-                                <Table>
-                                  <TableHeader>
-                                    <TableRow>
-                                      <TableHead>ID</TableHead>
-                                      <TableHead>Tipo</TableHead>
-                                      <TableHead>Status</TableHead>
-                                      <TableHead>Valor</TableHead>
-                                      <TableHead>Data</TableHead>
-                                      <TableHead>Descrição</TableHead>
-                                    </TableRow>
-                                  </TableHeader>
-                                  <TableBody>
-                                    {mockTransactions.map((transaction) => (
-                                      <TableRow 
-                                        key={transaction.id} 
-                                        className="cursor-pointer hover:bg-gray-50"
-                                        onClick={() => handleTransactionClick(transaction.id)}
-                                      >
-                                        <TableCell className="font-mono">{transaction.id}</TableCell>
-                                        <TableCell>{transaction.type}</TableCell>
-                                        <TableCell>
-                                          <Badge variant={
-                                            transaction.status === 'COMPLETED' ? 'default' :
-                                            transaction.status === 'PENDING' ? 'secondary' : 'destructive'
-                                          }>
-                                            {transaction.status}
-                                          </Badge>
-                                        </TableCell>
-                                        <TableCell>{transaction.amount.toLocaleString()} STN</TableCell>
-                                        <TableCell>{transaction.date}</TableCell>
-                                        <TableCell>{transaction.description}</TableCell>
-                                      </TableRow>
-                                    ))}
-                                  </TableBody>
-                                </Table>
+                              <div className="space-y-4">
+                                <div>
+                                  <Label htmlFor="dailyLimit">Limite Diário (STN)</Label>
+                                  <Input
+                                    id="dailyLimit"
+                                    type="number"
+                                    placeholder="Ex: 100000"
+                                    defaultValue="100000"
+                                  />
+                                </div>
+                                <div>
+                                  <Label htmlFor="monthlyLimit">Limite Mensal (STN)</Label>
+                                  <Input
+                                    id="monthlyLimit"
+                                    type="number"
+                                    placeholder="Ex: 1000000"
+                                    defaultValue="1000000"
+                                  />
+                                </div>
+                                <div>
+                                  <Label htmlFor="transactionLimit">Limite por Transação (STN)</Label>
+                                  <Input
+                                    id="transactionLimit"
+                                    type="number"
+                                    placeholder="Ex: 50000"
+                                    defaultValue="50000"
+                                  />
+                                </div>
+                                <div className="flex gap-2">
+                                  <Button variant="outline" onClick={() => setLimitsDialogOpen(false)}>
+                                    Cancelar
+                                  </Button>
+                                  <Button onClick={() => {
+                                    setLimitsDialogOpen(false);
+                                    toast({
+                                      title: "Limites atualizados",
+                                      description: "Os limites da conta foram configurados com sucesso"
+                                    });
+                                  }}>
+                                    Guardar
+                                  </Button>
+                                </div>
                               </div>
                             </DialogContent>
                           </Dialog>
+
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => onTransactionHistory?.(account.id)}
+                          >
+                            <Clock className="w-3 h-3 mr-1" />
+                            Histórico
+                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>

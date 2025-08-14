@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Download, Calendar, FileText } from 'lucide-react';
+import { PageHeader } from './PageHeader';
 
 interface WebExtractScreenProps {
   userType: 'personal' | 'business' | 'agent' | 'business-associated' | 'merchant';
@@ -73,31 +74,14 @@ const WebExtractScreen = ({ userType, onBack }: WebExtractScreenProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-4xl mx-auto flex items-center">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onBack}
-            className="mr-4"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <div className="flex items-center">
-            <img 
-              src="/lovable-uploads/eaf20c9f-d9d2-4df9-a59b-9270a930044e.png" 
-              alt="Kitadi Logo" 
-              className="h-6 w-auto mr-2"
-            />
-            <h1 className="text-xl font-bold text-kitadi-navy">Gerar Extrato</h1>
-          </div>
-        </div>
-      </div>
+    <div className="w-full">
+      <PageHeader 
+        title="Baixar Extrato"
+        onBack={onBack}
+      />
 
-      {/* Content */}
-      <div className="max-w-2xl mx-auto px-6 py-8">
+      <div className="w-full p-8">
+        <div className="max-w-2xl mx-auto">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -202,6 +186,7 @@ const WebExtractScreen = ({ userType, onBack }: WebExtractScreenProps) => {
             </Button>
           </CardContent>
         </Card>
+        </div>
       </div>
     </div>
   );
