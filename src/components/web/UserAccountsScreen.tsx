@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { CreditCard, Plus, Edit, Settings, Clock, Trash2 } from 'lucide-react';
+import { CreditCard, Plus, Edit, Settings, Clock, Trash2, Users } from 'lucide-react';
 import { PageHeader } from './PageHeader';
 import { useToast } from '@/hooks/use-toast';
 
@@ -50,6 +50,8 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [limitsDialogOpen, setLimitsDialogOpen] = useState(false);
   const [transactionDialogOpen, setTransactionDialogOpen] = useState(false);
+  const [ownersDialogOpen, setOwnersDialogOpen] = useState(false);
+  const [selectedAccountForOwners, setSelectedAccountForOwners] = useState<Account | null>(null);
 
   // Mock data
   const [accounts, setAccounts] = useState<Account[]>([
@@ -321,8 +323,12 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
                            <Button 
                              size="sm" 
                              variant="outline"
-                             onClick={() => console.log('Manage owners for account:', account.id)}
+                             onClick={() => {
+                               setSelectedAccountForOwners(account);
+                               setOwnersDialogOpen(true);
+                             }}
                            >
+                             <Users className="w-3 h-3 mr-1" />
                              Proprietários
                            </Button>
                            <Dialog open={editDialogOpen && selectedAccount?.id === account.id} onOpenChange={setEditDialogOpen}>
@@ -616,6 +622,139 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
             </div>
           </CardContent>
         </Card>
+
+        {/* Account Owners Management Dialog */}
+        <Dialog open={ownersDialogOpen} onOpenChange={setOwnersDialogOpen}>
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Users className="w-5 h-5" />
+                Gestão de Proprietários - {selectedAccountForOwners?.name}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-6">
+              {/* Current Owners */}
+              <div>
+                <h3 className="font-semibold text-lg mb-3">Proprietários Atuais</h3>
+                <div className="border rounded-lg">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Nome</TableHead>
+                        <TableHead>Telefone</TableHead>
+                        <TableHead>Tipo</TableHead>
+                        <TableHead>Percentual</TableHead>
+                        <TableHead>Ações</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      <TableRow>
+                        <TableCell>Maria Silva</TableCell>
+                        <TableCell>+2399123456</TableCell>
+                        <TableCell>
+                          <Badge className="bg-blue-100 text-blue-800">Principal</Badge>
+                        </TableCell>
+                        <TableCell>80%</TableCell>
+                        <TableCell>
+                          <Button size="sm" variant="destructive">
+                            <Trash2 className="w-3 h-3 mr-1" />
+                            Remover
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>João Santos</TableCell>
+                        <TableCell>+2399654321</TableCell>
+                        <TableCell>
+                          <Badge className="bg-gray-100 text-gray-800">Secundário</Badge>
+                        </TableCell>
+                        <TableCell>20%</TableCell>
+                        <TableCell>
+                          <Button size="sm" variant="destructive">
+                            <Trash2 className="w-3 h-3 mr-1" />
+                            Remover
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+
+              {/* Add New Owner */}
+              <div>
+                <h3 className="font-semibold text-lg mb-3">Adicionar Proprietário</h3>
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                      <div>
+                        <Label htmlFor="ownerPhone">Telefone</Label>
+                        <Input
+                          id="ownerPhone"
+                          placeholder="+239 912 3456"
+                          type="tel"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="ownerType">Tipo</Label>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione" />
+                          </SelectTrigger>
+                          <SelectContent className="z-50 bg-white">
+                            <SelectItem value="principal">Principal</SelectItem>
+                            <SelectItem value="secundario">Secundário</SelectItem>
+                            <SelectItem value="administrador">Administrador</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label htmlFor="ownerPercentage">Percentual (%)</Label>
+                        <Input
+                          id="ownerPercentage"
+                          placeholder="Ex: 50"
+                          type="number"
+                          min="0"
+                          max="100"
+                        />
+                      </div>
+                      <div className="flex items-end">
+                        <Button 
+                          className="w-full"
+                          onClick={() => {
+                            toast({
+                              title: "Proprietário adicionado",
+                              description: "Novo proprietário foi associado à conta"
+                            });
+                          }}
+                        >
+                          <Plus className="w-4 h-4 mr-2" />
+                          Adicionar
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Actions */}
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={() => setOwnersDialogOpen(false)}>
+                  Fechar
+                </Button>
+                <Button onClick={() => {
+                  setOwnersDialogOpen(false);
+                  toast({
+                    title: "Alterações guardadas",
+                    description: "As associações de proprietários foram atualizadas"
+                  });
+                }}>
+                  Guardar Alterações
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
