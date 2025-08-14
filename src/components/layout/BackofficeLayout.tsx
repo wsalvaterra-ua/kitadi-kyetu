@@ -80,6 +80,11 @@ export function BackofficeLayout({
               </Button>
               <div>
                 <h1 className="text-2xl font-semibold text-foreground">{getCategoryTitle()}</h1>
+                <nav className="flex items-center space-x-2 text-sm text-muted-foreground mt-1">
+                  <span>Home</span>
+                  <span>›</span>
+                  <span className="text-foreground font-semibold">{getPageTitle()}</span>
+                </nav>
               </div>
             </div>
             
@@ -108,10 +113,8 @@ export function BackofficeLayout({
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-y-auto w-full bg-content">
-          <div className="w-full">
-            {children}
-          </div>
+        <main className="flex-1 overflow-y-auto w-full">
+          {children}
         </main>
       </div>
     </div>

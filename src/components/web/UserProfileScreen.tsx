@@ -7,16 +7,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { ArrowLeft, User, CreditCard, Building, Shield, Phone, MessageSquare, Eye, Plus, Trash2, Upload, Download, FileText, Edit, MapPin } from 'lucide-react';
+import { ArrowLeft, User, CreditCard, Building, Shield, Phone, MessageSquare, Eye, Plus, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface UserProfileScreenProps {
   phoneNumber: string;
   onBack: () => void;
-  onOpenAccountManagement?: (phoneNumber: string) => void;
 }
 
 interface Account {
@@ -31,19 +27,10 @@ interface BusinessProfile {
   id: string;
   name: string;
   type: string;
-  location: string;
   status: 'active' | 'pending' | 'suspended';
 }
 
-interface Document {
-  id: string;
-  name: string;
-  submissionDate: string;
-  type: string;
-  status: 'pending' | 'approved' | 'rejected';
-}
-
-const UserProfileScreen = ({ phoneNumber, onBack, onOpenAccountManagement }: UserProfileScreenProps) => {
+const UserProfileScreen = ({ phoneNumber, onBack }: UserProfileScreenProps) => {
   const { toast } = useToast();
   const [userStatus, setUserStatus] = useState<'ACTIVE' | 'SUSPENDED' | 'PENDING_KYC' | 'CLOSED'>('ACTIVE');
   const [verificationCode, setVerificationCode] = useState('');
@@ -68,37 +55,10 @@ const UserProfileScreen = ({ phoneNumber, onBack, onOpenAccountManagement }: Use
     { id: 'acc003', name: 'Restaurante Central', type: 'merchant', status: 'pending' }
   ]);
 
-  const [businessProfiles, setBusinessProfiles] = useState<BusinessProfile[]>([
-    { id: 'biz001', name: 'Silva Commerce Lda', type: 'Comércio', location: 'São Tomé Centro', status: 'active' },
-    { id: 'biz002', name: 'Restaurante Central', type: 'Restauração', location: 'Água Grande', status: 'pending' }
+  const [businessProfiles] = useState<BusinessProfile[]>([
+    { id: 'biz001', name: 'Silva Commerce Lda', type: 'Comércio', status: 'active' },
+    { id: 'biz002', name: 'Restaurante Central', type: 'Restauração', status: 'pending' }
   ]);
-
-  const [documents] = useState<Document[]>([
-    {
-      id: '1',
-      name: 'Bilhete de Identidade',
-      submissionDate: '2024-01-10',
-      type: 'PDF',
-      status: 'approved'
-    },
-    {
-      id: '2',
-      name: 'Comprovativo de Morada',
-      submissionDate: '2024-01-12',
-      type: 'PDF',
-      status: 'pending'
-    }
-  ]);
-
-  const [showNewBusinessForm, setShowNewBusinessForm] = useState(false);
-  const [newBusinessData, setNewBusinessData] = useState({
-    name: '',
-    type: '',
-    location: ''
-  });
-  const [newDocumentName, setNewDocumentName] = useState('');
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [showUploadDialog, setShowUploadDialog] = useState(false);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -175,24 +135,17 @@ const UserProfileScreen = ({ phoneNumber, onBack, onOpenAccountManagement }: Use
       </div>
 
       {/* Main Content */}
-      <div className="w-full px-6 py-8 space-y-6">
-        <Tabs defaultValue="personal" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="personal">Perfil Pessoal</TabsTrigger>
-            <TabsTrigger value="commercial">Perfis Comerciais</TabsTrigger>
-            <TabsTrigger value="documents">Documentos</TabsTrigger>
-            <TabsTrigger value="accounts">Contas</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="personal" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User className="w-5 h-5" />
-                  Dados Pessoais
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+      <div className="max-w-6xl mx-auto px-6 py-8 space-y-6">
+        <div className="grid lg:grid-cols-2 gap-6">
+          {/* User Profile */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <User className="w-5 h-5" />
+                Dados Pessoais
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="firstName">Primeiro Nome</Label>
@@ -308,277 +261,104 @@ const UserProfileScreen = ({ phoneNumber, onBack, onOpenAccountManagement }: Use
                 )}
               </div>
 
-                <div className="flex gap-2">
-                  <Button onClick={() => sendVerificationCode('profile')} variant="outline" size="sm">
-                    <MessageSquare className="w-4 h-4 mr-2" />
-                    Enviar Código
-                  </Button>
-                  <Button onClick={saveUserProfile}>
-                    Guardar Alterações
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+              <div className="flex gap-2">
+                <Button onClick={() => sendVerificationCode('profile')} variant="outline" size="sm">
+                  <MessageSquare className="w-4 h-4 mr-2" />
+                  Enviar Código
+                </Button>
+                <Button onClick={saveUserProfile}>
+                  Guardar Alterações
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
 
-          <TabsContent value="commercial" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Building className="w-5 h-5" />
-                    Perfis Comerciais
-                  </div>
-                  <Dialog open={showNewBusinessForm} onOpenChange={setShowNewBusinessForm}>
-                    <DialogTrigger asChild>
-                      <Button>
-                        <Plus className="w-4 h-4 mr-2" />
-                        Adicionar Perfil Comercial
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-md">
-                      <DialogHeader>
-                        <DialogTitle>Novo Perfil Comercial</DialogTitle>
-                      </DialogHeader>
-                      <div className="space-y-4">
-                        <div>
-                          <Label htmlFor="businessName">Nome do Negócio</Label>
-                          <Input
-                            id="businessName"
-                            placeholder="Nome do negócio"
-                            value={newBusinessData.name}
-                            onChange={(e) => setNewBusinessData({...newBusinessData, name: e.target.value})}
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="businessType">Tipo de Negócio</Label>
-                          <Select value={newBusinessData.type} onValueChange={(value) => setNewBusinessData({...newBusinessData, type: value})}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecionar tipo" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="comercio">Comércio</SelectItem>
-                              <SelectItem value="restauracao">Restauração</SelectItem>
-                              <SelectItem value="servicos">Serviços</SelectItem>
-                              <SelectItem value="outros">Outros</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div>
-                          <Label htmlFor="businessLocation">Localização</Label>
-                          <Input
-                            id="businessLocation"
-                            placeholder="Localização do negócio"
-                            value={newBusinessData.location}
-                            onChange={(e) => setNewBusinessData({...newBusinessData, location: e.target.value})}
-                          />
-                        </div>
-                        <div className="flex gap-2">
-                          <Button variant="outline" onClick={() => setShowNewBusinessForm(false)} className="flex-1">
-                            Cancelar
-                          </Button>
-                          <Button onClick={() => {
-                            if (newBusinessData.name && newBusinessData.type && newBusinessData.location) {
-                              const newProfile: BusinessProfile = {
-                                id: (businessProfiles.length + 1).toString(),
-                                name: newBusinessData.name,
-                                type: newBusinessData.type,
-                                location: newBusinessData.location,
-                                status: 'pending'
-                              };
-                              setBusinessProfiles([...businessProfiles, newProfile]);
-                              setNewBusinessData({ name: '', type: '', location: '' });
-                              setShowNewBusinessForm(false);
-                              toast({
-                                title: "Perfil criado",
-                                description: "Novo perfil comercial criado com sucesso",
-                              });
-                            }
-                          }} className="flex-1">
-                            Criar
-                          </Button>
-                        </div>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Nome do Perfil</TableHead>
-                      <TableHead>Localização</TableHead>
-                      <TableHead>Tipo de Negócio</TableHead>
-                      <TableHead>Estado</TableHead>
-                      <TableHead>Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {businessProfiles.map((profile) => (
-                      <TableRow key={profile.id}>
-                        <TableCell className="font-medium">{profile.name}</TableCell>
-                        <TableCell>{profile.location}</TableCell>
-                        <TableCell>{profile.type}</TableCell>
-                        <TableCell>
-                          <Badge className={getStatusColor(profile.status)}>
-                            {getStatusText(profile.status)}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex gap-2">
-                            <Button size="sm" variant="outline">
-                              <Edit className="w-3 h-3 mr-1" />
-                              Editar
-                            </Button>
-                            <Button size="sm" variant="destructive">
-                              <Trash2 className="w-3 h-3 mr-1" />
-                              Remover
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="documents" className="mt-6">
-            <div className="space-y-6">
-              {/* Upload Section */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Upload className="w-5 h-5" />
-                      Enviar Novo Documento
-                    </div>
-                    <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>
-                      <DialogTrigger asChild>
-                        <Button>
-                          <Upload className="w-4 h-4 mr-2" />
-                          Enviar Documento
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="max-w-md">
-                        <DialogHeader>
-                          <DialogTitle>Enviar Documento</DialogTitle>
-                        </DialogHeader>
-                        <div className="space-y-4">
-                          <div>
-                            <Label htmlFor="documentName">Nome do Documento</Label>
-                            <Input
-                              id="documentName"
-                              placeholder="Ex: Bilhete de Identidade"
-                              value={newDocumentName}
-                              onChange={(e) => setNewDocumentName(e.target.value)}
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="documentFile">Selecionar Arquivo</Label>
-                            <Input
-                              id="documentFile"
-                              type="file"
-                              accept=".pdf,.jpg,.jpeg,.png"
-                              onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-                            />
-                          </div>
-                          <div className="flex gap-2">
-                            <Button variant="outline" onClick={() => setShowUploadDialog(false)} className="flex-1">
-                              Cancelar
-                            </Button>
-                            <Button onClick={() => {
-                              if (newDocumentName && selectedFile) {
-                                toast({
-                                  title: "Documento enviado",
-                                  description: `${newDocumentName} foi enviado com sucesso`,
-                                });
-                                setNewDocumentName('');
-                                setSelectedFile(null);
-                                setShowUploadDialog(false);
-                              }
-                            }} className="flex-1">
-                              Enviar
-                            </Button>
-                          </div>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                  </CardTitle>
-                </CardHeader>
-              </Card>
-
-              {/* Documents Table */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileText className="w-5 h-5" />
-                    Documentos Submetidos
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Nome do Documento</TableHead>
-                        <TableHead>Data de Submissão</TableHead>
-                        <TableHead>Estado</TableHead>
-                        <TableHead>Ações</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {documents.map((document) => (
-                        <TableRow key={document.id}>
-                          <TableCell className="font-medium">{document.name}</TableCell>
-                          <TableCell>{document.submissionDate}</TableCell>
-                          <TableCell>
-                            <Badge className={getStatusColor(document.status)}>
-                              {document.status === 'approved' ? 'Aprovado' : document.status === 'pending' ? 'Pendente' : 'Rejeitado'}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <Button size="sm" variant="outline">
-                              <Download className="w-3 h-3 mr-1" />
-                              Download
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="accounts" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+          {/* User Accounts */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
                   <CreditCard className="w-5 h-5" />
-                  Gestão de Contas
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="bg-blue-50 border border-blue-200 p-4">
-                  <p className="text-blue-800 text-sm">
-                    Para gerir contas, perfis e associações, utilize o menu "Contas" disponível nos resultados de pesquisa.
-                  </p>
-                  <Button 
-                    size="sm" 
-                    className="mt-2"
-                    onClick={() => onOpenAccountManagement?.(phoneNumber)}
-                  >
-                    <CreditCard className="w-4 h-4 mr-2" />
-                    Ir para Gestão de Contas
-                  </Button>
+                  Contas do Utilizador
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+                <Button size="sm" variant="outline">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Nova Conta
+                </Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {accounts.map((account) => (
+                <div key={account.id} className="border rounded-lg p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <div>
+                      <h4 className="font-medium">{account.name}</h4>
+                      <p className="text-sm text-gray-500">ID: {account.id}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs">
+                        {account.type}
+                      </Badge>
+                      <Badge className={getStatusColor(account.status)}>
+                        {getStatusText(account.status)}
+                      </Badge>
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => setSelectedAccount(account)}
+                    >
+                      <Eye className="w-3 h-3 mr-1" />
+                      Ver Detalhes
+                    </Button>
+                    <Button size="sm" variant="outline" className="text-red-600">
+                      <Trash2 className="w-3 h-3 mr-1" />
+                      Eliminar
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Business Profiles */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Building className="w-5 h-5" />
+                Perfis Comerciais
+              </div>
+              <Button size="sm" variant="outline">
+                <Plus className="w-4 h-4 mr-2" />
+                Novo Perfil
+              </Button>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-2 gap-4">
+              {businessProfiles.map((profile) => (
+                <div key={profile.id} className="border rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium">{profile.name}</h4>
+                    <Badge className={getStatusColor(profile.status)}>
+                      {getStatusText(profile.status)}
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-gray-500 mb-3">{profile.type}</p>
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline">Editar</Button>
+                    <Button size="sm" variant="outline" className="text-red-600">Eliminar</Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Account Details Modal Content */}
         {selectedAccount && (

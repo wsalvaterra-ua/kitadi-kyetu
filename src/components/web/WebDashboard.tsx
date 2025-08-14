@@ -89,9 +89,9 @@ const WebDashboard = ({
   const userInfo = getUserTypeInfo();
 
   return (
-    <div className="w-full p-8">
+    <div className="w-full px-6 py-8">
         {/* Balance Card */}
-        <Card className="mb-8 w-full">
+        <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-kitadi-orange">
               <CreditCard className="w-5 h-5" />
@@ -112,8 +112,25 @@ const WebDashboard = ({
         {/* Consultas */}
         <div className="mb-8">
           <h2 className="text-xl font-semibold text-kitadi-navy mb-4">Consultas</h2>
-          <div className="grid gap-6 grid-cols-1 md:grid-cols-2 w-full">
-            <Card className="cursor-pointer hover:shadow-md transition-shadow w-full" onClick={onDownloadExtract}>
+          <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+            <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onViewTransactions}>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-kitadi-orange">
+                  <Eye className="w-5 h-5" />
+                  Ver Transações
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600">
+                  Consulte o histórico completo de transações realizadas
+                </p>
+                <Button variant="outline" className="mt-4 w-full">
+                  Abrir Histórico
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onDownloadExtract}>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-kitadi-orange">
                   <Download className="w-5 h-5" />
@@ -138,8 +155,8 @@ const WebDashboard = ({
             {/* Gestão de Clientes */}
             <div className="mb-8">
               <h2 className="text-xl font-semibold text-kitadi-navy mb-4">Gestão de Clientes</h2>
-              <div className="grid gap-6 grid-cols-1 md:grid-cols-2 w-full">
-                <Card className="cursor-pointer hover:shadow-md transition-shadow w-full" onClick={onCreateMerchantProfile}>
+              <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onCreateMerchantProfile}>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-kitadi-orange">
                       <Building className="w-5 h-5" />
@@ -156,7 +173,7 @@ const WebDashboard = ({
                   </CardContent>
                 </Card>
 
-                <Card className="cursor-pointer hover:shadow-md transition-shadow w-full" onClick={onAccountOwnership}>
+                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onAccountOwnership}>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-kitadi-orange">
                       <UserCheck className="w-5 h-5" />
@@ -178,8 +195,8 @@ const WebDashboard = ({
             {/* Transações */}
             <div className="mb-8">
               <h2 className="text-xl font-semibold text-kitadi-navy mb-4">Transações</h2>
-              <div className="grid gap-6 grid-cols-1 md:grid-cols-2 w-full">
-                <Card className="cursor-pointer hover:shadow-md transition-shadow w-full" onClick={onAgentCashoutRequest}>
+              <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onAgentCashoutRequest}>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-kitadi-orange">
                       <Banknote className="w-5 h-5" />
@@ -196,7 +213,7 @@ const WebDashboard = ({
                   </CardContent>
                 </Card>
 
-                <Card className="cursor-pointer hover:shadow-md transition-shadow w-full" onClick={onTransactionManagement}>
+                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onTransactionManagement}>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-kitadi-orange">
                       <Search className="w-5 h-5" />
@@ -218,8 +235,8 @@ const WebDashboard = ({
             {/* Operações Financeiras */}
             <div className="mb-8">
               <h2 className="text-xl font-semibold text-kitadi-navy mb-4">Operações Financeiras</h2>
-              <div className="grid gap-6 grid-cols-1 md:grid-cols-2 w-full">
-                <Card className="cursor-pointer hover:shadow-md transition-shadow w-full" onClick={onAddReconciliation}>
+              <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onAddReconciliation}>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-kitadi-orange">
                       <Plus className="w-5 h-5" />
@@ -236,7 +253,7 @@ const WebDashboard = ({
                   </CardContent>
                 </Card>
 
-                <Card className="cursor-pointer hover:shadow-md transition-shadow w-full" onClick={onBankTransactionApproval}>
+                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onBankTransactionApproval}>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-kitadi-orange">
                       <CheckCircle className="w-5 h-5" />
@@ -253,7 +270,7 @@ const WebDashboard = ({
                   </CardContent>
                 </Card>
 
-                <Card className="cursor-pointer hover:shadow-md transition-shadow w-full" onClick={onCashReserve}>
+                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onCashReserve}>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-kitadi-orange">
                       <Wallet className="w-5 h-5" />
@@ -270,7 +287,7 @@ const WebDashboard = ({
                   </CardContent>
                 </Card>
 
-                <Card className="cursor-pointer hover:shadow-md transition-shadow w-full" onClick={onExternalBankTransfer}>
+                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onExternalBankTransfer}>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-kitadi-orange">
                       <FileText className="w-5 h-5" />
@@ -292,8 +309,8 @@ const WebDashboard = ({
             {/* Sistema */}
             <div className="mb-8">
               <h2 className="text-xl font-semibold text-kitadi-navy mb-4">Sistema</h2>
-              <div className="grid gap-6 grid-cols-1 md:grid-cols-2 w-full">
-                <Card className="cursor-pointer hover:shadow-md transition-shadow w-full" onClick={onOperatorManagement}>
+              <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+                <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={onOperatorManagement}>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-kitadi-orange">
                       <Settings className="w-5 h-5" />
