@@ -126,7 +126,7 @@ const CreateUserProfileScreen = ({ phoneNumber, onBack, onUserCreated }: CreateU
       />
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-6 py-8 space-y-6">
+      <div className="w-full p-8 space-y-6">
         {/* Verification Code */}
         <Card>
           <CardHeader>

@@ -26,7 +26,7 @@ const UserConfigScreen = ({ onBack, phoneNumber }: Props) => {
         onBack={onBack}
       />
 
-      <div className="max-w-3xl mx-auto px-6 py-8">
+      <div className="w-full p-8">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">

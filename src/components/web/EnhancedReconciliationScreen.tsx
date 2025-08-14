@@ -113,7 +113,7 @@ const EnhancedReconciliationScreen = ({ onBack }: EnhancedReconciliationScreenPr
       />
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="w-full p-8">
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">

@@ -145,7 +145,7 @@ const WebAccountCreationScreen = ({ onBack }: WebAccountCreationScreenProps) => 
         onBack={showTabs ? handleBackToPhoneInput : onBack}
       />
 
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="w-full p-8">
         {!showTabs ? (
           // Phone number input step
           <Card>

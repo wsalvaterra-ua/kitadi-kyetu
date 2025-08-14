@@ -125,7 +125,7 @@ const AccountOwnershipScreen = ({ onBack }: AccountOwnershipScreenProps) => {
       />
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="w-full p-8">
         {/* Search Card */}
         <Card className="mb-6">
           <CardHeader>

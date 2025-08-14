@@ -56,7 +56,7 @@ const WebReconciliationScreen = ({ onBack }: WebReconciliationScreenProps) => {
         onBack={onBack}
       />
 
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="w-full p-8">
         <Card className="border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="text-kitadi-navy flex items-center">

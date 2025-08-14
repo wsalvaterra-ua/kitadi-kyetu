@@ -127,7 +127,7 @@ const OperatorManagementScreen = ({ onBack }: OperatorManagementScreenProps) => 
       />
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="w-full p-8">
         {/* Operators List */}
         <Card className="mb-6">
           <CardHeader>

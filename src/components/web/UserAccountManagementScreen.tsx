@@ -817,7 +817,7 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber, onOpenTransactionMan
       />
 
       {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-6 py-8">
+      <div className="w-full p-8">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold">Detalhes do Utilizador</h2>
           <Button 

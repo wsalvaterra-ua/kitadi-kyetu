@@ -108,7 +108,7 @@ const CashReserveScreen = ({ onBack }: CashReserveScreenProps) => {
       />
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="w-full p-8">
         {/* Balance Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <Card>

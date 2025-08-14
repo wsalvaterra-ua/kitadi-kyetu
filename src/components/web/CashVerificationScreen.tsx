@@ -94,7 +94,7 @@ const CashVerificationScreen = ({ onBack }: CashVerificationScreenProps) => {
       />
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="w-full p-8">
         {/* Pending Verifications */}
         <Card className="mb-6">
           <CardHeader>

@@ -75,7 +75,7 @@ const ClientTransactionsScreen = ({ onBack }: ClientTransactionsScreenProps) => 
       />
 
       {/* Main */}
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="w-full p-8">
         <Tabs defaultValue="cashout" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="cashout">Cash-out</TabsTrigger>
