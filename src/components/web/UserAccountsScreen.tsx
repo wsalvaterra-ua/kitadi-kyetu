@@ -316,19 +316,26 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
                           {getStatusText(account.status)}
                         </Badge>
                       </TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Dialog open={editDialogOpen && selectedAccount?.id === account.id} onOpenChange={setEditDialogOpen}>
-                            <DialogTrigger asChild>
-                              <Button 
-                                size="sm" 
-                                variant="outline"
-                                onClick={() => setSelectedAccount(account)}
-                              >
-                                <Edit className="w-3 h-3 mr-1" />
-                                Editar
-                              </Button>
-                            </DialogTrigger>
+                       <TableCell>
+                         <div className="flex gap-2">
+                           <Button 
+                             size="sm" 
+                             variant="outline"
+                             onClick={() => console.log('Manage owners for account:', account.id)}
+                           >
+                             Proprietários
+                           </Button>
+                           <Dialog open={editDialogOpen && selectedAccount?.id === account.id} onOpenChange={setEditDialogOpen}>
+                             <DialogTrigger asChild>
+                               <Button 
+                                 size="sm" 
+                                 variant="outline"
+                                 onClick={() => setSelectedAccount(account)}
+                               >
+                                 <Edit className="w-3 h-3 mr-1" />
+                                 Editar
+                               </Button>
+                             </DialogTrigger>
                             <DialogContent>
                               <DialogHeader>
                                 <DialogTitle>Editar Conta</DialogTitle>
