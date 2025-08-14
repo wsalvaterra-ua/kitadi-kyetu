@@ -90,24 +90,76 @@ const WebDashboard = ({
 
   return (
     <div className="w-full p-8">
-        {/* Balance Card */}
-        <Card className="mb-8 w-full">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-kitadi-orange">
-              <CreditCard className="w-5 h-5" />
-              {userInfo.title}
-            </CardTitle>
-            <p className="text-sm text-gray-600">{userInfo.description}</p>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-kitadi-orange mb-2">
-              {userInfo.balance}
+        {userType === 'agent' ? (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+            {/* Main Balance Card */}
+            <div className="lg:col-span-2">
+              <Card className="h-full">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-kitadi-orange">
+                    <CreditCard className="w-5 h-5" />
+                    {userInfo.title}
+                  </CardTitle>
+                  <p className="text-sm text-gray-600">{userInfo.description}</p>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-kitadi-orange mb-2">
+                    {userInfo.balance}
+                  </div>
+                  <p className="text-gray-600">
+                    {userInfo.transactions} transações este mês
+                  </p>
+                </CardContent>
+              </Card>
             </div>
-            <p className="text-gray-600">
-              {userInfo.transactions} transações este mês
-            </p>
-          </CardContent>
-        </Card>
+
+            {/* Agent Statistics Cards */}
+            <div className="space-y-4">
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-kitadi-orange">12</div>
+                    <p className="text-sm text-gray-600">Novos clientes hoje</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-kitadi-orange">85</div>
+                    <p className="text-sm text-gray-600">Novos clientes este mês</p>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-kitadi-orange">37</div>
+                    <p className="text-sm text-gray-600">Clientes com 1ª transação no mês</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        ) : (
+          <Card className="mb-8 w-full">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-kitadi-orange">
+                <CreditCard className="w-5 h-5" />
+                {userInfo.title}
+              </CardTitle>
+              <p className="text-sm text-gray-600">{userInfo.description}</p>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-kitadi-orange mb-2">
+                {userInfo.balance}
+              </div>
+              <p className="text-gray-600">
+                {userInfo.transactions} transações este mês
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Consultas */}
         <div className="mb-8">
@@ -138,7 +190,7 @@ const WebDashboard = ({
             {/* Gestão de Clientes */}
             <div className="mb-8">
               <h2 className="text-xl font-semibold text-kitadi-navy mb-4">Gestão de Clientes</h2>
-              <div className="grid gap-6 grid-cols-1 md:grid-cols-2 w-full">
+              <div className="grid gap-6 grid-cols-1 w-full">
                 <Card className="cursor-pointer hover:shadow-md transition-shadow w-full" onClick={onCreateMerchantProfile}>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-kitadi-orange">
@@ -148,24 +200,7 @@ const WebDashboard = ({
                   </CardHeader>
                   <CardContent>
                     <p className="text-gray-600">
-                      Pesquise clientes e gira perfis e contas bancárias
-                    </p>
-                    <Button variant="outline" className="mt-4 w-full">
-                      Gerir
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="cursor-pointer hover:shadow-md transition-shadow w-full" onClick={onAccountOwnership}>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-kitadi-orange">
-                      <UserCheck className="w-5 h-5" />
-                      Gestão de Proprietários
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-600">
-                      Gerir proprietários de contas bancárias
+                      Pesquise clientes e gira perfis, contas bancárias e proprietários
                     </p>
                     <Button variant="outline" className="mt-4 w-full">
                       Gerir
@@ -314,15 +349,14 @@ const WebDashboard = ({
           </>
         )}
 
-        {/* Additional Info for Business/Agent/Merchant accounts */}
-        {(userType === 'merchant' || userType === 'business' || userType === 'agent' || userType === 'business-associated') && (
+        {/* Additional Info for Business/Merchant accounts (excluding agent) */}
+        {(userType === 'merchant' || userType === 'business' || userType === 'business-associated') && (
           <Card className="mt-6">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-kitadi-orange">
                 <Users className="w-5 h-5" />
                 {userType === 'merchant' && 'Informações Comerciais'}
                 {userType === 'business' && 'Métricas do Negócio'}
-                {userType === 'agent' && 'Estatísticas de Agente'}
                 {userType === 'business-associated' && 'Dados do Balcão'}
               </CardTitle>
             </CardHeader>
@@ -357,22 +391,6 @@ const WebDashboard = ({
                     <div className="text-center">
                       <div className="text-2xl font-bold text-kitadi-orange">95%</div>
                       <p className="text-sm text-gray-600">Operações Concluídas</p>
-                    </div>
-                  </>
-                )}
-                {userType === 'agent' && (
-                  <>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-kitadi-orange">12</div>
-                      <p className="text-sm text-gray-600">Novos clientes hoje</p>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-kitadi-orange">85</div>
-                      <p className="text-sm text-gray-600">Novos clientes este mês</p>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-kitadi-orange">37</div>
-                      <p className="text-sm text-gray-600">Clientes com 1ª transação no mês</p>
                     </div>
                   </>
                 )}
