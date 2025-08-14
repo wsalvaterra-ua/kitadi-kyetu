@@ -46,8 +46,9 @@ import WithdrawalReportScreen from '@/components/web/WithdrawalReportScreen';
 import UserAccessManagementScreen from '@/components/web/UserAccessManagementScreen';
 import UserConfigScreen from '@/components/web/UserConfigScreen';
 import ClientTransactionsScreen from '@/components/web/ClientTransactionsScreen';
+import UserAccountsScreen from '@/components/web/UserAccountsScreen';
 
-type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation' | 'add-reconciliation' | 'account-creation' | 'web-login' | 'web-dashboard' | 'web-transactions' | 'web-extract' | 'web-account-management' | 'web-user-account-management' | 'web-user-access' | 'web-user-config' | 'web-create-user' | 'web-reconciliation' | 'web-transaction-management' | 'web-account-ownership' | 'web-bank-approval' | 'web-cash-verification' | 'web-cash-reserve' | 'web-external-bank-transfer' | 'web-operator-management' | 'web-withdrawal-report' | 'web-client-transactions';
+type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation' | 'add-reconciliation' | 'account-creation' | 'web-login' | 'web-dashboard' | 'web-transactions' | 'web-extract' | 'web-account-management' | 'web-user-account-management' | 'web-user-profile' | 'web-user-accounts' | 'web-user-access' | 'web-user-config' | 'web-create-user' | 'web-reconciliation' | 'web-transaction-management' | 'web-account-ownership' | 'web-bank-approval' | 'web-cash-verification' | 'web-cash-reserve' | 'web-external-bank-transfer' | 'web-operator-management' | 'web-withdrawal-report' | 'web-client-transactions';
 
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('onboarding');
@@ -551,7 +552,11 @@ const handleWebAddReconciliation = () => {
               }}
               onManageUser={(phone) => {
                 setUserManagementPhone(phone);
-                setCurrentScreen('web-user-account-management');
+                setCurrentScreen('web-user-profile');
+              }}
+              onManageAccounts={(phone) => {
+                setUserManagementPhone(phone);
+                setCurrentScreen('web-user-accounts');
               }}
               onManageAccess={(phone) => {
                 setUserManagementPhone(phone);
@@ -576,6 +581,41 @@ const handleWebAddReconciliation = () => {
               phoneNumber={userManagementPhone}
               onBack={handleWebBack}
               onOpenTransactionManagement={(id: string) => {
+                setWebSelectedTransactionId(id);
+                setCurrentScreen('web-transaction-management');
+              }}
+            />
+          </BackofficeLayout>
+        );
+      case 'web-user-profile':
+        return (
+          <BackofficeLayout
+            onLogout={handleWebLogout}
+            onNavigate={handleWebNavigate}
+            currentScreen={currentScreen}
+            userType={webUserType}
+          >
+            <UserProfileScreen
+              phoneNumber={userManagementPhone}
+              onBack={handleWebBack}
+              onAccountsManagement={() => {
+                setCurrentScreen('web-user-accounts');
+              }}
+            />
+          </BackofficeLayout>
+        );
+      case 'web-user-accounts':
+        return (
+          <BackofficeLayout
+            onLogout={handleWebLogout}
+            onNavigate={handleWebNavigate}
+            currentScreen={currentScreen}
+            userType={webUserType}
+          >
+            <UserAccountsScreen
+              phoneNumber={userManagementPhone}
+              onBack={handleWebBack}
+              onTransactionHistory={(id: string) => {
                 setWebSelectedTransactionId(id);
                 setCurrentScreen('web-transaction-management');
               }}
