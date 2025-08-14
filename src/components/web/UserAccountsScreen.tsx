@@ -386,17 +386,17 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
                                    <div>
                                      <Label htmlFor="editAccountProfile">Perfil Comercial</Label>
                                      <Select 
-                                       value={selectedAccount.profile || ""} 
+                                       value={selectedAccount.profile || "none"} 
                                        onValueChange={(value) => setSelectedAccount({
                                          ...selectedAccount,
-                                         profile: value
+                                         profile: value === "none" ? undefined : value
                                        })}
                                      >
                                        <SelectTrigger>
                                          <SelectValue placeholder="Selecione o perfil" />
                                        </SelectTrigger>
                                        <SelectContent>
-                                         <SelectItem value="">Nenhum</SelectItem>
+                                         <SelectItem value="none">Nenhum</SelectItem>
                                          <SelectItem value="perfil1">Perfil Comercial 1</SelectItem>
                                          <SelectItem value="perfil2">Perfil Comercial 2</SelectItem>
                                        </SelectContent>
@@ -405,17 +405,17 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
                                    <div>
                                      <Label htmlFor="editAccountEvent">Evento Associado</Label>
                                      <Select 
-                                       value={selectedAccount.event || ""} 
+                                       value={selectedAccount.event || "none"} 
                                        onValueChange={(value) => setSelectedAccount({
                                          ...selectedAccount,
-                                         event: value
+                                         event: value === "none" ? undefined : value
                                        })}
                                      >
                                        <SelectTrigger>
                                          <SelectValue placeholder="Selecione o evento" />
                                        </SelectTrigger>
                                        <SelectContent>
-                                         <SelectItem value="">Nenhum</SelectItem>
+                                         <SelectItem value="none">Nenhum</SelectItem>
                                          <SelectItem value="evento1">Evento Promocional 1</SelectItem>
                                          <SelectItem value="evento2">Evento Sazonal 2</SelectItem>
                                        </SelectContent>
