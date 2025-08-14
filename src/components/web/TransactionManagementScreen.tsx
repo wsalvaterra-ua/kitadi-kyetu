@@ -220,7 +220,7 @@ const TransactionManagementScreen = ({ onBack, initialTransactionId }: Transacti
       
       <div className="w-full p-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="flex w-full overflow-x-auto min-h-[44px]">
+          <TabsList className="flex w-full overflow-x-auto min-h-[44px] md:grid md:grid-cols-2">
             <TabsTrigger value="search" className="flex-1 min-w-0 px-3 py-2">
               <span className="hidden sm:inline">Pesquisar Transação</span>
               <span className="sm:hidden">Pesquisar</span>
