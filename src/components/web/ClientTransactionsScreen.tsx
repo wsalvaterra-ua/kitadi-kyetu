@@ -77,10 +77,19 @@ const ClientTransactionsScreen = ({ onBack }: ClientTransactionsScreenProps) => 
       {/* Main */}
       <div className="w-full p-8">
         <Tabs defaultValue="cashout" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="cashout">Cash-out</TabsTrigger>
-            <TabsTrigger value="cashin">Cash-in</TabsTrigger>
-            <TabsTrigger value="behalf">Em Nome do Cliente</TabsTrigger>
+          <TabsList className="flex w-full overflow-x-auto min-h-[44px] md:grid md:grid-cols-3">
+            <TabsTrigger value="cashout" className="flex-shrink-0 px-3 py-2 md:flex-shrink">
+              <span className="hidden sm:inline">Cash-out</span>
+              <span className="sm:hidden">Cash-out</span>
+            </TabsTrigger>
+            <TabsTrigger value="cashin" className="flex-shrink-0 px-3 py-2 md:flex-shrink">
+              <span className="hidden sm:inline">Cash-in</span>
+              <span className="sm:hidden">Cash-in</span>
+            </TabsTrigger>
+            <TabsTrigger value="behalf" className="flex-shrink-0 px-3 py-2 md:flex-shrink">
+              <span className="hidden sm:inline">Em Nome do Cliente</span>
+              <span className="sm:hidden">Em Nome</span>
+            </TabsTrigger>
           </TabsList>
 
           {/* Cash-out */}

@@ -831,18 +831,21 @@ const UserAccountManagementScreen = ({ onBack, phoneNumber, onOpenTransactionMan
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="personal" className="flex items-center gap-2">
+          <TabsList className="flex w-full overflow-x-auto min-h-[44px] md:grid md:grid-cols-3">
+            <TabsTrigger value="personal" className="flex-shrink-0 flex items-center gap-2 px-3 py-2 md:flex-shrink">
               <User className="w-4 h-4" />
-              Perfil Pessoal
+              <span className="hidden sm:inline">Perfil Pessoal</span>
+              <span className="sm:hidden">Pessoal</span>
             </TabsTrigger>
-            <TabsTrigger value="business" className="flex items-center gap-2">
+            <TabsTrigger value="business" className="flex-shrink-0 flex items-center gap-2 px-3 py-2 md:flex-shrink">
               <Building className="w-4 h-4" />
-              Perfis Comerciais
+              <span className="hidden sm:inline">Perfis Comerciais</span>
+              <span className="sm:hidden">Comerciais</span>
             </TabsTrigger>
-            <TabsTrigger value="accounts" className="flex items-center gap-2">
+            <TabsTrigger value="accounts" className="flex-shrink-0 flex items-center gap-2 px-3 py-2 md:flex-shrink">
               <Wallet className="w-4 h-4" />
-              Contas
+              <span className="hidden sm:inline">Contas e Propriedades</span>
+              <span className="sm:hidden">Contas</span>
             </TabsTrigger>
           </TabsList>
 

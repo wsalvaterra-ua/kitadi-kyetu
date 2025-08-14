@@ -266,10 +266,19 @@ const UserProfileScreen = ({
         </div>
 
         <Tabs defaultValue="personal" className="w-full">
-          <TabsList className="w-full">
-            <TabsTrigger value="personal" className="flex-1">Perfil Pessoal</TabsTrigger>
-            <TabsTrigger value="commercial" className="flex-1">Perfis Comerciais</TabsTrigger>
-            <TabsTrigger value="documents" className="flex-1">Documentos</TabsTrigger>
+          <TabsList className="flex w-full overflow-x-auto min-h-[44px] md:grid md:grid-cols-3">
+            <TabsTrigger value="personal" className="flex-shrink-0 px-3 py-2 md:flex-shrink">
+              <span className="hidden sm:inline">Perfil Pessoal</span>
+              <span className="sm:hidden">Pessoal</span>
+            </TabsTrigger>
+            <TabsTrigger value="commercial" className="flex-shrink-0 px-3 py-2 md:flex-shrink">
+              <span className="hidden sm:inline">Perfis Comerciais</span>
+              <span className="sm:hidden">Comerciais</span>
+            </TabsTrigger>
+            <TabsTrigger value="documents" className="flex-shrink-0 px-3 py-2 md:flex-shrink">
+              <span className="hidden sm:inline">Documentos</span>
+              <span className="sm:hidden">Documentos</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="personal" className="w-full">

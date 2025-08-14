@@ -87,12 +87,17 @@ const accountItems: MenuItem[] = [
 
 const operationsItems: MenuItem[] = [
   {
-    title: "Operações de Caixa",
+    title: "Transações com Cliente",
     icon: DollarSign,
     screen: "web-cash-verification"
   },
   {
-    title: "Aprovações Bancárias",
+    title: "Reconciliação",
+    icon: FileText,
+    screen: "web-reconciliation"
+  },
+  {
+    title: "Verificar Operações",
     icon: CheckCircle,
     screen: "web-bank-approval"
   },
@@ -102,7 +107,7 @@ const operationsItems: MenuItem[] = [
     screen: "web-cash-reserve"
   },
   {
-    title: "Transferências Externas",
+    title: "Transferências Bancárias",
     icon: ArrowLeftRight,
     screen: "web-external-bank-transfer"
   }
@@ -273,7 +278,7 @@ export function BackofficeSidebar({
         />
         
         <MenuSection
-          title="Operações"
+          title="Operações Financeiras"
           items={operationsItems}
           isCollapsed={isCollapsed}
           onNavigate={onNavigate}

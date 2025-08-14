@@ -186,18 +186,21 @@ const WebAccountCreationScreen = ({ onBack }: WebAccountCreationScreenProps) => 
             </div>
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="personal" className="flex items-center space-x-2">
+              <TabsList className="flex w-full overflow-x-auto min-h-[44px] md:grid md:grid-cols-3">
+                <TabsTrigger value="personal" className="flex-shrink-0 flex items-center space-x-2 px-3 py-2 md:flex-shrink">
                   <User className="w-4 h-4" />
-                  <span>Conta Pessoal</span>
+                  <span className="hidden sm:inline">Conta Pessoal</span>
+                  <span className="sm:hidden">Pessoal</span>
                 </TabsTrigger>
-                <TabsTrigger value="business" className="flex items-center space-x-2">
+                <TabsTrigger value="business" className="flex-shrink-0 flex items-center space-x-2 px-3 py-2 md:flex-shrink">
                   <Building className="w-4 h-4" />
-                  <span>Perfil Comercial</span>
+                  <span className="hidden sm:inline">Perfil Comercial</span>
+                  <span className="sm:hidden">Comercial</span>
                 </TabsTrigger>
-                <TabsTrigger value="association" className="flex items-center space-x-2">
+                <TabsTrigger value="association" className="flex-shrink-0 flex items-center space-x-2 px-3 py-2 md:flex-shrink">
                   <Link className="w-4 h-4" />
-                  <span>Associação</span>
+                  <span className="hidden sm:inline">Associação</span>
+                  <span className="sm:hidden">Associação</span>
                 </TabsTrigger>
               </TabsList>
 

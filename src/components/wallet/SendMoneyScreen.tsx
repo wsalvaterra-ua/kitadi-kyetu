@@ -39,9 +39,9 @@ const SendMoneyScreen = ({ onBack, onConfirm, onScanQR }: SendMoneyScreenProps) 
 
       <div className="px-6 -mt-4">
         <Tabs defaultValue="manual" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="manual">Manual</TabsTrigger>
-            <TabsTrigger value="qr">Escanear QR</TabsTrigger>
+          <TabsList className="flex w-full overflow-x-auto min-h-[44px] md:grid md:grid-cols-2 mb-6">
+            <TabsTrigger value="manual" className="flex-shrink-0 px-3 py-2 md:flex-shrink">Manual</TabsTrigger>
+            <TabsTrigger value="qr" className="flex-shrink-0 px-3 py-2 md:flex-shrink">Escanear QR</TabsTrigger>
           </TabsList>
           
           <TabsContent value="manual">

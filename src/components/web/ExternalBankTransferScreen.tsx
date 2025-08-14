@@ -157,10 +157,19 @@ const ExternalBankTransferScreen = ({ onBack }: ExternalBankTransferScreenProps)
       {/* Main Content */}
       <div className="w-full p-8">
         <Tabs defaultValue="with-proof" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="with-proof">Cash-in com Comprovativo ({mockTransfers.filter(t => t.status === 'PENDING').length})</TabsTrigger>
-            <TabsTrigger value="manual-cashin">Cash-in Manual</TabsTrigger>
-            <TabsTrigger value="cashout">Levantamentos</TabsTrigger>
+          <TabsList className="flex w-full overflow-x-auto min-h-[44px] md:grid md:grid-cols-3">
+            <TabsTrigger value="with-proof" className="flex-shrink-0 px-3 py-2 md:flex-shrink">
+              <span className="hidden sm:inline">Cash-in com Comprovativo ({mockTransfers.filter(t => t.status === 'PENDING').length})</span>
+              <span className="sm:hidden">Com Comprovativo ({mockTransfers.filter(t => t.status === 'PENDING').length})</span>
+            </TabsTrigger>
+            <TabsTrigger value="manual-cashin" className="flex-shrink-0 px-3 py-2 md:flex-shrink">
+              <span className="hidden sm:inline">Cash-in Manual</span>
+              <span className="sm:hidden">Manual</span>
+            </TabsTrigger>
+            <TabsTrigger value="cashout" className="flex-shrink-0 px-3 py-2 md:flex-shrink">
+              <span className="hidden sm:inline">Levantamentos</span>
+              <span className="sm:hidden">Levantamentos</span>
+            </TabsTrigger>
           </TabsList>
           
           <TabsContent value="with-proof" className="space-y-6">

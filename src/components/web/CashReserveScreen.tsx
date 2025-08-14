@@ -144,10 +144,19 @@ const CashReserveScreen = ({ onBack }: CashReserveScreenProps) => {
 
         {/* Allocation Tabs */}
         <Tabs defaultValue="to-system" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="to-system">Alocar ao Sistema</TabsTrigger>
-            <TabsTrigger value="to-operator">Retirar do Sistema</TabsTrigger>
-            <TabsTrigger value="history">Histórico</TabsTrigger>
+          <TabsList className="flex w-full overflow-x-auto min-h-[44px] md:grid md:grid-cols-3">
+            <TabsTrigger value="to-system" className="flex-shrink-0 px-3 py-2 md:flex-shrink">
+              <span className="hidden sm:inline">Alocar ao Sistema</span>
+              <span className="sm:hidden">Alocar</span>
+            </TabsTrigger>
+            <TabsTrigger value="to-operator" className="flex-shrink-0 px-3 py-2 md:flex-shrink">
+              <span className="hidden sm:inline">Retirar do Sistema</span>
+              <span className="sm:hidden">Retirar</span>
+            </TabsTrigger>
+            <TabsTrigger value="history" className="flex-shrink-0 px-3 py-2 md:flex-shrink">
+              <span className="hidden sm:inline">Histórico</span>
+              <span className="sm:hidden">Histórico</span>
+            </TabsTrigger>
           </TabsList>
           
           <TabsContent value="to-system" className="space-y-6">

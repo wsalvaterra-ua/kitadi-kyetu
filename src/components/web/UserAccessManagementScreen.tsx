@@ -62,9 +62,15 @@ const UserAccessManagementScreen = ({ onBack, phoneNumber }: Props) => {
 
       <div className="w-full p-8">
         <Tabs defaultValue="security" className="w-full">
-          <TabsList className="w-full">
-            <TabsTrigger value="security" className="flex-1">Acesso e Segurança</TabsTrigger>
-            <TabsTrigger value="attempts" className="flex-1">Tentativas de Login</TabsTrigger>
+          <TabsList className="flex w-full overflow-x-auto min-h-[44px] md:grid md:grid-cols-2">
+            <TabsTrigger value="security" className="flex-shrink-0 px-3 py-2 md:flex-shrink">
+              <span className="hidden sm:inline">Acesso e Segurança</span>
+              <span className="sm:hidden">Segurança</span>
+            </TabsTrigger>
+            <TabsTrigger value="attempts" className="flex-shrink-0 px-3 py-2 md:flex-shrink">
+              <span className="hidden sm:inline">Tentativas de Login</span>
+              <span className="sm:hidden">Tentativas</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="security" className="w-full">
