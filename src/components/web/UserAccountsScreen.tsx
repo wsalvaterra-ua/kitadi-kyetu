@@ -328,8 +328,8 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
                                setOwnersDialogOpen(true);
                              }}
                            >
-                             <Users className="w-3 h-3 mr-1" />
-                             Proprietários
+                              <Users className="w-3 h-3 mr-1" />
+                              Membros da Conta
                            </Button>
                            <Dialog open={editDialogOpen && selectedAccount?.id === account.id} onOpenChange={setEditDialogOpen}>
                              <DialogTrigger asChild>
@@ -629,13 +629,13 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Users className="w-5 h-5" />
-                Gestão de Proprietários - {selectedAccountForOwners?.name}
+                Membros da Conta - {selectedAccountForOwners?.name}
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-6">
               {/* Current Owners */}
               <div>
-                <h3 className="font-semibold text-lg mb-3">Proprietários Atuais</h3>
+                <h3 className="font-semibold text-lg mb-3">Membros Atuais</h3>
                 <div className="border rounded-lg">
                   <Table>
                     <TableHeader>
@@ -643,7 +643,7 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
                         <TableHead>Nome</TableHead>
                         <TableHead>Telefone</TableHead>
                         <TableHead>Tipo</TableHead>
-                        <TableHead>Percentual</TableHead>
+                        
                         <TableHead>Ações</TableHead>
                       </TableRow>
                     </TableHeader>
@@ -652,9 +652,8 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
                         <TableCell>Maria Silva</TableCell>
                         <TableCell>+2399123456</TableCell>
                         <TableCell>
-                          <Badge className="bg-blue-100 text-blue-800">Principal</Badge>
-                        </TableCell>
-                        <TableCell>80%</TableCell>
+                           <Badge className="bg-blue-100 text-blue-800">Primário</Badge>
+                         </TableCell>
                         <TableCell>
                           <Button size="sm" variant="destructive">
                             <Trash2 className="w-3 h-3 mr-1" />
@@ -666,9 +665,8 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
                         <TableCell>João Santos</TableCell>
                         <TableCell>+2399654321</TableCell>
                         <TableCell>
-                          <Badge className="bg-gray-100 text-gray-800">Secundário</Badge>
-                        </TableCell>
-                        <TableCell>20%</TableCell>
+                           <Badge className="bg-gray-100 text-gray-800">Modo Observador</Badge>
+                         </TableCell>
                         <TableCell>
                           <Button size="sm" variant="destructive">
                             <Trash2 className="w-3 h-3 mr-1" />
@@ -683,10 +681,10 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
 
               {/* Add New Owner */}
               <div>
-                <h3 className="font-semibold text-lg mb-3">Adicionar Proprietário</h3>
+                <h3 className="font-semibold text-lg mb-3">Adicionar Membro</h3>
                 <Card>
                   <CardContent className="pt-6">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
                         <Label htmlFor="ownerPhone">Telefone</Label>
                         <Input
@@ -701,31 +699,20 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
                           <SelectTrigger>
                             <SelectValue placeholder="Selecione" />
                           </SelectTrigger>
-                          <SelectContent className="z-50 bg-white">
-                            <SelectItem value="principal">Principal</SelectItem>
-                            <SelectItem value="secundario">Secundário</SelectItem>
-                            <SelectItem value="administrador">Administrador</SelectItem>
-                          </SelectContent>
+                           <SelectContent className="z-50 bg-white">
+                             <SelectItem value="primario">Primário</SelectItem>
+                             <SelectItem value="observador">Modo Observador</SelectItem>
+                           </SelectContent>
                         </Select>
-                      </div>
-                      <div>
-                        <Label htmlFor="ownerPercentage">Percentual (%)</Label>
-                        <Input
-                          id="ownerPercentage"
-                          placeholder="Ex: 50"
-                          type="number"
-                          min="0"
-                          max="100"
-                        />
                       </div>
                       <div className="flex items-end">
                         <Button 
                           className="w-full"
                           onClick={() => {
-                            toast({
-                              title: "Proprietário adicionado",
-                              description: "Novo proprietário foi associado à conta"
-                            });
+                             toast({
+                               title: "Membro adicionado",
+                               description: "Novo membro foi associado à conta"
+                             });
                           }}
                         >
                           <Plus className="w-4 h-4 mr-2" />
@@ -745,8 +732,8 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
                 <Button onClick={() => {
                   setOwnersDialogOpen(false);
                   toast({
-                    title: "Alterações guardadas",
-                    description: "As associações de proprietários foram atualizadas"
+                     title: "Alterações guardadas",
+                     description: "As associações de membros foram atualizadas"
                   });
                 }}>
                   Guardar Alterações
