@@ -107,11 +107,10 @@ const AccountManagementScreen = ({ onBack, onUserFound, onCreateNewUser, onManag
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid gap-2">
-              <Label className="text-sm font-medium">Critério de Pesquisa</Label>
+            <div className="flex gap-2">
               <Select value={tab} onValueChange={(v) => { setTab(v as any); setResults(null); setHasSearched(false); }}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Escolha o critério" />
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Critério" />
                 </SelectTrigger>
                 <SelectContent className="z-50 bg-white">
                   <SelectItem value="phone">Telefone</SelectItem>
@@ -120,39 +119,31 @@ const AccountManagementScreen = ({ onBack, onUserFound, onCreateNewUser, onManag
                   <SelectItem value="nif">NIF</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">
-                {tab === 'phone' ? 'Número de Telefone' : tab === 'name' ? 'Nome' : tab === 'id' ? 'Número de Identificação' : 'NIF'}
-              </Label>
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  {tab === 'phone' && <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />}
-                  <Input
-                    type={tab === 'phone' ? 'tel' : 'text'}
-                    placeholder={placeholder}
-                    value={query}
-                    onChange={(e) => { setQuery(e.target.value); setResults(null); setHasSearched(false); }}
-                    className={tab === 'phone' ? 'pl-10' : ''}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                  />
-                </div>
-                <Button onClick={handleSearch} disabled={!query.trim() || isSearching} className="px-6">
-                  {isSearching ? 'A listar...' : 'Listar Resultados'}
-                </Button>
+              <div className="relative flex-1">
+                {tab === 'phone' && <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />}
+                <Input
+                  type={tab === 'phone' ? 'tel' : 'text'}
+                  placeholder={placeholder}
+                  value={query}
+                  onChange={(e) => { setQuery(e.target.value); setResults(null); setHasSearched(false); }}
+                  className={tab === 'phone' ? 'pl-10' : ''}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                />
               </div>
-              {tab === 'phone' && (
-                <div className="text-xs text-gray-500 space-y-1">
-                  <p>Introduza o número completo com o código do país (+239)</p>
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium select-all">Exemplo: +2399123456</span>
-                    <Button size="sm" variant="outline" onClick={() => navigator.clipboard?.writeText('+2399123456')}>Copiar</Button>
-                    <Button size="sm" variant="ghost" onClick={() => setQuery('+2399123456')}>Preencher</Button>
-                  </div>
-                </div>
-              )}
+              <Button onClick={handleSearch} disabled={!query.trim() || isSearching} className="px-6">
+                {isSearching ? 'A listar...' : 'Listar Resultados'}
+              </Button>
             </div>
+            {tab === 'phone' && (
+              <div className="text-xs text-gray-500 space-y-1">
+                <p>Introduza o número completo com o código do país (+239)</p>
+                <div className="flex items-center gap-2">
+                  <span className="font-medium select-all">Exemplo: +2399123456</span>
+                  <Button size="sm" variant="outline" onClick={() => navigator.clipboard?.writeText('+2399123456')}>Copiar</Button>
+                  <Button size="sm" variant="ghost" onClick={() => setQuery('+2399123456')}>Preencher</Button>
+                </div>
+              </div>
+            )}
 
             {/* Results List */}
             {hasSearched && results && (
@@ -168,10 +159,12 @@ const AccountManagementScreen = ({ onBack, onUserFound, onCreateNewUser, onManag
               ) : (
                 <div className="space-y-3">
                   {results.map((u) => (
-                    <div key={u.phone} className="flex items-center justify-between p-3 border rounded-lg bg-white">
-                      <div>
-                        <p className="font-medium">{u.name}</p>
-                        <p className="text-xs text-gray-500">Tel: {u.phone} • ID: {u.idNumber} • NIF: {u.nif}</p>
+                    <div key={u.phone} className="p-3 border rounded-lg bg-white">
+                      <div className="flex items-center justify-between mb-2">
+                        <div>
+                          <p className="font-medium">{u.name}</p>
+                          <p className="text-xs text-gray-500">Tel: {u.phone} • ID: {u.idNumber}</p>
+                        </div>
                       </div>
                       <div className="flex gap-2">
                         <Button size="sm" onClick={() => handleVerifyAndNavigate(u.phone)}>Perfil & Contas</Button>

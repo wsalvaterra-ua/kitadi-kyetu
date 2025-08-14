@@ -4,38 +4,40 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, User, CreditCard, Building, Shield, Phone, MessageSquare, Eye, Plus, Trash2 } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { ArrowLeft, User, Building, Phone, MessageSquare, Plus, Trash2, Upload, Download, Edit } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { PageHeader } from './PageHeader';
 
 interface UserProfileScreenProps {
   phoneNumber: string;
   onBack: () => void;
-}
-
-interface Account {
-  id: string;
-  name: string;
-  type: 'personal' | 'business' | 'merchant';
-  status: 'active' | 'suspended' | 'pending' | 'closed';
-  balance?: number;
+  onAccountsManagement?: () => void;
 }
 
 interface BusinessProfile {
   id: string;
   name: string;
-  type: string;
+  location: string;
+  businessType: string;
   status: 'active' | 'pending' | 'suspended';
 }
 
-const UserProfileScreen = ({ phoneNumber, onBack }: UserProfileScreenProps) => {
+interface Document {
+  id: string;
+  name: string;
+  submissionDate: string;
+  type: 'id' | 'proof_address' | 'business_license' | 'other';
+}
+
+const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserProfileScreenProps) => {
   const { toast } = useToast();
   const [userStatus, setUserStatus] = useState<'ACTIVE' | 'SUSPENDED' | 'PENDING_KYC' | 'CLOSED'>('ACTIVE');
-  const [verificationCode, setVerificationCode] = useState('');
-  const [selectedAccount, setSelectedAccount] = useState<Account | null>(null);
-  const [showAccountDetails, setShowAccountDetails] = useState(false);
+  const [documentName, setDocumentName] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   
   // Mock user data - exemplo de utilizador existente: Maria dos Santos Almeida
   const [userData, setUserData] = useState({
@@ -49,15 +51,15 @@ const UserProfileScreen = ({ phoneNumber, onBack }: UserProfileScreenProps) => {
     civilStatus: 'casado'
   });
 
-  const [accounts] = useState<Account[]>([
-    { id: 'acc001', name: 'Conta Principal', type: 'personal', status: 'active' },
-    { id: 'acc002', name: 'Loja Online', type: 'business', status: 'active' },
-    { id: 'acc003', name: 'Restaurante Central', type: 'merchant', status: 'pending' }
+  const [businessProfiles, setBusinessProfiles] = useState<BusinessProfile[]>([
+    { id: 'biz001', name: 'Silva Commerce Lda', location: 'São Tomé', businessType: 'Comércio', status: 'active' },
+    { id: 'biz002', name: 'Restaurante Central', location: 'Príncipe', businessType: 'Restauração', status: 'pending' }
   ]);
 
-  const [businessProfiles] = useState<BusinessProfile[]>([
-    { id: 'biz001', name: 'Silva Commerce Lda', type: 'Comércio', status: 'active' },
-    { id: 'biz002', name: 'Restaurante Central', type: 'Restauração', status: 'pending' }
+  const [documents] = useState<Document[]>([
+    { id: 'doc001', name: 'Bilhete de Identidade', submissionDate: '2024-01-15', type: 'id' },
+    { id: 'doc002', name: 'Comprovativo de Morada', submissionDate: '2024-01-14', type: 'proof_address' },
+    { id: 'doc003', name: 'Licença Comercial', submissionDate: '2024-01-13', type: 'business_license' }
   ]);
 
   const getStatusColor = (status: string) => {
@@ -84,26 +86,46 @@ const UserProfileScreen = ({ phoneNumber, onBack }: UserProfileScreenProps) => {
     }
   };
 
-  const sendVerificationCode = (type: 'profile' | 'account') => {
-    toast({
-      title: "Código enviado",
-      description: `Código de verificação enviado para ${phoneNumber}`,
-    });
-  };
-
-  const handleAccountAccess = () => {
-    if (!verificationCode) {
+  const uploadDocument = () => {
+    if (!documentName.trim() || !selectedFile) {
       toast({
         title: "Erro",
-        description: "Introduza o código de verificação",
+        description: "Selecione um arquivo e insira o nome do documento",
         variant: "destructive"
       });
       return;
     }
-    setShowAccountDetails(true);
+    
     toast({
-      title: "Acesso autorizado",
-      description: "Detalhes da conta carregados",
+      title: "Documento enviado",
+      description: `Documento ${documentName} enviado com sucesso`,
+    });
+    
+    setDocumentName('');
+    setSelectedFile(null);
+  };
+
+  const downloadDocument = (docName: string) => {
+    toast({
+      title: "Download iniciado",
+      description: `Download do documento ${docName} iniciado`,
+    });
+  };
+
+  const addBusinessProfile = () => {
+    const newProfile: BusinessProfile = {
+      id: `biz${Date.now()}`,
+      name: 'Novo Perfil Comercial',
+      location: 'São Tomé',
+      businessType: 'Comércio',
+      status: 'pending'
+    };
+    
+    setBusinessProfiles([newProfile, ...businessProfiles]);
+    
+    toast({
+      title: "Perfil criado",
+      description: "Novo perfil comercial adicionado",
     });
   };
 
@@ -115,314 +137,319 @@ const UserProfileScreen = ({ phoneNumber, onBack }: UserProfileScreenProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center">
-            <Button variant="ghost" onClick={onBack} className="mr-4">
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
-            <div>
-              <h1 className="text-xl font-bold text-kitadi-navy">Perfil do Utilizador</h1>
-              <p className="text-sm text-gray-500">{phoneNumber}</p>
-            </div>
-          </div>
+    <div className="w-full">
+      <PageHeader 
+        title="Perfil do Utilizador"
+        description={phoneNumber}
+        onBack={onBack}
+      />
+
+      <div className="w-full p-8">
+        <div className="flex items-center justify-between mb-6">
+          <div></div>
           <Badge className={getStatusColor(userStatus)}>
             {getStatusText(userStatus)}
           </Badge>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-6 py-8 space-y-6">
-        <div className="grid lg:grid-cols-2 gap-6">
-          {/* User Profile */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="w-5 h-5" />
-                Dados Pessoais
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="firstName">Primeiro Nome</Label>
-                  <Input
-                    id="firstName"
-                    value={userData.firstName}
-                    onChange={(e) => setUserData({...userData, firstName: e.target.value})}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="middleName">Nome do Meio</Label>
-                  <Input
-                    id="middleName"
-                    value={userData.middleName}
-                    onChange={(e) => setUserData({...userData, middleName: e.target.value})}
-                  />
-                </div>
-              </div>
+        <Tabs defaultValue="personal" className="w-full">
+          <TabsList className="w-full">
+            <TabsTrigger value="personal" className="flex-1">Perfil Pessoal</TabsTrigger>
+            <TabsTrigger value="commercial" className="flex-1">Perfis Comerciais</TabsTrigger>
+            <TabsTrigger value="documents" className="flex-1">Documentos</TabsTrigger>
+            <TabsTrigger value="accounts" className="flex-1">Contas</TabsTrigger>
+          </TabsList>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="lastName">Último Nome</Label>
-                  <Input
-                    id="lastName"
-                    value={userData.lastName}
-                    onChange={(e) => setUserData({...userData, lastName: e.target.value})}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="civilStatus">Estado Civil</Label>
-                  <select
-                    id="civilStatus"
-                    value={userData.civilStatus}
-                    onChange={(e) => setUserData({...userData, civilStatus: e.target.value})}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <option value="">Selecionar</option>
-                    <option value="solteiro">Solteiro</option>
-                    <option value="casado">Casado</option>
-                    <option value="divorciado">Divorciado</option>
-                    <option value="viuvo">Viúvo</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="idNumber">Número do Documento</Label>
-                  <Input
-                    id="idNumber"
-                    value={userData.idNumber}
-                    onChange={(e) => setUserData({...userData, idNumber: e.target.value})}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="nationality">Nacionalidade</Label>
-                  <select
-                    id="nationality"
-                    value={userData.nationality}
-                    onChange={(e) => setUserData({...userData, nationality: e.target.value})}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <option value="STP">São Tomé e Príncipe</option>
-                    <option value="AGO">Angola</option>
-                    <option value="PRT">Portugal</option>
-                    <option value="BRA">Brasil</option>
-                    <option value="other">Outro</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="dateOfBirth">Data de Nascimento</Label>
-                  <Input
-                    id="dateOfBirth"
-                    type="date"
-                    value={userData.dateOfBirth}
-                    onChange={(e) => setUserData({...userData, dateOfBirth: e.target.value})}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="expiryDate">Data de Expiração do Documento</Label>
-                  <Input
-                    id="expiryDate"
-                    type="date"
-                    value={userData.expiryDate}
-                    onChange={(e) => setUserData({...userData, expiryDate: e.target.value})}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="status">Estado da Conta</Label>
-                <Select 
-                  value={userStatus} 
-                  onValueChange={(value: any) => setUserStatus(value)}
-                  disabled={userStatus === 'PENDING_KYC'}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ACTIVE">Ativo</SelectItem>
-                    <SelectItem value="SUSPENDED">Suspenso</SelectItem>
-                    <SelectItem value="CLOSED">Fechado</SelectItem>
-                  </SelectContent>
-                </Select>
-                {userStatus === 'PENDING_KYC' && (
-                  <p className="text-xs text-amber-600 mt-1">
-                    Estado não pode ser alterado enquanto verificação estiver pendente
-                  </p>
-                )}
-              </div>
-
-              <div className="flex gap-2">
-                <Button onClick={() => sendVerificationCode('profile')} variant="outline" size="sm">
-                  <MessageSquare className="w-4 h-4 mr-2" />
-                  Enviar Código
-                </Button>
-                <Button onClick={saveUserProfile}>
-                  Guardar Alterações
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* User Accounts */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <CreditCard className="w-5 h-5" />
-                  Contas do Utilizador
-                </div>
-                <Button size="sm" variant="outline">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Nova Conta
-                </Button>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {accounts.map((account) => (
-                <div key={account.id} className="border rounded-lg p-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <div>
-                      <h4 className="font-medium">{account.name}</h4>
-                      <p className="text-sm text-gray-500">ID: {account.id}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-xs">
-                        {account.type}
-                      </Badge>
-                      <Badge className={getStatusColor(account.status)}>
-                        {getStatusText(account.status)}
-                      </Badge>
-                    </div>
+          <TabsContent value="personal" className="w-full">
+            <Card className="w-full">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <User className="w-5 h-5" />
+                  Dados Pessoais
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="firstName">Primeiro Nome</Label>
+                    <Input
+                      id="firstName"
+                      value={userData.firstName}
+                      onChange={(e) => setUserData({...userData, firstName: e.target.value})}
+                    />
                   </div>
-                  
-                  <div className="flex gap-2">
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => setSelectedAccount(account)}
+                  <div>
+                    <Label htmlFor="middleName">Nome do Meio</Label>
+                    <Input
+                      id="middleName"
+                      value={userData.middleName}
+                      onChange={(e) => setUserData({...userData, middleName: e.target.value})}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="lastName">Último Nome</Label>
+                    <Input
+                      id="lastName"
+                      value={userData.lastName}
+                      onChange={(e) => setUserData({...userData, lastName: e.target.value})}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="civilStatus">Estado Civil</Label>
+                    <select
+                      id="civilStatus"
+                      value={userData.civilStatus}
+                      onChange={(e) => setUserData({...userData, civilStatus: e.target.value})}
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                      <Eye className="w-3 h-3 mr-1" />
-                      Ver Detalhes
-                    </Button>
-                    <Button size="sm" variant="outline" className="text-red-600">
-                      <Trash2 className="w-3 h-3 mr-1" />
-                      Eliminar
-                    </Button>
+                      <option value="">Selecionar</option>
+                      <option value="solteiro">Solteiro</option>
+                      <option value="casado">Casado</option>
+                      <option value="divorciado">Divorciado</option>
+                      <option value="viuvo">Viúvo</option>
+                    </select>
                   </div>
                 </div>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
 
-        {/* Business Profiles */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Building className="w-5 h-5" />
-                Perfis Comerciais
-              </div>
-              <Button size="sm" variant="outline">
-                <Plus className="w-4 h-4 mr-2" />
-                Novo Perfil
-              </Button>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-4">
-              {businessProfiles.map((profile) => (
-                <div key={profile.id} className="border rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium">{profile.name}</h4>
-                    <Badge className={getStatusColor(profile.status)}>
-                      {getStatusText(profile.status)}
-                    </Badge>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="idNumber">Número do Documento</Label>
+                    <Input
+                      id="idNumber"
+                      value={userData.idNumber}
+                      onChange={(e) => setUserData({...userData, idNumber: e.target.value})}
+                    />
                   </div>
-                  <p className="text-sm text-gray-500 mb-3">{profile.type}</p>
-                  <div className="flex gap-2">
-                    <Button size="sm" variant="outline">Editar</Button>
-                    <Button size="sm" variant="outline" className="text-red-600">Eliminar</Button>
+                  <div>
+                    <Label htmlFor="nationality">Nacionalidade</Label>
+                    <select
+                      id="nationality"
+                      value={userData.nationality}
+                      onChange={(e) => setUserData({...userData, nationality: e.target.value})}
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <option value="STP">São Tomé e Príncipe</option>
+                      <option value="AGO">Angola</option>
+                      <option value="PRT">Portugal</option>
+                      <option value="BRA">Brasil</option>
+                      <option value="other">Outro</option>
+                    </select>
                   </div>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
 
-        {/* Account Details Modal Content */}
-        {selectedAccount && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Shield className="w-5 h-5" />
-                Acesso à Conta: {selectedAccount.name}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                <p className="text-amber-800 text-sm">
-                  Para aceder aos detalhes da conta, é necessário código de verificação do cliente.
-                </p>
-              </div>
-              
-              <div className="flex gap-2">
-                <Input 
-                  placeholder="Código de verificação"
-                  value={verificationCode}
-                  onChange={(e) => setVerificationCode(e.target.value)}
-                />
-                <Button onClick={() => sendVerificationCode('account')} variant="outline">
-                  <Phone className="w-4 h-4 mr-2" />
-                  Enviar SMS
-                </Button>
-                <Button onClick={handleAccountAccess}>
-                  Aceder
-                </Button>
-              </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="dateOfBirth">Data de Nascimento</Label>
+                    <Input
+                      id="dateOfBirth"
+                      type="date"
+                      value={userData.dateOfBirth}
+                      onChange={(e) => setUserData({...userData, dateOfBirth: e.target.value})}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="expiryDate">Data de Expiração do Documento</Label>
+                    <Input
+                      id="expiryDate"
+                      type="date"
+                      value={userData.expiryDate}
+                      onChange={(e) => setUserData({...userData, expiryDate: e.target.value})}
+                    />
+                  </div>
+                </div>
 
-              {showAccountDetails && (
-                <>
-                  <Separator />
+                <div>
+                  <Label htmlFor="status">Estado da Conta</Label>
+                  <Select 
+                    value={userStatus} 
+                    onValueChange={(value: any) => setUserStatus(value)}
+                    disabled={userStatus === 'PENDING_KYC'}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ACTIVE">Ativo</SelectItem>
+                      <SelectItem value="SUSPENDED">Suspenso</SelectItem>
+                      <SelectItem value="CLOSED">Fechado</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {userStatus === 'PENDING_KYC' && (
+                    <p className="text-xs text-amber-600 mt-1">
+                      Estado não pode ser alterado enquanto verificação estiver pendente
+                    </p>
+                  )}
+                </div>
+
+                <div className="flex gap-2">
+                  <Button onClick={saveUserProfile}>
+                    Guardar Alterações
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="commercial" className="w-full">
+            <Card className="w-full">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Building className="w-5 h-5" />
+                    Perfis Comerciais
+                  </div>
+                  <Button size="sm" variant="outline" onClick={addBusinessProfile}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Adicionar Perfil Comercial
+                  </Button>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nome</TableHead>
+                      <TableHead>Localização</TableHead>
+                      <TableHead>Tipo de Negócio</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Ações</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {businessProfiles.map((profile) => (
+                      <TableRow key={profile.id}>
+                        <TableCell className="font-medium">{profile.name}</TableCell>
+                        <TableCell>{profile.location}</TableCell>
+                        <TableCell>{profile.businessType}</TableCell>
+                        <TableCell>
+                          <Badge className={getStatusColor(profile.status)}>
+                            {getStatusText(profile.status)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline">
+                              <Edit className="w-3 h-3 mr-1" />
+                              Editar
+                            </Button>
+                            <Button size="sm" variant="destructive">
+                              <Trash2 className="w-3 h-3 mr-1" />
+                              Remover
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="documents" className="w-full">
+            <Card className="w-full">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Upload className="w-5 h-5" />
+                  Documentos do Utilizador
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Upload Section */}
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
                   <div className="space-y-4">
-                    <h4 className="font-medium">Detalhes da Conta</h4>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label>Estado da Conta</Label>
-                        <Select defaultValue={selectedAccount.status}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="active">Ativo</SelectItem>
-                            <SelectItem value="suspended">Suspenso</SelectItem>
-                            <SelectItem value="closed">Fechado</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label>Limite Máximo (STN)</Label>
-                        <Input type="number" defaultValue="10000" max="50000" />
-                        <p className="text-xs text-gray-500 mt-1">Máximo: 50,000 STN</p>
-                      </div>
+                    <div>
+                      <Label htmlFor="documentName">Nome do Documento</Label>
+                      <Input
+                        id="documentName"
+                        placeholder="Ex: Bilhete de Identidade"
+                        value={documentName}
+                        onChange={(e) => setDocumentName(e.target.value)}
+                      />
                     </div>
-                    <Button>Guardar Alterações</Button>
+                    <div>
+                      <Label htmlFor="documentFile">Selecionar Arquivo</Label>
+                      <Input
+                        id="documentFile"
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                      />
+                    </div>
+                    <Button onClick={uploadDocument} className="w-full">
+                      <Upload className="w-4 h-4 mr-2" />
+                      Enviar Documento
+                    </Button>
                   </div>
-                </>
-              )}
-            </CardContent>
-          </Card>
-        )}
+                </div>
+
+                {/* Documents Table */}
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nome do Documento</TableHead>
+                      <TableHead>Data de Submissão</TableHead>
+                      <TableHead>Tipo</TableHead>
+                      <TableHead>Ações</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {documents.map((document) => (
+                      <TableRow key={document.id}>
+                        <TableCell className="font-medium">{document.name}</TableCell>
+                        <TableCell>{document.submissionDate}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline">
+                            {document.type.replace('_', ' ').toUpperCase()}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => downloadDocument(document.name)}
+                          >
+                            <Download className="w-3 h-3 mr-1" />
+                            Download
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="accounts" className="w-full">
+            <Card className="w-full">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Building className="w-5 h-5" />
+                    Gestão de Contas
+                  </div>
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={onAccountsManagement}
+                  >
+                    Gerir Contas
+                  </Button>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600">
+                  A gestão detalhada de contas foi movida para uma tela dedicada. 
+                  Clique no botão "Gerir Contas" para acessar todas as funcionalidades de contas.
+                </p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

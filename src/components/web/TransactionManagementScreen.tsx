@@ -444,7 +444,7 @@ const TransactionManagementScreen = ({ onBack, initialTransactionId }: Transacti
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <ArrowDownUp className="w-5 h-5" />
-                  Minhas Transações
+                  Transações do Operador
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -456,7 +456,7 @@ const TransactionManagementScreen = ({ onBack, initialTransactionId }: Transacti
                       <TableHead>Status</TableHead>
                       <TableHead>Origem</TableHead>
                       <TableHead>Destino</TableHead>
-                      <TableHead>Data</TableHead>
+                      <TableHead>Tempo de Processamento</TableHead>
                       <TableHead>Valor</TableHead>
                     </TableRow>
                   </TableHeader>
