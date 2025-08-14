@@ -19,6 +19,7 @@ interface UserManagementScreenProps {
   onUserFound: (phoneNumber: string) => void;
   onCreateNewUser: (phoneNumber: string) => void;
   onManageUser?: (phoneNumber: string) => void;
+  onManageAccounts?: (phoneNumber: string) => void;
   onManageAccess?: (phoneNumber: string) => void;
   onManageConfig?: (phoneNumber: string) => void;
 }
@@ -29,7 +30,7 @@ const MOCK_USERS: UserListItem[] = [
   { name: 'Pedro Costa', phone: '+2399987654', idNumber: '1112223334', nif: 'NIF111222333' },
 ];
 
-const AccountManagementScreen = ({ onBack, onUserFound, onCreateNewUser, onManageUser, onManageAccess, onManageConfig }: UserManagementScreenProps) => {
+const AccountManagementScreen = ({ onBack, onUserFound, onCreateNewUser, onManageUser, onManageAccounts, onManageAccess, onManageConfig }: UserManagementScreenProps) => {
   const [tab, setTab] = useState<'phone' | 'name' | 'id' | 'nif'>('phone');
   const [query, setQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
@@ -167,7 +168,8 @@ const AccountManagementScreen = ({ onBack, onUserFound, onCreateNewUser, onManag
                         </div>
                       </div>
                       <div className="flex gap-2">
-                        <Button size="sm" onClick={() => handleVerifyAndNavigate(u.phone)}>Perfil & Contas</Button>
+                        <Button size="sm" onClick={() => handleVerifyAndNavigate(u.phone)}>Perfil</Button>
+                        <Button size="sm" variant="outline" onClick={() => onManageAccounts && onManageAccounts(u.phone)}>Contas</Button>
                         <Button size="sm" variant="outline" onClick={() => onManageAccess && onManageAccess(u.phone)}>Acesso</Button>
                         <Button size="sm" variant="outline" onClick={() => onManageConfig && onManageConfig(u.phone)}>Configurações</Button>
                       </div>
