@@ -26,6 +26,10 @@ interface Account {
   status: 'ACTIVE' | 'FROZEN' | 'CLOSED';
   name: string;
   commercialProfile?: string;
+  type?: 'personal' | 'business' | 'merchant';
+  nature?: 'checking' | 'savings' | 'current';
+  profile?: string;
+  event?: string;
 }
 
 interface Transaction {
@@ -329,48 +333,124 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
                                 <DialogTitle>Editar Conta</DialogTitle>
                               </DialogHeader>
                               {selectedAccount && (
-                                <div className="space-y-4">
-                                  <div>
-                                    <Label htmlFor="editName">Nome da Conta</Label>
-                                    <Input
-                                      id="editName"
-                                      value={selectedAccount.name}
-                                      onChange={(e) => setSelectedAccount({
-                                        ...selectedAccount,
-                                        name: e.target.value
-                                      })}
-                                    />
-                                  </div>
-                                  <div>
-                                    <Label htmlFor="editStatus">Status</Label>
-                                    <Select 
-                                      value={selectedAccount.status} 
-                                      onValueChange={(value: any) => setSelectedAccount({
-                                        ...selectedAccount,
-                                        status: value
-                                      })}
-                                    >
-                                      <SelectTrigger>
-                                        <SelectValue />
-                                      </SelectTrigger>
+                                 <div className="space-y-4">
+                                   <div>
+                                     <Label htmlFor="editName">Nome da Conta</Label>
+                                     <Input
+                                       id="editName"
+                                       value={selectedAccount.name}
+                                       onChange={(e) => setSelectedAccount({
+                                         ...selectedAccount,
+                                         name: e.target.value
+                                       })}
+                                     />
+                                   </div>
+                                   <div>
+                                     <Label htmlFor="editAccountType">Tipo de Conta</Label>
+                                     <Select 
+                                       value={selectedAccount.type} 
+                                        onValueChange={(value: 'personal' | 'business' | 'merchant') => setSelectedAccount({
+                                          ...selectedAccount,
+                                          type: value
+                                        })}
+                                     >
+                                       <SelectTrigger>
+                                         <SelectValue />
+                                       </SelectTrigger>
                                        <SelectContent>
-                                         <SelectItem value="ACTIVE">Ativo</SelectItem>
-                                         <SelectItem value="FROZEN">Congelado</SelectItem>
-                                         <SelectItem value="CLOSED">Fechado</SelectItem>
+                                         <SelectItem value="personal">Pessoal</SelectItem>
+                                         <SelectItem value="business">Comercial</SelectItem>
+                                         <SelectItem value="merchant">Comerciante</SelectItem>
                                        </SelectContent>
-                                    </Select>
-                                  </div>
-                                  <div>
-                                    <Label htmlFor="editAccountId">ID da Conta</Label>
-                                    <Input
-                                      id="editAccountId"
-                                      value={selectedAccount.accountNumber}
-                                      onChange={(e) => setSelectedAccount({
-                                        ...selectedAccount,
-                                        accountNumber: e.target.value
-                                      })}
-                                    />
-                                  </div>
+                                     </Select>
+                                   </div>
+                                   <div>
+                                     <Label htmlFor="editAccountNature">Natureza da Conta</Label>
+                                     <Select 
+                                       value={selectedAccount.nature} 
+                                        onValueChange={(value: 'checking' | 'savings' | 'current') => setSelectedAccount({
+                                          ...selectedAccount,
+                                          nature: value
+                                        })}
+                                     >
+                                       <SelectTrigger>
+                                         <SelectValue />
+                                       </SelectTrigger>
+                                       <SelectContent>
+                                         <SelectItem value="checking">Conta Corrente</SelectItem>
+                                         <SelectItem value="savings">Poupança</SelectItem>
+                                         <SelectItem value="current">Conta à Ordem</SelectItem>
+                                       </SelectContent>
+                                     </Select>
+                                   </div>
+                                   <div>
+                                     <Label htmlFor="editAccountProfile">Perfil Comercial</Label>
+                                     <Select 
+                                       value={selectedAccount.profile || ""} 
+                                       onValueChange={(value) => setSelectedAccount({
+                                         ...selectedAccount,
+                                         profile: value
+                                       })}
+                                     >
+                                       <SelectTrigger>
+                                         <SelectValue placeholder="Selecione o perfil" />
+                                       </SelectTrigger>
+                                       <SelectContent>
+                                         <SelectItem value="">Nenhum</SelectItem>
+                                         <SelectItem value="perfil1">Perfil Comercial 1</SelectItem>
+                                         <SelectItem value="perfil2">Perfil Comercial 2</SelectItem>
+                                       </SelectContent>
+                                     </Select>
+                                   </div>
+                                   <div>
+                                     <Label htmlFor="editAccountEvent">Evento Associado</Label>
+                                     <Select 
+                                       value={selectedAccount.event || ""} 
+                                       onValueChange={(value) => setSelectedAccount({
+                                         ...selectedAccount,
+                                         event: value
+                                       })}
+                                     >
+                                       <SelectTrigger>
+                                         <SelectValue placeholder="Selecione o evento" />
+                                       </SelectTrigger>
+                                       <SelectContent>
+                                         <SelectItem value="">Nenhum</SelectItem>
+                                         <SelectItem value="evento1">Evento Promocional 1</SelectItem>
+                                         <SelectItem value="evento2">Evento Sazonal 2</SelectItem>
+                                       </SelectContent>
+                                     </Select>
+                                   </div>
+                                   <div>
+                                     <Label htmlFor="editStatus">Estado</Label>
+                                     <Select 
+                                       value={selectedAccount.status} 
+                                       onValueChange={(value: any) => setSelectedAccount({
+                                         ...selectedAccount,
+                                         status: value
+                                       })}
+                                     >
+                                       <SelectTrigger>
+                                         <SelectValue />
+                                       </SelectTrigger>
+                                        <SelectContent>
+                                          <SelectItem value="ACTIVE">Ativo</SelectItem>
+                                          <SelectItem value="FROZEN">Congelado</SelectItem>
+                                          <SelectItem value="CLOSED">Fechado</SelectItem>
+                                        </SelectContent>
+                                     </Select>
+                                   </div>
+                                   <div>
+                                     <Label htmlFor="editAccountId">ID da Conta</Label>
+                                     <Input
+                                       id="editAccountId"
+                                       value={selectedAccount.accountNumber}
+                                       onChange={(e) => setSelectedAccount({
+                                         ...selectedAccount,
+                                         accountNumber: e.target.value
+                                       })}
+                                     />
+                                   </div>
                                   <div className="flex gap-2">
                                     <Button variant="outline" onClick={() => {
                                       setEditDialogOpen(false);

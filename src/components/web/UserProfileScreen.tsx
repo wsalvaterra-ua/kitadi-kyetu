@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ArrowLeft, User, Building, Phone, MessageSquare, Plus, Trash2, Upload, Download, Edit } from 'lucide-react';
+import { ArrowLeft, User, Building, Phone, MessageSquare, Plus, Trash2, Upload, Download, Edit, MapPin } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { PageHeader } from './PageHeader';
 
@@ -54,6 +54,12 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
   const [newProfileName, setNewProfileName] = useState('');
   const [newProfileLocation, setNewProfileLocation] = useState('');
   const [newProfileType, setNewProfileType] = useState('');
+  const [newBusinessSize, setNewBusinessSize] = useState('');
+  const [newDistrict, setNewDistrict] = useState('');
+  const [newTaxId, setNewTaxId] = useState('');
+  const [newAddress, setNewAddress] = useState('');
+  const [newGpsCoordinates, setNewGpsCoordinates] = useState('');
+  const [newDescription, setNewDescription] = useState('');
   const [fiscalNumber, setFiscalNumber] = useState('');
   
   // Mock user data - exemplo de utilizador existente: Maria dos Santos Almeida
@@ -169,12 +175,12 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
       name: newProfileName,
       location: newProfileLocation,
       businessType: newProfileType,
-      businessSize: '',
-      taxId: '',
-      address: '',
-      description: '',
-      district: '',
-      gpsCoordinates: '',
+      businessSize: newBusinessSize,
+      taxId: newTaxId,
+      address: newAddress,
+      description: newDescription,
+      district: newDistrict,
+      gpsCoordinates: newGpsCoordinates,
       status: 'pending'
     };
     
@@ -182,6 +188,12 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
     setNewProfileName('');
     setNewProfileLocation('');
     setNewProfileType('');
+    setNewBusinessSize('');
+    setNewDistrict('');
+    setNewTaxId('');
+    setNewAddress('');
+    setNewGpsCoordinates('');
+    setNewDescription('');
     setAddProfileOpen(false);
     
     toast({
@@ -239,12 +251,9 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
         onBack={onBack}
       />
 
-      <div className="w-full p-8">
+        <div className="w-full p-8">
         <div className="flex items-center justify-between mb-6">
           <div></div>
-          <Badge className={getStatusColor(userStatus)}>
-            {getStatusText(userStatus)}
-          </Badge>
         </div>
 
         <Tabs defaultValue="personal" className="w-full">
@@ -257,9 +266,14 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
           <TabsContent value="personal" className="w-full">
             <Card className="w-full">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User className="w-5 h-5" />
-                  Dados Pessoais
+                <CardTitle className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <User className="w-5 h-5" />
+                    Dados Pessoais
+                  </div>
+                  <Badge className={getStatusColor(userStatus)}>
+                    {getStatusText(userStatus)}
+                  </Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -440,15 +454,32 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
                             onChange={(e) => setNewProfileName(e.target.value)}
                           />
                         </div>
-                        <div>
-                          <Label htmlFor="profileLocation">Localização</Label>
-                          <Input
-                            id="profileLocation"
-                            placeholder="Ex: São Tomé"
-                            value={newProfileLocation}
-                            onChange={(e) => setNewProfileLocation(e.target.value)}
-                          />
-                        </div>
+                         <div>
+                           <Label htmlFor="profileLocation">Localização</Label>
+                           <div className="flex gap-2">
+                             <Input
+                               id="profileLocation"
+                               placeholder="Ex: São Tomé"
+                               value={newProfileLocation}
+                               onChange={(e) => setNewProfileLocation(e.target.value)}
+                             />
+                             <Button
+                               type="button"
+                               size="sm"
+                               variant="outline"
+                               onClick={() => {
+                                 if (navigator.geolocation) {
+                                   navigator.geolocation.getCurrentPosition((position) => {
+                                     const coords = `${position.coords.latitude.toFixed(4)}° N, ${position.coords.longitude.toFixed(4)}° E`;
+                                     setNewProfileLocation(coords);
+                                   });
+                                 }
+                               }}
+                             >
+                               <MapPin className="w-4 h-4" />
+                             </Button>
+                           </div>
+                         </div>
                         <div>
                           <Label htmlFor="profileType">Tipo de Negócio</Label>
                           <Select value={newProfileType} onValueChange={setNewProfileType}>
@@ -467,75 +498,92 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
                             </SelectContent>
                           </Select>
                         </div>
-                        <div>
-                          <Label htmlFor="businessSize">Tamanho do Negócio</Label>
-                          <Select value={""} onValueChange={() => {}}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione o tamanho" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="Comerciante Individual">Comerciante Individual</SelectItem>
-                              <SelectItem value="Micro Empresa">Micro Empresa</SelectItem>
-                              <SelectItem value="Pequena Empresa">Pequena Empresa</SelectItem>
-                              <SelectItem value="Média Empresa">Média Empresa</SelectItem>
-                              <SelectItem value="Grande Empresa">Grande Empresa</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div>
-                          <Label htmlFor="district">Distrito</Label>
-                          <Select value={""} onValueChange={() => {}}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione o distrito" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="Água Grande">Água Grande</SelectItem>
-                              <SelectItem value="Mé-Zóchi">Mé-Zóchi</SelectItem>
-                              <SelectItem value="Cantagalo">Cantagalo</SelectItem>
-                              <SelectItem value="Caué">Caué</SelectItem>
-                              <SelectItem value="Lemba">Lemba</SelectItem>
-                              <SelectItem value="Lobata">Lobata</SelectItem>
-                              <SelectItem value="Príncipe">Príncipe</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div>
-                          <Label htmlFor="taxId">NIF</Label>
-                          <Input
-                            id="taxId"
-                            placeholder="Ex: 123456789"
-                            value={""}
-                            onChange={() => {}}
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="address">Endereço</Label>
-                          <Input
-                            id="address"
-                            placeholder="Ex: Rua da Independência, 45"
-                            value={""}
-                            onChange={() => {}}
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="gpsCoordinates">Coordenadas GPS</Label>
-                          <Input
-                            id="gpsCoordinates"
-                            placeholder="Ex: 0.3365° N, 6.7273° E"
-                            value={""}
-                            onChange={() => {}}
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="description">Descrição</Label>
-                          <textarea
-                            id="description"
-                            placeholder="Descrição do negócio"
-                            className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[80px]"
-                            value={""}
-                            onChange={() => {}}
-                          />
-                        </div>
+                         <div>
+                           <Label htmlFor="businessSize">Tamanho do Negócio</Label>
+                           <Select value={newBusinessSize} onValueChange={setNewBusinessSize}>
+                             <SelectTrigger>
+                               <SelectValue placeholder="Selecione o tamanho" />
+                             </SelectTrigger>
+                             <SelectContent>
+                               <SelectItem value="Comerciante Individual">Comerciante Individual</SelectItem>
+                               <SelectItem value="Micro Empresa">Micro Empresa</SelectItem>
+                               <SelectItem value="Pequena Empresa">Pequena Empresa</SelectItem>
+                               <SelectItem value="Média Empresa">Média Empresa</SelectItem>
+                               <SelectItem value="Grande Empresa">Grande Empresa</SelectItem>
+                             </SelectContent>
+                           </Select>
+                         </div>
+                         <div>
+                           <Label htmlFor="district">Distrito</Label>
+                           <Select value={newDistrict} onValueChange={setNewDistrict}>
+                             <SelectTrigger>
+                               <SelectValue placeholder="Selecione o distrito" />
+                             </SelectTrigger>
+                             <SelectContent>
+                               <SelectItem value="Água Grande">Água Grande</SelectItem>
+                               <SelectItem value="Mé-Zóchi">Mé-Zóchi</SelectItem>
+                               <SelectItem value="Cantagalo">Cantagalo</SelectItem>
+                               <SelectItem value="Caué">Caué</SelectItem>
+                               <SelectItem value="Lemba">Lemba</SelectItem>
+                               <SelectItem value="Lobata">Lobata</SelectItem>
+                               <SelectItem value="Príncipe">Príncipe</SelectItem>
+                             </SelectContent>
+                           </Select>
+                         </div>
+                         <div>
+                           <Label htmlFor="taxId">NIF</Label>
+                           <Input
+                             id="taxId"
+                             placeholder="Ex: 123456789"
+                             value={newTaxId}
+                             onChange={(e) => setNewTaxId(e.target.value)}
+                           />
+                         </div>
+                         <div>
+                           <Label htmlFor="address">Endereço</Label>
+                           <Input
+                             id="address"
+                             placeholder="Ex: Rua da Independência, 45"
+                             value={newAddress}
+                             onChange={(e) => setNewAddress(e.target.value)}
+                           />
+                         </div>
+                         <div>
+                           <Label htmlFor="gpsCoordinates">Coordenadas GPS</Label>
+                           <div className="flex gap-2">
+                             <Input
+                               id="gpsCoordinates"
+                               placeholder="Ex: 0.3365° N, 6.7273° E"
+                               value={newGpsCoordinates}
+                               onChange={(e) => setNewGpsCoordinates(e.target.value)}
+                             />
+                             <Button
+                               type="button"
+                               size="sm"
+                               variant="outline"
+                               onClick={() => {
+                                 if (navigator.geolocation) {
+                                   navigator.geolocation.getCurrentPosition((position) => {
+                                     const coords = `${position.coords.latitude.toFixed(4)}° N, ${position.coords.longitude.toFixed(4)}° E`;
+                                     setNewGpsCoordinates(coords);
+                                   });
+                                 }
+                               }}
+                             >
+                               <MapPin className="w-4 h-4" />
+                             </Button>
+                           </div>
+                         </div>
+                         <div>
+                           <Label htmlFor="description">Descrição</Label>
+                           <textarea
+                             id="description"
+                             placeholder="Descrição do negócio"
+                             className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[80px]"
+                             value={newDescription}
+                             onChange={(e) => setNewDescription(e.target.value)}
+                           />
+                         </div>
                         <div className="flex gap-2">
                           <Button variant="outline" onClick={() => setAddProfileOpen(false)}>
                             Cancelar
@@ -606,17 +654,139 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
                                         })}
                                       />
                                     </div>
-                                    <div>
-                                      <Label htmlFor="editProfileType">Tipo de Negócio</Label>
-                                      <Input
-                                        id="editProfileType"
-                                        value={editingProfile.businessType}
-                                        onChange={(e) => setEditingProfile({
-                                          ...editingProfile,
-                                          businessType: e.target.value
-                                        })}
-                                      />
-                                    </div>
+                                     <div>
+                                       <Label htmlFor="editProfileType">Tipo de Negócio</Label>
+                                       <Select 
+                                         value={editingProfile.businessType} 
+                                         onValueChange={(value) => setEditingProfile({
+                                           ...editingProfile,
+                                           businessType: value
+                                         })}
+                                       >
+                                         <SelectTrigger>
+                                           <SelectValue />
+                                         </SelectTrigger>
+                                         <SelectContent>
+                                           <SelectItem value="Comércio">Comércio</SelectItem>
+                                           <SelectItem value="Restauração">Restauração</SelectItem>
+                                           <SelectItem value="Serviços">Serviços</SelectItem>
+                                           <SelectItem value="Agricultura">Agricultura</SelectItem>
+                                           <SelectItem value="Pesca">Pesca</SelectItem>
+                                           <SelectItem value="Turismo">Turismo</SelectItem>
+                                           <SelectItem value="Tecnologia">Tecnologia</SelectItem>
+                                           <SelectItem value="Outro">Outro</SelectItem>
+                                         </SelectContent>
+                                       </Select>
+                                     </div>
+                                     <div>
+                                       <Label htmlFor="editBusinessSize">Tamanho do Negócio</Label>
+                                       <Select 
+                                         value={editingProfile.businessSize} 
+                                         onValueChange={(value) => setEditingProfile({
+                                           ...editingProfile,
+                                           businessSize: value
+                                         })}
+                                       >
+                                         <SelectTrigger>
+                                           <SelectValue />
+                                         </SelectTrigger>
+                                         <SelectContent>
+                                           <SelectItem value="Comerciante Individual">Comerciante Individual</SelectItem>
+                                           <SelectItem value="Micro Empresa">Micro Empresa</SelectItem>
+                                           <SelectItem value="Pequena Empresa">Pequena Empresa</SelectItem>
+                                           <SelectItem value="Média Empresa">Média Empresa</SelectItem>
+                                           <SelectItem value="Grande Empresa">Grande Empresa</SelectItem>
+                                         </SelectContent>
+                                       </Select>
+                                     </div>
+                                     <div>
+                                       <Label htmlFor="editDistrict">Distrito</Label>
+                                       <Select 
+                                         value={editingProfile.district} 
+                                         onValueChange={(value) => setEditingProfile({
+                                           ...editingProfile,
+                                           district: value
+                                         })}
+                                       >
+                                         <SelectTrigger>
+                                           <SelectValue />
+                                         </SelectTrigger>
+                                         <SelectContent>
+                                           <SelectItem value="Água Grande">Água Grande</SelectItem>
+                                           <SelectItem value="Mé-Zóchi">Mé-Zóchi</SelectItem>
+                                           <SelectItem value="Cantagalo">Cantagalo</SelectItem>
+                                           <SelectItem value="Caué">Caué</SelectItem>
+                                           <SelectItem value="Lemba">Lemba</SelectItem>
+                                           <SelectItem value="Lobata">Lobata</SelectItem>
+                                           <SelectItem value="Príncipe">Príncipe</SelectItem>
+                                         </SelectContent>
+                                       </Select>
+                                     </div>
+                                     <div>
+                                       <Label htmlFor="editTaxId">NIF</Label>
+                                       <Input
+                                         id="editTaxId"
+                                         value={editingProfile.taxId}
+                                         onChange={(e) => setEditingProfile({
+                                           ...editingProfile,
+                                           taxId: e.target.value
+                                         })}
+                                       />
+                                     </div>
+                                     <div>
+                                       <Label htmlFor="editAddress">Endereço</Label>
+                                       <Input
+                                         id="editAddress"
+                                         value={editingProfile.address}
+                                         onChange={(e) => setEditingProfile({
+                                           ...editingProfile,
+                                           address: e.target.value
+                                         })}
+                                       />
+                                     </div>
+                                     <div>
+                                       <Label htmlFor="editGpsCoordinates">Coordenadas GPS</Label>
+                                       <div className="flex gap-2">
+                                         <Input
+                                           id="editGpsCoordinates"
+                                           value={editingProfile.gpsCoordinates}
+                                           onChange={(e) => setEditingProfile({
+                                             ...editingProfile,
+                                             gpsCoordinates: e.target.value
+                                           })}
+                                         />
+                                         <Button
+                                           type="button"
+                                           size="sm"
+                                           variant="outline"
+                                           onClick={() => {
+                                             if (navigator.geolocation) {
+                                               navigator.geolocation.getCurrentPosition((position) => {
+                                                 const coords = `${position.coords.latitude.toFixed(4)}° N, ${position.coords.longitude.toFixed(4)}° E`;
+                                                 setEditingProfile({
+                                                   ...editingProfile!,
+                                                   gpsCoordinates: coords
+                                                 });
+                                               });
+                                             }
+                                           }}
+                                         >
+                                           <MapPin className="w-4 h-4" />
+                                         </Button>
+                                       </div>
+                                     </div>
+                                     <div>
+                                       <Label htmlFor="editDescription">Descrição</Label>
+                                       <textarea
+                                         id="editDescription"
+                                         className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[80px]"
+                                         value={editingProfile.description}
+                                         onChange={(e) => setEditingProfile({
+                                           ...editingProfile,
+                                           description: e.target.value
+                                         })}
+                                       />
+                                     </div>
                                     <div className="flex gap-2">
                                       <Button variant="outline" onClick={() => {
                                         setEditProfileOpen(false);
