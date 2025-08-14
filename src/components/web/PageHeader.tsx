@@ -9,7 +9,7 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, description, onBack }: PageHeaderProps) {
   return (
-    <div className="bg-white pt-4 px-8">
+    <div className="bg-content pt-4 px-8">
       <div className="flex items-center mb-4">
         <Button 
           variant="ghost" 

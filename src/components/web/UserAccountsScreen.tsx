@@ -181,6 +181,15 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
     }
   };
 
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'ACTIVE': return 'Ativo';
+      case 'FROZEN': return 'Congelado';
+      case 'CLOSED': return 'Fechado';
+      default: return status;
+    }
+  };
+
   const getTypeLabel = (type: string) => {
     switch (type) {
       case 'personal': return 'Pessoal';
@@ -299,7 +308,7 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
                       <TableCell className="font-semibold">{account.balance.toLocaleString()} STN</TableCell>
                       <TableCell>
                         <Badge className={getStatusColor(account.status)}>
-                          {account.status}
+                          {getStatusText(account.status)}
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -344,11 +353,11 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
                                       <SelectTrigger>
                                         <SelectValue />
                                       </SelectTrigger>
-                                      <SelectContent>
-                                        <SelectItem value="ACTIVE">ACTIVE</SelectItem>
-                                        <SelectItem value="FROZEN">FROZEN</SelectItem>
-                                        <SelectItem value="CLOSED">CLOSED</SelectItem>
-                                      </SelectContent>
+                                       <SelectContent>
+                                         <SelectItem value="ACTIVE">Ativo</SelectItem>
+                                         <SelectItem value="FROZEN">Congelado</SelectItem>
+                                         <SelectItem value="CLOSED">Fechado</SelectItem>
+                                       </SelectContent>
                                     </Select>
                                   </div>
                                   <div>
@@ -393,34 +402,96 @@ const UserAccountsScreen = ({ phoneNumber, onBack, onTransactionHistory }: UserA
                               <DialogHeader>
                                 <DialogTitle>Configurar Limites - {account.name}</DialogTitle>
                               </DialogHeader>
-                              <div className="space-y-4">
-                                <div>
-                                  <Label htmlFor="dailyLimit">Limite Diário (STN)</Label>
-                                  <Input
-                                    id="dailyLimit"
-                                    type="number"
-                                    placeholder="Ex: 100000"
-                                    defaultValue="100000"
-                                  />
-                                </div>
-                                <div>
-                                  <Label htmlFor="monthlyLimit">Limite Mensal (STN)</Label>
-                                  <Input
-                                    id="monthlyLimit"
-                                    type="number"
-                                    placeholder="Ex: 1000000"
-                                    defaultValue="1000000"
-                                  />
-                                </div>
-                                <div>
-                                  <Label htmlFor="transactionLimit">Limite por Transação (STN)</Label>
-                                  <Input
-                                    id="transactionLimit"
-                                    type="number"
-                                    placeholder="Ex: 50000"
-                                    defaultValue="50000"
-                                  />
-                                </div>
+                               <div className="space-y-4">
+                                 <div className="grid grid-cols-2 gap-4">
+                                   <div>
+                                     <Label htmlFor="dailySend">Limite Diário Envio (STN)</Label>
+                                     <Input
+                                       id="dailySend"
+                                       type="number"
+                                       placeholder="Ex: 100000"
+                                       defaultValue="100000"
+                                     />
+                                   </div>
+                                   <div>
+                                     <Label htmlFor="dailyReceive">Limite Diário Recebimento (STN)</Label>
+                                     <Input
+                                       id="dailyReceive"
+                                       type="number"
+                                       placeholder="Ex: 150000"
+                                       defaultValue="150000"
+                                     />
+                                   </div>
+                                 </div>
+                                 <div className="grid grid-cols-2 gap-4">
+                                   <div>
+                                     <Label htmlFor="monthlySend">Limite Mensal Envio (STN)</Label>
+                                     <Input
+                                       id="monthlySend"
+                                       type="number"
+                                       placeholder="Ex: 1000000"
+                                       defaultValue="1000000"
+                                     />
+                                   </div>
+                                   <div>
+                                     <Label htmlFor="monthlyReceive">Limite Mensal Recebimento (STN)</Label>
+                                     <Input
+                                       id="monthlyReceive"
+                                       type="number"
+                                       placeholder="Ex: 1500000"
+                                       defaultValue="1500000"
+                                     />
+                                   </div>
+                                 </div>
+                                 <div className="grid grid-cols-2 gap-4">
+                                   <div>
+                                     <Label htmlFor="transactionSend">Limite Transação Envio (STN)</Label>
+                                     <Input
+                                       id="transactionSend"
+                                       type="number"
+                                       placeholder="Ex: 50000"
+                                       defaultValue="50000"
+                                     />
+                                   </div>
+                                   <div>
+                                     <Label htmlFor="transactionReceive">Limite Transação Recebimento (STN)</Label>
+                                     <Input
+                                       id="transactionReceive"
+                                       type="number"
+                                       placeholder="Ex: 75000"
+                                       defaultValue="75000"
+                                     />
+                                   </div>
+                                 </div>
+                                 <div className="grid grid-cols-2 gap-4">
+                                   <div>
+                                     <Label htmlFor="dailyCashout">Limite Diário Saque (STN)</Label>
+                                     <Input
+                                       id="dailyCashout"
+                                       type="number"
+                                       placeholder="Ex: 50000"
+                                       defaultValue="50000"
+                                     />
+                                   </div>
+                                   <div>
+                                     <Label htmlFor="smsSendMax">Limite Máximo SMS</Label>
+                                     <Input
+                                       id="smsSendMax"
+                                       type="number"
+                                       placeholder="Ex: 10"
+                                       defaultValue="10"
+                                     />
+                                   </div>
+                                 </div>
+                                 <div>
+                                   <Label htmlFor="maxBalance">Saldo Máximo (STN)</Label>
+                                   <Input
+                                     id="maxBalance"
+                                     type="number"
+                                     placeholder="Ex: 5000000"
+                                     defaultValue="5000000"
+                                   />
+                                 </div>
                                 <div className="flex gap-2">
                                   <Button variant="outline" onClick={() => setLimitsDialogOpen(false)}>
                                     Cancelar

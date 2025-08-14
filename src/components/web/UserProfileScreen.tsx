@@ -24,6 +24,12 @@ interface BusinessProfile {
   name: string;
   location: string;
   businessType: string;
+  businessSize: string;
+  taxId: string;
+  address: string;
+  description: string;
+  district: string;
+  gpsCoordinates: string;
   status: 'active' | 'pending' | 'suspended';
 }
 
@@ -63,8 +69,32 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
   });
 
   const [businessProfiles, setBusinessProfiles] = useState<BusinessProfile[]>([
-    { id: 'biz001', name: 'Silva Commerce Lda', location: 'São Tomé', businessType: 'Comércio', status: 'active' },
-    { id: 'biz002', name: 'Restaurante Central', location: 'Príncipe', businessType: 'Restauração', status: 'pending' }
+    { 
+      id: 'biz001', 
+      name: 'Silva Commerce Lda', 
+      location: 'São Tomé', 
+      businessType: 'Comércio', 
+      businessSize: 'Pequena Empresa',
+      taxId: '123456789',
+      address: 'Rua da Independência, 45',
+      description: 'Comércio geral de produtos alimentares',
+      district: 'Água Grande',
+      gpsCoordinates: '0.3365° N, 6.7273° E',
+      status: 'active' 
+    },
+    { 
+      id: 'biz002', 
+      name: 'Restaurante Central', 
+      location: 'Príncipe', 
+      businessType: 'Restauração', 
+      businessSize: 'Micro Empresa',
+      taxId: '987654321',
+      address: 'Avenida Marginal, 12',
+      description: 'Restaurante especializado em culinária local',
+      district: 'Príncipe',
+      gpsCoordinates: '1.6136° N, 7.4061° E',
+      status: 'pending' 
+    }
   ]);
 
   const [documents] = useState<Document[]>([
@@ -139,6 +169,12 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
       name: newProfileName,
       location: newProfileLocation,
       businessType: newProfileType,
+      businessSize: '',
+      taxId: '',
+      address: '',
+      description: '',
+      district: '',
+      gpsCoordinates: '',
       status: 'pending'
     };
     
@@ -415,11 +451,89 @@ const UserProfileScreen = ({ phoneNumber, onBack, onAccountsManagement }: UserPr
                         </div>
                         <div>
                           <Label htmlFor="profileType">Tipo de Negócio</Label>
+                          <Select value={newProfileType} onValueChange={setNewProfileType}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecione o tipo" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Comércio">Comércio</SelectItem>
+                              <SelectItem value="Restauração">Restauração</SelectItem>
+                              <SelectItem value="Serviços">Serviços</SelectItem>
+                              <SelectItem value="Agricultura">Agricultura</SelectItem>
+                              <SelectItem value="Pesca">Pesca</SelectItem>
+                              <SelectItem value="Turismo">Turismo</SelectItem>
+                              <SelectItem value="Tecnologia">Tecnologia</SelectItem>
+                              <SelectItem value="Outro">Outro</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label htmlFor="businessSize">Tamanho do Negócio</Label>
+                          <Select value={""} onValueChange={() => {}}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecione o tamanho" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Comerciante Individual">Comerciante Individual</SelectItem>
+                              <SelectItem value="Micro Empresa">Micro Empresa</SelectItem>
+                              <SelectItem value="Pequena Empresa">Pequena Empresa</SelectItem>
+                              <SelectItem value="Média Empresa">Média Empresa</SelectItem>
+                              <SelectItem value="Grande Empresa">Grande Empresa</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label htmlFor="district">Distrito</Label>
+                          <Select value={""} onValueChange={() => {}}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecione o distrito" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Água Grande">Água Grande</SelectItem>
+                              <SelectItem value="Mé-Zóchi">Mé-Zóchi</SelectItem>
+                              <SelectItem value="Cantagalo">Cantagalo</SelectItem>
+                              <SelectItem value="Caué">Caué</SelectItem>
+                              <SelectItem value="Lemba">Lemba</SelectItem>
+                              <SelectItem value="Lobata">Lobata</SelectItem>
+                              <SelectItem value="Príncipe">Príncipe</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label htmlFor="taxId">NIF</Label>
                           <Input
-                            id="profileType"
-                            placeholder="Ex: Comércio"
-                            value={newProfileType}
-                            onChange={(e) => setNewProfileType(e.target.value)}
+                            id="taxId"
+                            placeholder="Ex: 123456789"
+                            value={""}
+                            onChange={() => {}}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="address">Endereço</Label>
+                          <Input
+                            id="address"
+                            placeholder="Ex: Rua da Independência, 45"
+                            value={""}
+                            onChange={() => {}}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="gpsCoordinates">Coordenadas GPS</Label>
+                          <Input
+                            id="gpsCoordinates"
+                            placeholder="Ex: 0.3365° N, 6.7273° E"
+                            value={""}
+                            onChange={() => {}}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="description">Descrição</Label>
+                          <textarea
+                            id="description"
+                            placeholder="Descrição do negócio"
+                            className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[80px]"
+                            value={""}
+                            onChange={() => {}}
                           />
                         </div>
                         <div className="flex gap-2">

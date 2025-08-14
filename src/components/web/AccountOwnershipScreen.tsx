@@ -242,10 +242,9 @@ const AccountOwnershipScreen = ({ onBack }: AccountOwnershipScreenProps) => {
                       <TableCell>
                         {!owner.isPrimary && (
                           <Button 
-                            variant="outline" 
+                            variant="destructive" 
                             size="sm"
                             onClick={() => handleRemoveOwner(owner.id)}
-                            className="text-red-600 border-red-200 hover:bg-red-50"
                           >
                             <UserMinus className="w-4 h-4 mr-1" />
                             Remover
