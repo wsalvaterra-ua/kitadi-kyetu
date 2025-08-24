@@ -48,8 +48,9 @@ import UserConfigScreen from '@/components/web/UserConfigScreen';
 import ClientTransactionsScreen from '@/components/web/ClientTransactionsScreen';
 import UserAccountsScreen from '@/components/web/UserAccountsScreen';
 import TransactionHistoryScreen from '@/components/web/TransactionHistoryScreen';
+import KYCVerificationScreen from '@/components/web/KYCVerificationScreen';
 
-type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation' | 'add-reconciliation' | 'account-creation' | 'web-login' | 'web-dashboard' | 'web-transactions' | 'web-extract' | 'web-account-management' | 'web-user-account-management' | 'web-user-profile' | 'web-user-accounts' | 'web-transaction-history' | 'web-user-access' | 'web-user-config' | 'web-create-user' | 'web-reconciliation' | 'web-transaction-management' | 'web-account-ownership' | 'web-bank-approval' | 'web-cash-verification' | 'web-cash-reserve' | 'web-external-bank-transfer' | 'web-operator-management' | 'web-withdrawal-report' | 'web-client-transactions';
+type AppScreen = 'onboarding' | 'login' | 'dashboard' | 'send' | 'send-confirmation' | 'pay' | 'pay-confirmation' | 'withdraw' | 'topup' | 'merchant-login' | 'merchant-dashboard' | 'qr-payment' | 'transaction-details' | 'code-input' | 'user-management' | 'extract' | 'forgot-pin' | 'terms' | 'create-pin' | 'sms-verification' | 'id-verification-intro' | 'document-selection' | 'reconciliation' | 'add-reconciliation' | 'account-creation' | 'web-login' | 'web-dashboard' | 'web-transactions' | 'web-extract' | 'web-account-management' | 'web-user-account-management' | 'web-user-profile' | 'web-user-accounts' | 'web-transaction-history' | 'web-user-access' | 'web-user-config' | 'web-create-user' | 'web-reconciliation' | 'web-transaction-management' | 'web-account-ownership' | 'web-bank-approval' | 'web-cash-verification' | 'web-cash-reserve' | 'web-external-bank-transfer' | 'web-operator-management' | 'web-withdrawal-report' | 'web-client-transactions' | 'web-kyc-verification';
 
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>('onboarding');
@@ -208,6 +209,7 @@ const handleWebAddReconciliation = () => {
   const handleWebOperatorManagement = () => setCurrentScreen('web-operator-management');
   const handleWebWithdrawalReport = () => setCurrentScreen('web-withdrawal-report');
   const handleWebAgentCashout = () => setCurrentScreen('web-client-transactions');
+  const handleWebKYCVerification = () => setCurrentScreen('web-kyc-verification');
 
   const handleWebBack = () => {
     setCurrentScreen('web-dashboard');
@@ -495,9 +497,10 @@ const handleWebAddReconciliation = () => {
               onCashVerification={handleWebCashVerification}
               onCashReserve={handleWebCashReserve}
               onExternalBankTransfer={handleWebExternalBankTransfer}
-              onOperatorManagement={handleWebOperatorManagement}
-              onWithdrawalReport={handleWebWithdrawalReport}
-              onAgentCashoutRequest={handleWebAgentCashout}
+          onOperatorManagement={handleWebOperatorManagement}
+          onWithdrawalReport={handleWebWithdrawalReport}
+          onAgentCashoutRequest={handleWebAgentCashout}
+          onKYCVerification={handleWebKYCVerification}
             />
           </BackofficeLayout>
         );
@@ -797,6 +800,19 @@ const handleWebAddReconciliation = () => {
             userType={webUserType}
           >
             <ClientTransactionsScreen
+              onBack={handleWebBack}
+            />
+          </BackofficeLayout>
+        );
+      case 'web-kyc-verification':
+        return (
+          <BackofficeLayout
+            onLogout={handleWebLogout}
+            onNavigate={handleWebNavigate}
+            currentScreen={currentScreen}
+            userType={webUserType}
+          >
+            <KYCVerificationScreen
               onBack={handleWebBack}
             />
           </BackofficeLayout>

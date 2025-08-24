@@ -35,7 +35,8 @@ export function BackofficeLayout({
       'web-cash-verification': 'Operações',
       'web-account-ownership': 'Contas',
       'web-withdrawal-report': 'Sistema',
-      'web-user-config': 'Sistema'
+      'web-user-config': 'Sistema',
+      'web-kyc-verification': 'Clientes'
     };
     return categories[currentScreen] || 'Kitadi Backoffice';
   };

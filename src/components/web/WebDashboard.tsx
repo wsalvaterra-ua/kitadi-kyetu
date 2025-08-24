@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LogOut, Download, Eye, CreditCard, Users, UserPlus, Building, Plus, Search, UserCheck, DollarSign, CheckCircle, Wallet, FileText, Settings, ArrowDownCircle, Banknote } from 'lucide-react';
+import { LogOut, Download, Eye, CreditCard, Users, UserPlus, Building, Plus, Search, UserCheck, DollarSign, CheckCircle, Wallet, FileText, Settings, ArrowDownCircle, Banknote, Shield } from 'lucide-react';
 
 interface WebDashboardProps {
   userType: 'personal' | 'business' | 'agent' | 'business-associated' | 'merchant';
@@ -19,6 +19,7 @@ interface WebDashboardProps {
   onOperatorManagement?: () => void;
   onWithdrawalReport?: () => void;
   onAgentCashoutRequest?: () => void;
+  onKYCVerification?: () => void;
 }
 
 const WebDashboard = ({ 
@@ -37,7 +38,8 @@ const WebDashboard = ({
   onExternalBankTransfer,
   onOperatorManagement,
   onWithdrawalReport,
-  onAgentCashoutRequest
+  onAgentCashoutRequest,
+  onKYCVerification
 }: WebDashboardProps) => {
   const getUserTypeInfo = () => {
     switch (userType) {
@@ -182,7 +184,7 @@ const WebDashboard = ({
             {/* Gestão de Clientes */}
             <div className="mb-8">
               <h2 className="text-xl font-semibold text-kitadi-navy mb-4">Gestão de Clientes</h2>
-              <div className="grid gap-6 grid-cols-1 w-full">
+              <div className="grid gap-6 grid-cols-1 md:grid-cols-2 w-full">
                 <Card className="cursor-pointer hover:shadow-md transition-shadow w-full" onClick={onCreateMerchantProfile}>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-kitadi-orange">
@@ -196,6 +198,23 @@ const WebDashboard = ({
                     </p>
                     <Button variant="outline" className="mt-4 w-full">
                       Gerir
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <Card className="cursor-pointer hover:shadow-md transition-shadow w-full" onClick={onKYCVerification}>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-kitadi-orange">
+                      <Shield className="w-5 h-5" />
+                      Verificação KYC
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600">
+                      Verificar documentos de identidade e fiscais pendentes
+                    </p>
+                    <Button variant="outline" className="mt-4 w-full">
+                      Verificar
                     </Button>
                   </CardContent>
                 </Card>
